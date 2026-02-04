@@ -33,7 +33,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="py-12 md:py-16 px-6 bg-cream-dark">
+    <section id="contact" className="py-8 md:py-10 px-6 bg-cream-dark">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-12">
           <div className="section-divider" />

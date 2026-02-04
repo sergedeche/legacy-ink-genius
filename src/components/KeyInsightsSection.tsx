@@ -66,7 +66,7 @@ const KeyInsightsSection = () => {
   ];
 
   return (
-    <section id="insights" className="py-12 md:py-16 px-6 bg-cream-dark">
+    <section id="insights" className="py-8 md:py-10 px-6 bg-cream-dark">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10">
           <div className="section-divider" />
