@@ -7,37 +7,44 @@ const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image - no overlay to keep center transparent */}
+      {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${heroBg})` }}
       />
       
-      {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto animate-fade-in">
-        <p className="font-display text-lg md:text-xl tracking-[0.3em] uppercase text-sepia-light mb-4 opacity-0 animate-fade-up">
-          Интеллектуальный экскурс:
-        </p>
+      {/* Content with backdrop */}
+      <div className="relative z-10 text-center px-6 py-12 max-w-3xl mx-auto animate-fade-in">
+        {/* Semi-transparent card backdrop */}
+        <div className="absolute inset-0 bg-cream/80 backdrop-blur-sm rounded-lg border border-gold/20 shadow-elegant -z-10" />
         
-        <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-medium tracking-wide text-sepia mb-6 opacity-0 animate-fade-up delay-100">
-          Стратегия Наследия
-        </h1>
-        
-        <p className="font-display text-xl md:text-2xl italic text-sepia-light mb-4 opacity-0 animate-fade-up delay-200">
-          Наследие прошлого — стратегии будущего
-        </p>
-        
-        <p className="font-body text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-10 opacity-0 animate-fade-up delay-300">
-          Формат для тех, кто готов создавать историю,
-          <br />а не просто управлять бизнесом.
-        </p>
-        
-        <button 
-          onClick={scrollToContact}
-          className="btn-heritage opacity-0 animate-fade-up delay-400"
-        >
-          Подробнее
-        </button>
+        <div className="px-8 py-10 md:px-12 md:py-14">
+          <p className="font-display text-base md:text-lg tracking-[0.25em] uppercase text-gold-dark mb-3 opacity-0 animate-fade-up">
+            Интеллектуальный экскурс:
+          </p>
+          
+          <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-medium tracking-wide text-sepia mb-4 opacity-0 animate-fade-up delay-100">
+            Стратегия Наследия
+          </h1>
+          
+          <p className="font-display text-lg md:text-xl italic text-sepia-light mb-3 opacity-0 animate-fade-up delay-200">
+            Наследие прошлого — стратегии будущего
+          </p>
+          
+          <div className="w-16 h-px bg-gold/50 mx-auto my-6 opacity-0 animate-fade-up delay-200" />
+          
+          <p className="font-body text-sm md:text-base text-muted-foreground max-w-lg mx-auto mb-8 opacity-0 animate-fade-up delay-300">
+            Формат для тех, кто готов создавать историю,
+            <br />а не просто управлять бизнесом.
+          </p>
+          
+          <button 
+            onClick={scrollToContact}
+            className="btn-heritage opacity-0 animate-fade-up delay-400"
+          >
+            Подробнее
+          </button>
+        </div>
       </div>
 
       {/* Scroll indicator */}
@@ -49,4 +56,3 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
-
