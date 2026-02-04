@@ -211,7 +211,7 @@ const EventCalendarSection = () => {
             ) : nextEvent ? (
               <div className="space-y-6">
                 <p className="text-sm tracking-[0.2em] uppercase" style={{ color: 'hsl(38 70% 50%)' }}>
-                  Ближайший мастер-класс
+                  Ближайший экскурс
                 </p>
                 <h3 className="font-display text-2xl md:text-3xl lg:text-4xl" style={{ color: 'hsl(35 25% 95%)' }}>
                   {nextEvent.title}
@@ -237,12 +237,6 @@ const EventCalendarSection = () => {
                     </span>
                   </div>
                 </div>
-
-                {nextEvent.description && (
-                  <p className="text-sm leading-relaxed" style={{ color: 'hsl(35 20% 65%)' }}>
-                    {nextEvent.description}
-                  </p>
-                )}
 
                 <div className="pt-4">
                   <p className="text-2xl font-display mb-4" style={{ color: 'hsl(38 70% 50%)' }}>
