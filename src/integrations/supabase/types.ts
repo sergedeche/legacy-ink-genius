@@ -14,13 +14,124 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          created_at: string
+          event_id: string
+          expires_at: string
+          guest_email: string
+          guest_name: string
+          id: string
+          seats_count: number
+          status: string
+          total_amount: number
+          verification_code: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          expires_at?: string
+          guest_email: string
+          guest_name: string
+          id?: string
+          seats_count?: number
+          status?: string
+          total_amount: number
+          verification_code?: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          expires_at?: string
+          guest_email?: string
+          guest_name?: string
+          id?: string
+          seats_count?: number
+          status?: string
+          total_amount?: number
+          verification_code?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          created_at: string
+          description: string | null
+          estafeta_url: string | null
+          event_date: string
+          id: string
+          price_per_seat: number
+          title: string
+          total_seats: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          estafeta_url?: string | null
+          event_date: string
+          id?: string
+          price_per_seat?: number
+          title: string
+          total_seats?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          estafeta_url?: string | null
+          event_date?: string
+          id?: string
+          price_per_seat?: number
+          title?: string
+          total_seats?: number
+        }
+        Relationships: []
+      }
+      tickets: {
+        Row: {
+          booking_id: string
+          created_at: string
+          id: string
+          ticket_code: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          id?: string
+          ticket_code?: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          id?: string
+          ticket_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tickets_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_booked_seats: { Args: { p_event_id: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never
