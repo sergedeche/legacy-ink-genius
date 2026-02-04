@@ -5,6 +5,7 @@ import AboutSection from "@/components/AboutSection";
 import KeyInsightsSection from "@/components/KeyInsightsSection";
 import UniqueFormatSection from "@/components/UniqueFormatSection";
 import EventCalendarSection from "@/components/EventCalendarSection";
+import AuthorSection from "@/components/AuthorSection";
 import CharitySection from "@/components/CharitySection";
 import Footer from "@/components/Footer";
 import TelegramDialog from "@/components/TelegramDialog";
@@ -20,6 +21,7 @@ const Index = () => {
       <KeyInsightsSection />
       <UniqueFormatSection />
       <EventCalendarSection />
+      <AuthorSection />
       <CharitySection onContactClick={() => setTelegramOpen(true)} />
       <Footer />
       <TelegramDialog open={telegramOpen} onOpenChange={setTelegramOpen} />
