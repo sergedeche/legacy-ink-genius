@@ -1,12 +1,15 @@
 import { Home } from "lucide-react";
 
-const Header = () => {
+interface HeaderProps {
+  onContactClick: () => void;
+}
+
+const Header = ({ onContactClick }: HeaderProps) => {
   const navItems = [
     { label: "О проекте", href: "#about" },
     { label: "Ключевые смыслы", href: "#insights" },
     { label: "Формат", href: "#format" },
     { label: "Благотворительность", href: "#charity" },
-    { label: "Контакты", href: "#contact" },
   ];
 
   const scrollToSection = (href: string) => {
@@ -42,6 +45,14 @@ const Header = () => {
                   </button>
                 </li>
               ))}
+              <li>
+                <button
+                  onClick={onContactClick}
+                  className="font-body text-xs text-cream/80 hover:text-gold px-2 lg:px-3 py-2 transition-colors"
+                >
+                  Контакты
+                </button>
+              </li>
             </ul>
 
             {/* Mobile: simplified nav */}
@@ -53,7 +64,7 @@ const Header = () => {
                 О проекте
               </button>
               <button
-                onClick={() => scrollToSection('#contact')}
+                onClick={onContactClick}
                 className="font-body text-xs text-cream/80 hover:text-gold"
               >
                 Контакты
