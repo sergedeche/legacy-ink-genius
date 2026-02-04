@@ -42,9 +42,9 @@ const UniqueFormatSection = () => {
   ];
 
   return (
-    <section id="format" className="py-8 md:py-10 px-6 bg-cream">
+    <section id="format" className="py-6 md:py-8 px-6 bg-cream">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <div className="section-divider" />
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-sepia mb-4">
             Уникальность формата

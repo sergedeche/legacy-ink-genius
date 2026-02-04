@@ -2,7 +2,7 @@ import aboutBg from "@/assets/about-bg.png";
 
 const AboutSection = () => {
   return (
-    <section id="about" className="py-8 md:py-10 px-6 bg-cream relative overflow-hidden">
+    <section id="about" className="py-6 md:py-8 px-6 bg-cream relative overflow-hidden">
       {/* Background image with low opacity */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-15"
@@ -32,8 +32,6 @@ const AboutSection = () => {
             И именно это помогает сохранять смыслы, команду и мотивацию.
           </p>
         </div>
-        
-        <div className="section-divider mt-8" />
       </div>
     </section>
   );

@@ -73,7 +73,7 @@ const CharitySection = () => {
   };
 
   return (
-    <section id="charity" className="py-8 md:py-10 px-6 bg-navy text-cream">
+    <section id="charity" className="py-6 md:py-8 px-6 bg-navy text-cream">
       <div className="max-w-4xl mx-auto text-center">
         <div className="flex justify-center mb-6">
           <Heart className="w-12 h-12 text-gold animate-pulse" />
