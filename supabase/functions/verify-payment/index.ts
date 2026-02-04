@@ -29,14 +29,31 @@ function normalizeName(name: string): string {
     .replace(/ё/g, 'е'); // Normalize russian ё to е
 }
 
+// Parse date string like "04.02.2026 16:52:19" to Date object
+function parseDonationDate(dateStr: string): Date | null {
+  // Format: DD.MM.YYYY HH:MM:SS
+  const match = dateStr.match(/(\d{2})\.(\d{2})\.(\d{4})\s+(\d{2}):(\d{2}):(\d{2})/);
+  if (!match) return null;
+  
+  const [, day, month, year, hour, minute, second] = match;
+  return new Date(
+    parseInt(year),
+    parseInt(month) - 1, // months are 0-indexed
+    parseInt(day),
+    parseInt(hour),
+    parseInt(minute),
+    parseInt(second)
+  );
+}
+
 // Extract donations from the HTML page
-function extractDonations(html: string): Array<{ name: string; amount: number }> {
+function extractDonations(html: string): Array<{ name: string; amount: number; donatedAt: Date | null }> {
   // Narrow parsing to the "уже участвуют" section when present to avoid false positives.
   const lower = html.toLowerCase();
   const markerIndex = lower.indexOf('уже участвуют');
   const slice = markerIndex >= 0 ? html.slice(markerIndex, markerIndex + 60000) : html;
 
-  const donations: Array<{ name: string; amount: number }> = [];
+  const donations: Array<{ name: string; amount: number; donatedAt: Date | null }> = [];
 
   // Match amounts like "200 ₽" or "1 200 ₽".
   const amountRegex = /(\d{1,3}(?:\s\d{3})*|\d+)\s*₽/g;
@@ -47,7 +64,7 @@ function extractDonations(html: string): Array<{ name: string; amount: number }>
     const amount = parseInt(rawAmount, 10);
     if (!Number.isFinite(amount) || amount <= 0) continue;
 
-    // Take a wider window around the amount to find name and comment
+    // Take a wider window around the amount to find name, date, and comment
     const start = Math.max(0, match.index - 600);
     const end = Math.min(slice.length, match.index + match[0].length + 600);
     const chunk = slice.substring(start, end);
@@ -78,6 +95,10 @@ function extractDonations(html: string): Array<{ name: string; amount: number }>
     // Prefer the name closest to the amount (latest candidate in the chunk before amount position).
     const chosen = candidates[candidates.length - 1].name;
     
+    // Extract date from the chunk (format: DD.MM.YYYY HH:MM:SS)
+    const dateMatch = chunk.match(/(\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}:\d{2})/);
+    const donatedAt = dateMatch ? parseDonationDate(dateMatch[1]) : null;
+    
     const exists = donations.some(
       (d) => normalizeName(d.name) === normalizeName(chosen) && d.amount === amount,
     );
@@ -86,6 +107,7 @@ function extractDonations(html: string): Array<{ name: string; amount: number }>
       donations.push({
         name: chosen,
         amount,
+        donatedAt,
       });
     }
   }
@@ -292,8 +314,9 @@ Deno.serve(async (req) => {
     // Generate expected donor name format: "Имя П" from full name
     const expectedDonorName = getExpectedDonorName(booking.guest_name);
     const expectedAmount = booking.total_amount;
+    const bookingCreatedAt = new Date(booking.created_at);
     
-    console.log('Looking for:', { expectedDonorName, expectedAmount });
+    console.log('Looking for:', { expectedDonorName, expectedAmount, bookingCreatedAt: bookingCreatedAt.toISOString() });
 
     let found = false;
 
@@ -305,6 +328,8 @@ Deno.serve(async (req) => {
         expectedDonorName: normalizeName(expectedDonorName),
         donorAmount: donation.amount,
         expectedAmount,
+        donatedAt: donation.donatedAt?.toISOString() || 'unknown',
+        bookingCreatedAt: bookingCreatedAt.toISOString(),
       });
 
       const amountsMatch = donation.amount === expectedAmount;
@@ -314,11 +339,20 @@ Deno.serve(async (req) => {
       const nameMatches = normalizedDonorName === expectedNormalized ||
         normalizedDonorName.startsWith(expectedNormalized) ||
         expectedNormalized.startsWith(normalizedDonorName);
+      
+      // CRITICAL: Only accept donations made AFTER the booking was created
+      // This prevents using old donations for new bookings
+      const donationIsRecent = donation.donatedAt && donation.donatedAt > bookingCreatedAt;
 
-      if (amountsMatch && nameMatches) {
+      if (amountsMatch && nameMatches && donationIsRecent) {
         found = true;
-        console.log('Found matching donation!', { donation, expectedDonorName });
+        console.log('Found matching donation!', { donation, expectedDonorName, donatedAt: donation.donatedAt?.toISOString() });
         break;
+      } else if (amountsMatch && nameMatches && !donationIsRecent) {
+        console.log('Donation matches but is too old (before booking creation)', { 
+          donatedAt: donation.donatedAt?.toISOString(), 
+          bookingCreatedAt: bookingCreatedAt.toISOString() 
+        });
       }
     }
 
