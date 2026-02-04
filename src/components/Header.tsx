@@ -1,10 +1,13 @@
-import { Home } from "lucide-react";
+import { useState } from "react";
+import { Home, Menu, X } from "lucide-react";
 
 interface HeaderProps {
   onContactClick: () => void;
 }
 
 const Header = ({ onContactClick }: HeaderProps) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const navItems = [
     { label: "О проекте", href: "#about" },
     { label: "Ключевые смыслы", href: "#insights" },
@@ -15,6 +18,12 @@ const Header = ({ onContactClick }: HeaderProps) => {
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
     element?.scrollIntoView({ behavior: 'smooth' });
+    setIsMenuOpen(false);
+  };
+
+  const handleContactClick = () => {
+    onContactClick();
+    setIsMenuOpen(false);
   };
 
   return (
@@ -33,7 +42,7 @@ const Header = ({ onContactClick }: HeaderProps) => {
               <Home className="w-5 h-5 md:w-6 md:h-6" />
             </a>
 
-            {/* Navigation */}
+            {/* Desktop Navigation */}
             <ul className="hidden md:flex items-center gap-1">
               {navItems.map((item) => (
                 <li key={item.href}>
@@ -55,24 +64,45 @@ const Header = ({ onContactClick }: HeaderProps) => {
               </li>
             </ul>
 
-            {/* Mobile: simplified nav */}
-            <div className="md:hidden flex items-center gap-4">
-              <button
-                onClick={() => scrollToSection('#about')}
-                className="font-body text-xs text-cream/80 hover:text-gold"
-              >
-                О проекте
-              </button>
-              <button
-                onClick={onContactClick}
-                className="font-body text-xs text-cream/80 hover:text-gold"
-              >
-                Контакты
-              </button>
-            </div>
+            {/* Mobile: Burger button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden flex items-center justify-center w-10 h-10 text-cream hover:text-gold transition-colors"
+              aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </nav>
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-navy/95 backdrop-blur-md border-t border-cream/10">
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <ul className="flex flex-col gap-2">
+              {navItems.map((item) => (
+                <li key={item.href}>
+                  <button
+                    onClick={() => scrollToSection(item.href)}
+                    className="w-full text-left font-body text-sm text-cream/90 hover:text-gold py-3 px-2 transition-colors border-b border-cream/10"
+                  >
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+              <li>
+                <button
+                  onClick={handleContactClick}
+                  className="w-full text-left font-body text-sm text-cream/90 hover:text-gold py-3 px-2 transition-colors"
+                >
+                  Контакты
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
