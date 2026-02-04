@@ -18,6 +18,87 @@ function normalizeName(name: string): string {
     .replace(/ё/g, 'е'); // Normalize russian ё to е
 }
 
+// Extract donations from the HTML page
+function extractDonations(html: string): Array<{ name: string; amount: number; comment: string }> {
+  const donations: Array<{ name: string; amount: number; comment: string }> = [];
+  
+  // Pattern for donor entries on estafeta.ru
+  // Looking for patterns like: <span class="name">Сергей</span> ... 200 ₽
+  // Or structured blocks with donor info
+  
+  // Try to find donation cards/blocks
+  // Pattern 1: Name in one element, amount in another (common structure)
+  const blockPatterns = [
+    // Match name followed by amount with ₽ symbol
+    /(?:class="[^"]*(?:name|user|donor)[^"]*"[^>]*>|<(?:strong|b|span)[^>]*>)\s*([А-Яа-яЁёA-Za-z\s]+?)\s*<[^>]*>[\s\S]*?(\d+)\s*₽/gi,
+    // Match person icon + name + amount pattern
+    />\s*([А-Яа-яЁё][А-Яа-яЁёA-Za-z\s]{1,30})\s*<[^>]*>[\s\S]{0,200}?(\d+)\s*₽/gi,
+  ];
+  
+  for (const pattern of blockPatterns) {
+    let match;
+    while ((match = pattern.exec(html)) !== null) {
+      const name = match[1].trim();
+      const amount = parseInt(match[2], 10);
+      
+      // Skip empty names or very short names
+      if (name && name.length >= 2 && amount > 0) {
+        // Look for comment "СН" near this match
+        const contextStart = Math.max(0, match.index - 100);
+        const contextEnd = Math.min(html.length, match.index + match[0].length + 200);
+        const context = html.substring(contextStart, contextEnd);
+        const hasComment = /СН|сн/i.test(context);
+        
+        donations.push({
+          name,
+          amount,
+          comment: hasComment ? 'СН' : ''
+        });
+      }
+    }
+  }
+  
+  // Pattern 2: Extract from text content directly
+  // Remove HTML tags and look for "Name ... 200 ₽" patterns
+  const textContent = html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, '\n')
+    .replace(/\s+/g, ' ');
+  
+  // Look for patterns like "Сергей 200 ₽" or "Сергей ... 200 ₽"
+  const textPattern = /([А-Яа-яЁё][А-Яа-яЁёA-Za-z\s]{1,25}?)\s+(\d+)\s*₽/g;
+  let textMatch;
+  
+  while ((textMatch = textPattern.exec(textContent)) !== null) {
+    const name = textMatch[1].trim();
+    const amount = parseInt(textMatch[2], 10);
+    
+    if (name && name.length >= 2 && amount > 0) {
+      // Check if this donation is already found
+      const exists = donations.some(d => 
+        normalizeName(d.name) === normalizeName(name) && d.amount === amount
+      );
+      
+      if (!exists) {
+        // Look for СН comment
+        const contextStart = Math.max(0, textMatch.index - 50);
+        const contextEnd = Math.min(textContent.length, textMatch.index + textMatch[0].length + 100);
+        const context = textContent.substring(contextStart, contextEnd);
+        const hasComment = /СН|сн/i.test(context);
+        
+        donations.push({
+          name,
+          amount,
+          comment: hasComment ? 'СН' : ''
+        });
+      }
+    }
+  }
+  
+  return donations;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -110,9 +191,10 @@ Deno.serve(async (req) => {
 
     const response = await fetch(estafetaUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
         'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Cache-Control': 'no-cache',
       },
     });
 
@@ -129,62 +211,50 @@ Deno.serve(async (req) => {
     }
 
     const html = await response.text();
+    console.log('HTML length:', html.length);
+    
+    // Extract all donations from the page
+    const donations = extractDonations(html);
+    console.log('Found donations:', donations);
     
     // Search for donations matching the guest name and amount
-    // The page structure may vary, but typically shows donor name and amount
     const normalizedGuestName = normalizeName(booking.guest_name);
     const expectedAmount = booking.total_amount;
     
     console.log('Looking for:', { normalizedGuestName, expectedAmount });
 
-    // Parse donor entries - looking for patterns like:
-    // <div class="donor">Name</div> ... <span>100 ₽</span>
-    // Or table rows with name and amount
-    
-    // Try multiple patterns to find donations
+    // Find matching donation
     let found = false;
     
-    // Pattern 1: Look for name followed by the expected amount
-    const namePattern = new RegExp(
-      `${booking.guest_name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[^<]*<[^>]*>[^<]*${expectedAmount}`,
-      'i'
-    );
-    
-    if (namePattern.test(html)) {
-      found = true;
-      console.log('Found match with pattern 1');
-    }
-    
-    // Pattern 2: Look for donor-card or similar structures
-    const donorPattern = /<(?:div|span|td)[^>]*class="[^"]*(?:donor|user|name)[^"]*"[^>]*>([^<]+)<[^>]*>[\s\S]*?(\d[\d\s]*?)(?:\s*₽|<)/gi;
-    let match;
-    
-    while ((match = donorPattern.exec(html)) !== null) {
-      const donorName = normalizeName(match[1]);
-      const amount = parseInt(match[2].replace(/\s/g, ''), 10);
+    for (const donation of donations) {
+      const normalizedDonorName = normalizeName(donation.name);
       
-      console.log('Found donor:', { donorName, amount });
+      console.log('Comparing:', { 
+        donorName: normalizedDonorName, 
+        guestName: normalizedGuestName,
+        donorAmount: donation.amount,
+        expectedAmount,
+        comment: donation.comment
+      });
       
-      if (donorName.includes(normalizedGuestName) || normalizedGuestName.includes(donorName)) {
-        if (amount === expectedAmount) {
-          found = true;
-          console.log('Found exact match!');
-          break;
-        }
-      }
-    }
-
-    // Pattern 3: Simple text search for name and amount in proximity
-    if (!found) {
-      const textContent = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-      const simplePattern = new RegExp(
-        `${booking.guest_name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[^₽]{0,100}${expectedAmount}\\s*₽`,
-        'i'
-      );
+      // Check if names match (partial match allowed - first name only)
+      const namesMatch = 
+        normalizedDonorName === normalizedGuestName ||
+        (normalizedDonorName.length >= 2 && normalizedGuestName.includes(normalizedDonorName)) ||
+        (normalizedGuestName.length >= 2 && normalizedDonorName.includes(normalizedGuestName));
       
-      if (simplePattern.test(textContent)) {
+      // Check if amounts match
+      const amountsMatch = donation.amount === expectedAmount;
+      
+      // For security, we require: matching name + matching amount
+      // Comment "СН" is optional but provides extra confidence
+      if (namesMatch && amountsMatch) {
         found = true;
-        console.log('Found match with simple text search');
+        console.log('Found matching donation!', { 
+          donation, 
+          hasComment: donation.comment === 'СН' 
+        });
+        break;
       }
     }
 
@@ -253,10 +323,12 @@ Deno.serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         verified: false,
-        message: 'Payment not found yet. Please make sure you used the exact name when donating.',
+        message: 'Оплата не найдена. Убедитесь, что указали точное имя при донате и добавили комментарий "СН".',
         minutes_left: minutesLeft,
         expected_name: booking.guest_name,
-        expected_amount: booking.total_amount
+        expected_amount: booking.total_amount,
+        found_donations: donations.length,
+        hint: 'При донате укажите имя и добавьте комментарий "СН" (Стратегия Наследия)'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
