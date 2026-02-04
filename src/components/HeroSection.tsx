@@ -1,6 +1,5 @@
 import heroBg from "@/assets/hero-bg.png";
 import heroMobile from "@/assets/hero-mobile.png";
-import monogram from "@/assets/monogram.png";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const HeroSection = () => {
@@ -10,36 +9,37 @@ const HeroSection = () => {
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Mobile layout: image with monogram on top, text below
+  // Mobile layout: image with title overlay, text below
   if (isMobile) {
     return (
       <section className="relative overflow-hidden bg-cream">
-        {/* Mobile Hero Image with Monogram */}
+        {/* Mobile Hero Image with Title */}
         <div className="relative w-full aspect-[3/4]">
           <img 
             src={heroMobile} 
             alt="Heritage Strategy" 
             className="w-full h-full object-cover"
           />
-          {/* Floating Monogram */}
+          {/* Floating Title */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <img 
-              src={monogram} 
-              alt="СН Monogram" 
-              className="w-40 h-40 object-contain drop-shadow-lg animate-fade-in"
-            />
+            <h1 
+              className="font-display text-4xl font-medium tracking-wide text-cream text-center leading-tight animate-fade-in"
+              style={{ 
+                textShadow: '2px 2px 8px rgba(0,0,0,0.7), 0 0 20px rgba(0,0,0,0.5)' 
+              }}
+            >
+              Стратегия
+              <br />
+              Наследия
+            </h1>
           </div>
         </div>
         
         {/* Text content below image */}
         <div className="px-6 py-8 text-center animate-fade-in">
-          <p className="font-display text-sm tracking-[0.2em] uppercase text-gold-dark mb-2">
+          <p className="font-display text-sm tracking-[0.2em] uppercase text-gold-dark mb-3">
             Интеллектуальный экскурс:
           </p>
-          
-          <h1 className="font-display text-3xl font-medium tracking-wide text-sepia mb-2">
-            Стратегия Наследия
-          </h1>
           
           <p className="font-display text-base italic text-sepia-light mb-2">
             Наследие прошлого — стратегии будущего
