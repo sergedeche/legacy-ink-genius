@@ -8,7 +8,7 @@ interface CharitySectionProps {
 
 const CharitySection = ({ onContactClick }: CharitySectionProps) => {
   const goal = 5000000;
-  const [currentAmount, setCurrentAmount] = useState(4432610); // Fallback value
+  const [currentAmount, setCurrentAmount] = useState(0); // Will be fetched from API
   const [displayAmount, setDisplayAmount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -23,7 +23,7 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
           return;
         }
         
-        if (data?.success && data?.amount) {
+        if (data?.success && typeof data?.amount === 'number') {
           setCurrentAmount(data.amount);
         }
       } catch (err) {
