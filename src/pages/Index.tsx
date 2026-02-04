@@ -21,8 +21,8 @@ const Index = () => {
       <KeyInsightsSection />
       <UniqueFormatSection />
       <EventCalendarSection />
-      <AuthorSection />
       <CharitySection onContactClick={() => setTelegramOpen(true)} />
+      <AuthorSection />
       <Footer />
       <TelegramDialog open={telegramOpen} onOpenChange={setTelegramOpen} />
     </main>
