@@ -84,7 +84,7 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
             <img 
               src={charityLogo} 
               alt="Жизнь как чудо" 
-              className="w-32 md:w-[140px] h-auto"
+              className="w-40 md:w-[180px] h-auto"
             />
           </div>
           
@@ -101,7 +101,7 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
                 href="https://kakchudo.ru" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-charity-teal font-medium hover:underline inline-flex items-center gap-1"
+                className="text-charity-red font-medium hover:underline inline-flex items-center gap-1"
               >
                 «Жизнь как чудо»
                 <ExternalLink className="w-4 h-4" />
@@ -121,7 +121,7 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
             Собрано
           </p>
           
-          <div className="font-display text-3xl md:text-4xl lg:text-5xl text-charity-teal mb-2">
+          <div className="font-display text-3xl md:text-4xl lg:text-5xl text-charity-red mb-2">
             {formatNumber(displayAmount)} ₽
           </div>
           
@@ -132,7 +132,7 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
           {/* Progress bar */}
           <div className="h-2 bg-cream/10 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-charity-teal rounded-full transition-all duration-1000 ease-out"
+              className="h-full bg-charity-red rounded-full transition-all duration-1000 ease-out"
               style={{ width: isVisible ? `${percentage}%` : '0%' }}
             />
           </div>
