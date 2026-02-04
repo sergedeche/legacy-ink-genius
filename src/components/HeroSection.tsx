@@ -2,12 +2,12 @@ import heroBg from "@/assets/hero-bg.png";
 import heroMobile from "@/assets/hero-mobile.png";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  onContactClick: () => void;
+}
+
+const HeroSection = ({ onContactClick }: HeroSectionProps) => {
   const isMobile = useIsMobile();
-  
-  const scrollToContact = () => {
-    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   // Mobile layout: image on top, text below
   if (isMobile) {
@@ -44,7 +44,7 @@ const HeroSection = () => {
           </p>
           
           <button 
-            onClick={scrollToContact}
+            onClick={onContactClick}
             className="btn-heritage text-sm px-6 py-3 opacity-0 animate-fade-up delay-400"
           >
             Подробнее
@@ -89,7 +89,7 @@ const HeroSection = () => {
           </p>
           
           <button 
-            onClick={scrollToContact}
+            onClick={onContactClick}
             className="btn-heritage text-sm px-6 py-3 opacity-0 animate-fade-up delay-400"
           >
             Подробнее

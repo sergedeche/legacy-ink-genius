@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { Heart, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-const CharitySection = () => {
+interface CharitySectionProps {
+  onContactClick: () => void;
+}
+
+const CharitySection = ({ onContactClick }: CharitySectionProps) => {
   const goal = 5000000;
   const [currentAmount, setCurrentAmount] = useState(4432610); // Fallback value
   const [displayAmount, setDisplayAmount] = useState(0);
@@ -68,9 +72,6 @@ const CharitySection = () => {
     return Math.floor(num).toLocaleString('ru-RU');
   };
 
-  const scrollToContact = () => {
-    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   return (
     <section id="charity" className="py-6 md:py-8 px-6 bg-navy text-cream">
@@ -130,7 +131,7 @@ const CharitySection = () => {
         </div>
 
         <button 
-          onClick={scrollToContact}
+          onClick={onContactClick}
           className="btn-primary-heritage"
         >
           Оставить заявку
