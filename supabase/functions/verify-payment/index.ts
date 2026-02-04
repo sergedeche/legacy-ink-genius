@@ -26,6 +26,8 @@ function normalizeName(name: string): string {
     .toLowerCase()
     .trim()
     .replace(/\s+/g, ' ')
+    // Strip common punctuation (e.g. "Тамара Ц." -> "тамара ц")
+    .replace(/[.,!?:;"'«»()\[\]{}]/g, '')
     .replace(/ё/g, 'е'); // Normalize russian ё to е
 }
 
@@ -52,6 +54,29 @@ function extractDonations(html: string): Array<{ name: string; amount: number; d
   const lower = html.toLowerCase();
   const markerIndex = lower.indexOf('уже участвуют');
   const slice = markerIndex >= 0 ? html.slice(markerIndex, markerIndex + 60000) : html;
+
+  // 1) Prefer strict extraction from the participant blocks (much less noise than generic heuristics)
+  // Example structure:
+  // <span class="user__name">Богдан</span> ... <span class="user__sum">100 ₽</span> ... <div class="user__date"><span>04.02.2026 16:52:19</span>
+  const strict: Array<{ name: string; amount: number; donatedAt: Date | null }> = [];
+  const strictRegex = /user__name[^>]*>\s*([^<]+?)\s*<\/span>[\s\S]{0,500}?user__sum[^>]*>\s*([\d\s]+)\s*₽\s*<\/span>(?:[\s\S]{0,800}?user__date[^>]*>[\s\S]{0,200}?<span>\s*(\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}:\d{2})\s*<\/span>)?/gi;
+  let sm: RegExpExecArray | null;
+  while ((sm = strictRegex.exec(slice)) !== null) {
+    const name = sm[1].trim().replace(/\s+/g, ' ');
+    const rawAmount = (sm[2] || '').replace(/\s+/g, '');
+    const amount = parseInt(rawAmount, 10);
+    if (!name || !Number.isFinite(amount) || amount <= 0) continue;
+
+    const donatedAt = sm[3] ? parseDonationDate(sm[3]) : null;
+    const exists = strict.some(
+      (d) => normalizeName(d.name) === normalizeName(name) && d.amount === amount && String(d.donatedAt) === String(donatedAt),
+    );
+    if (!exists) strict.push({ name, amount, donatedAt });
+  }
+
+  if (strict.length > 0) {
+    return strict;
+  }
 
   const donations: Array<{ name: string; amount: number; donatedAt: Date | null }> = [];
 
@@ -84,6 +109,11 @@ function extractDonations(html: string): Array<{ name: string; amount: number; d
           normalized.includes(w),
         )
       ) {
+        continue;
+      }
+
+      // Additional common UI / non-donor labels that appear close to currency values
+      if (['оферты', 'войти', 'благотворительное пожертвование', 'пожертвование'].includes(normalized)) {
         continue;
       }
 
@@ -284,14 +314,16 @@ Deno.serve(async (req) => {
 
     // Fetch the estafeta event page to find donations
     const estafetaUrl = booking.events?.estafeta_url || 'https://estafeta.ru/events/master-klass/ekskurs-strategiya-naslediya-343403/';
-    
-    console.log('Fetching donations from:', estafetaUrl);
+    // Cache-busting: the donors list may be CDN-cached; user can already see new donation while our fetch gets stale HTML.
+    const fetchUrl = `${estafetaUrl}${estafetaUrl.includes('?') ? '&' : '?'}nocache=${Date.now()}`;
+
+    console.log('Fetching donations from:', fetchUrl);
 
     // Try Firecrawl first (renders JS), fallback to simple fetch
-    let html = await fetchPageWithFirecrawl(estafetaUrl);
+    let html = await fetchPageWithFirecrawl(fetchUrl);
     if (!html) {
       console.log('Firecrawl failed, trying simple fetch...');
-      html = await fetchPageSimple(estafetaUrl);
+      html = await fetchPageSimple(fetchUrl);
     }
 
     if (!html) {
