@@ -1,10 +1,69 @@
 import heroBg from "@/assets/hero-bg.png";
+import heroMobile from "@/assets/hero-mobile.png";
+import monogram from "@/assets/monogram.png";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const HeroSection = () => {
+  const isMobile = useIsMobile();
+  
   const scrollToContact = () => {
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Mobile layout: image with monogram on top, text below
+  if (isMobile) {
+    return (
+      <section className="relative overflow-hidden bg-cream">
+        {/* Mobile Hero Image with Monogram */}
+        <div className="relative w-full aspect-[3/4]">
+          <img 
+            src={heroMobile} 
+            alt="Heritage Strategy" 
+            className="w-full h-full object-cover"
+          />
+          {/* Floating Monogram */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <img 
+              src={monogram} 
+              alt="СН Monogram" 
+              className="w-40 h-40 object-contain drop-shadow-lg animate-fade-in"
+            />
+          </div>
+        </div>
+        
+        {/* Text content below image */}
+        <div className="px-6 py-8 text-center animate-fade-in">
+          <p className="font-display text-sm tracking-[0.2em] uppercase text-gold-dark mb-2">
+            Интеллектуальный экскурс:
+          </p>
+          
+          <h1 className="font-display text-3xl font-medium tracking-wide text-sepia mb-2">
+            Стратегия Наследия
+          </h1>
+          
+          <p className="font-display text-base italic text-sepia-light mb-2">
+            Наследие прошлого — стратегии будущего
+          </p>
+          
+          <div className="w-12 h-px bg-gold/50 mx-auto my-4" />
+          
+          <p className="font-body text-xs text-muted-foreground max-w-md mx-auto mb-5">
+            Формат для тех, кто готов создавать историю,
+            <br />а не просто управлять бизнесом.
+          </p>
+          
+          <button 
+            onClick={scrollToContact}
+            className="btn-heritage text-sm px-6 py-3"
+          >
+            Подробнее
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  // Desktop layout: original design
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
