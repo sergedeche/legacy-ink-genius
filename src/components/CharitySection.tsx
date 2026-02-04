@@ -121,7 +121,7 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
             Собрано
           </p>
           
-          <div className="font-display text-3xl md:text-4xl lg:text-5xl text-charity-red mb-2">
+          <div className="font-display text-3xl md:text-4xl lg:text-5xl text-cream mb-2">
             {formatNumber(displayAmount)} ₽
           </div>
           
