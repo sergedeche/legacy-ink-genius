@@ -9,6 +9,8 @@ interface VerifyRequest {
   booking_id: string;
 }
 
+const REQUIRED_COMMENT = 'СН';
+
 // Normalize name for comparison (remove extra spaces, lowercase)
 function normalizeName(name: string): string {
   return name
@@ -20,82 +22,67 @@ function normalizeName(name: string): string {
 
 // Extract donations from the HTML page
 function extractDonations(html: string): Array<{ name: string; amount: number; comment: string }> {
+  // Narrow parsing to the "уже участвуют" section when present to avoid false positives.
+  const lower = html.toLowerCase();
+  const markerIndex = lower.indexOf('уже участвуют');
+  const slice = markerIndex >= 0 ? html.slice(markerIndex, markerIndex + 60000) : html;
+
   const donations: Array<{ name: string; amount: number; comment: string }> = [];
-  
-  // Pattern for donor entries on estafeta.ru
-  // Looking for patterns like: <span class="name">Сергей</span> ... 200 ₽
-  // Or structured blocks with donor info
-  
-  // Try to find donation cards/blocks
-  // Pattern 1: Name in one element, amount in another (common structure)
-  const blockPatterns = [
-    // Match name followed by amount with ₽ symbol
-    /(?:class="[^"]*(?:name|user|donor)[^"]*"[^>]*>|<(?:strong|b|span)[^>]*>)\s*([А-Яа-яЁёA-Za-z\s]+?)\s*<[^>]*>[\s\S]*?(\d+)\s*₽/gi,
-    // Match person icon + name + amount pattern
-    />\s*([А-Яа-яЁё][А-Яа-яЁёA-Za-z\s]{1,30})\s*<[^>]*>[\s\S]{0,200}?(\d+)\s*₽/gi,
-  ];
-  
-  for (const pattern of blockPatterns) {
-    let match;
-    while ((match = pattern.exec(html)) !== null) {
-      const name = match[1].trim();
-      const amount = parseInt(match[2], 10);
-      
-      // Skip empty names or very short names
-      if (name && name.length >= 2 && amount > 0) {
-        // Look for comment "СН" near this match
-        const contextStart = Math.max(0, match.index - 100);
-        const contextEnd = Math.min(html.length, match.index + match[0].length + 200);
-        const context = html.substring(contextStart, contextEnd);
-        const hasComment = /СН|сн/i.test(context);
-        
-        donations.push({
-          name,
-          amount,
-          comment: hasComment ? 'СН' : ''
-        });
+
+  // Match amounts like "200 ₽" or "1 200 ₽".
+  const amountRegex = /(\d{1,3}(?:\s\d{3})*|\d+)\s*₽/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = amountRegex.exec(slice)) !== null) {
+    const rawAmount = match[1].replace(/\s+/g, '');
+    const amount = parseInt(rawAmount, 10);
+    if (!Number.isFinite(amount) || amount <= 0) continue;
+
+    // Take a small window around the amount and find a plausible name inside it.
+    const start = Math.max(0, match.index - 400);
+    const end = Math.min(slice.length, match.index + match[0].length + 400);
+    const chunk = slice.substring(start, end);
+
+    // Capture text nodes that look like a person's name.
+    const nameRegex = />\s*([А-Яа-яЁё][А-Яа-яЁёA-Za-z\-\s]{1,40}?)\s*</g;
+    const candidates: Array<{ name: string; idx: number }> = [];
+    let nm: RegExpExecArray | null;
+    while ((nm = nameRegex.exec(chunk)) !== null) {
+      const name = nm[1].trim().replace(/\s+/g, ' ');
+      if (name.length < 2) continue;
+
+      // Skip obvious non-names that may appear in UI.
+      const normalized = normalizeName(name);
+      if (
+        ['уже участвуют', 'поддержать событие', 'о проекте', 'участники', 'создать событие', 'профиль'].some((w) =>
+          normalized.includes(w),
+        )
+      ) {
+        continue;
       }
+
+      candidates.push({ name, idx: nm.index });
+    }
+
+    if (candidates.length === 0) continue;
+
+    // Prefer the name closest to the amount (latest candidate in the chunk).
+    const chosen = candidates[candidates.length - 1].name;
+    const hasComment = new RegExp(`\\b${REQUIRED_COMMENT}\\b`, 'i').test(chunk);
+
+    const exists = donations.some(
+      (d) => normalizeName(d.name) === normalizeName(chosen) && d.amount === amount,
+    );
+
+    if (!exists) {
+      donations.push({
+        name: chosen,
+        amount,
+        comment: hasComment ? REQUIRED_COMMENT : '',
+      });
     }
   }
-  
-  // Pattern 2: Extract from text content directly
-  // Remove HTML tags and look for "Name ... 200 ₽" patterns
-  const textContent = html
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<[^>]+>/g, '\n')
-    .replace(/\s+/g, ' ');
-  
-  // Look for patterns like "Сергей 200 ₽" or "Сергей ... 200 ₽"
-  const textPattern = /([А-Яа-яЁё][А-Яа-яЁёA-Za-z\s]{1,25}?)\s+(\d+)\s*₽/g;
-  let textMatch;
-  
-  while ((textMatch = textPattern.exec(textContent)) !== null) {
-    const name = textMatch[1].trim();
-    const amount = parseInt(textMatch[2], 10);
-    
-    if (name && name.length >= 2 && amount > 0) {
-      // Check if this donation is already found
-      const exists = donations.some(d => 
-        normalizeName(d.name) === normalizeName(name) && d.amount === amount
-      );
-      
-      if (!exists) {
-        // Look for СН comment
-        const contextStart = Math.max(0, textMatch.index - 50);
-        const contextEnd = Math.min(textContent.length, textMatch.index + textMatch[0].length + 100);
-        const context = textContent.substring(contextStart, contextEnd);
-        const hasComment = /СН|сн/i.test(context);
-        
-        donations.push({
-          name,
-          amount,
-          comment: hasComment ? 'СН' : ''
-        });
-      }
-    }
-  }
-  
+
   return donations;
 }
 
@@ -224,36 +211,48 @@ Deno.serve(async (req) => {
     console.log('Looking for:', { normalizedGuestName, expectedAmount });
 
     // Find matching donation
+    const guestTokens = normalizedGuestName
+      .split(' ')
+      .map((t) => t.trim())
+      .filter(Boolean);
+
+    const namesMatch = (normalizedDonorName: string) => {
+      if (normalizedGuestName.length < 2 || normalizedDonorName.length < 2) return false;
+      if (normalizedDonorName === normalizedGuestName) return true;
+
+      // Require first token to match to avoid "".includes("") style false positives.
+      const guestFirst = guestTokens[0];
+      if (!guestFirst || guestFirst.length < 2) return false;
+
+      const donorTokens = normalizedDonorName.split(' ').filter(Boolean);
+      const firstOk = donorTokens.includes(guestFirst) || normalizedDonorName.startsWith(`${guestFirst} `);
+      if (!firstOk) return false;
+
+      // If user provided multiple tokens (e.g. first+last name), require all meaningful tokens.
+      const restTokens = guestTokens.slice(1).filter((t) => t.length >= 3);
+      return restTokens.every((t) => normalizedDonorName.includes(t));
+    };
+
     let found = false;
-    
+
     for (const donation of donations) {
       const normalizedDonorName = normalizeName(donation.name);
-      
-      console.log('Comparing:', { 
-        donorName: normalizedDonorName, 
+
+      console.log('Comparing:', {
+        donorName: normalizedDonorName,
         guestName: normalizedGuestName,
         donorAmount: donation.amount,
         expectedAmount,
-        comment: donation.comment
+        comment: donation.comment,
       });
-      
-      // Check if names match (partial match allowed - first name only)
-      const namesMatch = 
-        normalizedDonorName === normalizedGuestName ||
-        (normalizedDonorName.length >= 2 && normalizedGuestName.includes(normalizedDonorName)) ||
-        (normalizedGuestName.length >= 2 && normalizedDonorName.includes(normalizedGuestName));
-      
-      // Check if amounts match
+
       const amountsMatch = donation.amount === expectedAmount;
-      
-      // For security, we require: matching name + matching amount
-      // Comment "СН" is optional but provides extra confidence
-      if (namesMatch && amountsMatch) {
+      const commentMatch = donation.comment === REQUIRED_COMMENT;
+
+      // For security, require: matching name + matching amount + required comment
+      if (amountsMatch && namesMatch(normalizedDonorName) && commentMatch) {
         found = true;
-        console.log('Found matching donation!', { 
-          donation, 
-          hasComment: donation.comment === 'СН' 
-        });
+        console.log('Found matching donation!', { donation });
         break;
       }
     }
@@ -323,12 +322,12 @@ Deno.serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         verified: false,
-        message: 'Оплата не найдена. Убедитесь, что указали точное имя при донате и добавили комментарий "СН".',
+          message: `Оплата не найдена. Убедитесь, что указали точное имя и комментарий "${REQUIRED_COMMENT}" при пожертвовании.`,
         minutes_left: minutesLeft,
         expected_name: booking.guest_name,
         expected_amount: booking.total_amount,
         found_donations: donations.length,
-        hint: 'При донате укажите имя и добавьте комментарий "СН" (Стратегия Наследия)'
+          hint: `При пожертвовании обязательно добавьте комментарий "${REQUIRED_COMMENT}" (Стратегия Наследия)`
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

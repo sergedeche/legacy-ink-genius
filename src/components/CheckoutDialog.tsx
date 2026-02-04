@@ -87,7 +87,9 @@ const CheckoutDialog = ({
       setBookingId(data.booking.id);
 
       // Open payment page in new tab
-      const estafetaUrl = event.estafeta_url || 'https://estafeta.ru/profile/events/preview/';
+      const estafetaUrl =
+        event.estafeta_url ||
+        "https://estafeta.ru/events/master-klass/ekskurs-strategiya-naslediya-343403/";
       window.open(estafetaUrl, '_blank');
 
       // Show verification dialog
@@ -261,7 +263,10 @@ const CheckoutDialog = ({
           totalAmount={totalAmount}
           eventTitle={event.title}
           eventDate={event.event_date}
-          estafetaUrl={event.estafeta_url || 'https://estafeta.ru/profile/events/preview/'}
+          estafetaUrl={
+            event.estafeta_url ||
+            "https://estafeta.ru/events/master-klass/ekskurs-strategiya-naslediya-343403/"
+          }
           onVerified={onBookingComplete}
           onCancel={() => {
             setVerificationOpen(false);
