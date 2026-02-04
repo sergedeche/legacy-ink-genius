@@ -1,6 +1,6 @@
-import formatIconTouch from "@/assets/format-icon-touch.png";
-import formatIconClosed from "@/assets/format-icon-closed.png";
-import formatIconLimited from "@/assets/format-icon-limited.png";
+import formatIconTouch from "@/assets/format-icon-touch-transparent.png";
+import formatIconClosed from "@/assets/format-icon-closed-transparent.png";
+import formatIconLimited from "@/assets/format-icon-limited-transparent.png";
 import formatIconTea from "@/assets/format-icon-tea.png";
 
 interface FormatFeatureProps {
