@@ -9,9 +9,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { useTicketStorage } from "@/hooks/useTicketStorage";
 import TicketDialog from "./TicketDialog";
 import TelegramDialog from "./TelegramDialog";
-
 interface PaymentVerificationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -23,6 +23,7 @@ interface PaymentVerificationDialogProps {
   estafetaUrl: string;
   onVerified: () => void;
   onCancel: () => void;
+  seatsCount: number;
 }
 
 interface TicketData {
@@ -42,12 +43,14 @@ const PaymentVerificationDialog = ({
   estafetaUrl,
   onVerified,
   onCancel,
+  seatsCount,
 }: PaymentVerificationDialogProps) => {
   const [checking, setChecking] = useState(false);
   const [verified, setVerified] = useState(false);
   const [ticket, setTicket] = useState<TicketData | null>(null);
   const [minutesLeft, setMinutesLeft] = useState(15);
   const [error, setError] = useState<string | null>(null);
+  const { saveTicket } = useTicketStorage();
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [ticketDialogOpen, setTicketDialogOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
@@ -88,6 +91,14 @@ const PaymentVerificationDialog = ({
       if (data?.verified) {
         setVerified(true);
         setTicket(data.ticket);
+        // Save ticket to localStorage for recovery
+        saveTicket({
+          ticketCode: data.ticket.ticket_code,
+          guestName,
+          eventTitle,
+          eventDate,
+          seatsCount,
+        });
         setTicketDialogOpen(true);
       } else if (data?.minutes_left !== undefined) {
         setMinutesLeft(data.minutes_left);
@@ -332,7 +343,7 @@ const PaymentVerificationDialog = ({
           guestName={guestName}
           eventTitle={eventTitle}
           eventDate={eventDate}
-          seatsCount={Math.round(totalAmount / 100)}
+          seatsCount={seatsCount}
         />
       )}
 

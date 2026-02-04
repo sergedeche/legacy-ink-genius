@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
@@ -9,6 +9,7 @@ import AuthorSection from "@/components/AuthorSection";
 import CharitySection from "@/components/CharitySection";
 import Footer from "@/components/Footer";
 import TelegramDialog from "@/components/TelegramDialog";
+import SavedTicketButton from "@/components/SavedTicketButton";
 
 const Index = () => {
   const [telegramOpen, setTelegramOpen] = useState(false);
@@ -33,6 +34,7 @@ const Index = () => {
       <AuthorSection />
       <Footer />
       <TelegramDialog open={telegramOpen} onOpenChange={setTelegramOpen} />
+      <SavedTicketButton />
     </main>
   );
 };
