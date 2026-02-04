@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const url = 'https://estafeta.ru/members/member/chernenko-sergey-156225/';
+    const url = 'https://estafeta.ru/events/master-klass/ekskurs-strategiya-naslediya-343403/';
     
     console.log('Fetching donation amount from:', url);
     
