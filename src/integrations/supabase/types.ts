@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       bookings: {
         Row: {
+          client_ip: string | null
           created_at: string
           event_id: string
           expires_at: string
@@ -29,6 +30,7 @@ export type Database = {
           verified_at: string | null
         }
         Insert: {
+          client_ip?: string | null
           created_at?: string
           event_id: string
           expires_at?: string
@@ -42,6 +44,7 @@ export type Database = {
           verified_at?: string | null
         }
         Update: {
+          client_ip?: string | null
           created_at?: string
           event_id?: string
           expires_at?: string
@@ -153,6 +156,10 @@ export type Database = {
       }
     }
     Functions: {
+      check_booking_rate_limit: {
+        Args: { p_client_ip: string }
+        Returns: boolean
+      }
       get_booked_seats: { Args: { p_event_id: string }; Returns: number }
     }
     Enums: {

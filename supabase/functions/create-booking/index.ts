@@ -2,7 +2,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version, x-forwarded-for',
 };
 
 interface BookingRequest {
@@ -10,6 +10,41 @@ interface BookingRequest {
   guest_name: string;
   guest_email: string;
   seats_count: number;
+}
+
+// Input validation functions
+function isValidUUID(str: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(str);
+}
+
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email) && email.length <= 255;
+}
+
+function isValidName(name: string): boolean {
+  // Allow Cyrillic, Latin, spaces, and hyphens. Min 2, max 100 chars.
+  const nameRegex = /^[А-Яа-яЁёA-Za-z\s\-]{2,100}$/;
+  return nameRegex.test(name);
+}
+
+function sanitizeName(name: string): string {
+  // Remove any potentially dangerous characters, keep only allowed ones
+  return name
+    .trim()
+    .replace(/[<>'"&]/g, '')
+    .substring(0, 100);
+}
+
+// Get safe error message for clients (hide internal details)
+function getSafeErrorMessage(error: unknown, context: string): string {
+  if (error instanceof Error) {
+    console.error(`[${context}] Internal error:`, error.message, error.stack);
+  } else {
+    console.error(`[${context}] Unknown error:`, error);
+  }
+  return 'Произошла ошибка. Попробуйте позже.';
 }
 
 Deno.serve(async (req) => {
@@ -29,22 +64,71 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Get client IP for rate limiting
+    const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
+                     req.headers.get('cf-connecting-ip') || 
+                     'unknown';
+
+    // Rate limiting check
+    const { data: rateLimitOk, error: rateLimitError } = await supabase
+      .rpc('check_booking_rate_limit', { p_client_ip: clientIP });
+
+    if (rateLimitError) {
+      console.error('Rate limit check error:', rateLimitError);
+    } else if (!rateLimitOk) {
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Слишком много запросов. Попробуйте через час.' 
+        }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const body: BookingRequest = await req.json();
     const { event_id, guest_name, guest_email, seats_count } = body;
 
-    console.log('Creating booking:', { event_id, guest_name, guest_email, seats_count });
+    console.log('Creating booking:', { event_id, guest_name: '[REDACTED]', guest_email: '[REDACTED]', seats_count });
 
-    // Validate input
-    if (!event_id || !guest_name || !guest_email || !seats_count) {
+    // Comprehensive input validation
+    if (!event_id || !guest_name || !guest_email || seats_count === undefined) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Missing required fields' }),
+        JSON.stringify({ success: false, error: 'Заполните все обязательные поля' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    if (seats_count < 1 || seats_count > 5) {
+    // Validate UUID format
+    if (!isValidUUID(event_id)) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Seats count must be between 1 and 5' }),
+        JSON.stringify({ success: false, error: 'Некорректный идентификатор события' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate email format
+    const trimmedEmail = guest_email.trim().toLowerCase();
+    if (!isValidEmail(trimmedEmail)) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Некорректный формат email' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate and sanitize name
+    const trimmedName = guest_name.trim();
+    if (!isValidName(trimmedName)) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Имя должно содержать 2-100 символов (буквы, пробелы, дефисы)' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    const sanitizedName = sanitizeName(trimmedName);
+
+    // Validate seats count
+    if (!Number.isInteger(seats_count) || seats_count < 1 || seats_count > 5) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Количество мест должно быть от 1 до 5' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -59,7 +143,7 @@ Deno.serve(async (req) => {
     if (eventError || !event) {
       console.error('Event not found:', eventError);
       return new Response(
-        JSON.stringify({ success: false, error: 'Event not found' }),
+        JSON.stringify({ success: false, error: 'Событие не найдено' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -70,7 +154,10 @@ Deno.serve(async (req) => {
 
     if (seatsError) {
       console.error('Error getting booked seats:', seatsError);
-      throw seatsError;
+      return new Response(
+        JSON.stringify({ success: false, error: getSafeErrorMessage(seatsError, 'get_booked_seats') }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const availableSeats = event.total_seats - (bookedSeats || 0);
@@ -79,7 +166,7 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: `Not enough seats available. Only ${availableSeats} seats left.` 
+          error: `Недостаточно мест. Осталось только ${availableSeats}.` 
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -88,23 +175,27 @@ Deno.serve(async (req) => {
     // Calculate total amount
     const total_amount = seats_count * event.price_per_seat;
 
-    // Create booking
+    // Create booking with client IP for rate limiting
     const { data: booking, error: bookingError } = await supabase
       .from('bookings')
       .insert({
         event_id,
-        guest_name: guest_name.trim(),
-        guest_email: guest_email.trim().toLowerCase(),
+        guest_name: sanitizedName,
+        guest_email: trimmedEmail,
         seats_count,
         total_amount,
         status: 'pending',
+        client_ip: clientIP,
       })
       .select()
       .single();
 
     if (bookingError) {
       console.error('Error creating booking:', bookingError);
-      throw bookingError;
+      return new Response(
+        JSON.stringify({ success: false, error: getSafeErrorMessage(bookingError, 'create_booking') }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     console.log('Booking created:', booking.id);
@@ -131,12 +222,10 @@ Deno.serve(async (req) => {
       }
     );
   } catch (error: unknown) {
-    console.error('Error in create-booking:', error);
-    
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: getSafeErrorMessage(error, 'create-booking')
       }),
       { 
         status: 500,

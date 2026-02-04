@@ -9,6 +9,22 @@ interface VerifyRequest {
   booking_id: string;
 }
 
+// Input validation
+function isValidUUID(str: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(str);
+}
+
+// Get safe error message for clients (hide internal details)
+function getSafeErrorMessage(error: unknown, context: string): string {
+  if (error instanceof Error) {
+    console.error(`[${context}] Internal error:`, error.message, error.stack);
+  } else {
+    console.error(`[${context}] Unknown error:`, error);
+  }
+  return 'Произошла ошибка. Попробуйте позже.';
+}
+
 // Generate expected donor name format: "Имя П" from "Имя Фамилия"
 function getExpectedDonorName(fullName: string): string {
   const parts = fullName.trim().split(/\s+/);
@@ -251,7 +267,15 @@ Deno.serve(async (req) => {
 
     if (!booking_id) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Missing booking_id' }),
+        JSON.stringify({ success: false, error: 'Не указан идентификатор бронирования' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate UUID format
+    if (!isValidUUID(booking_id)) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Некорректный идентификатор бронирования' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -487,12 +511,10 @@ Deno.serve(async (req) => {
     );
 
   } catch (error: unknown) {
-    console.error('Error in verify-payment:', error);
-    
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: getSafeErrorMessage(error, 'verify-payment')
       }),
       { 
         status: 500,
