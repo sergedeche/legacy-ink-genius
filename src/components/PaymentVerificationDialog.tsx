@@ -51,6 +51,20 @@ const PaymentVerificationDialog = ({
   const [ticketDialogOpen, setTicketDialogOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
 
+  // IMPORTANT: reset state for every new booking / new open.
+  // Otherwise a ticket from a previous booking could be shown without calling verification.
+  useEffect(() => {
+    if (!open) return;
+
+    setChecking(false);
+    setVerified(false);
+    setTicket(null);
+    setMinutesLeft(15);
+    setError(null);
+    setTicketDialogOpen(false);
+    setSupportOpen(false);
+  }, [open, bookingId]);
+
   const checkPayment = useCallback(async () => {
     if (checking || verified) return;
     
