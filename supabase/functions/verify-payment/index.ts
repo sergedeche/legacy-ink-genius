@@ -38,9 +38,9 @@ function extractDonations(html: string): Array<{ name: string; amount: number; c
     const amount = parseInt(rawAmount, 10);
     if (!Number.isFinite(amount) || amount <= 0) continue;
 
-    // Take a small window around the amount and find a plausible name inside it.
-    const start = Math.max(0, match.index - 400);
-    const end = Math.min(slice.length, match.index + match[0].length + 400);
+    // Take a wider window around the amount to find name and comment
+    const start = Math.max(0, match.index - 600);
+    const end = Math.min(slice.length, match.index + match[0].length + 600);
     const chunk = slice.substring(start, end);
 
     // Capture text nodes that look like a person's name.
@@ -54,7 +54,7 @@ function extractDonations(html: string): Array<{ name: string; amount: number; c
       // Skip obvious non-names that may appear in UI.
       const normalized = normalizeName(name);
       if (
-        ['уже участвуют', 'поддержать событие', 'о проекте', 'участники', 'создать событие', 'профиль'].some((w) =>
+        ['уже участвуют', 'поддержать событие', 'о проекте', 'участники', 'создать событие', 'профиль', 'человек'].some((w) =>
           normalized.includes(w),
         )
       ) {
@@ -66,9 +66,21 @@ function extractDonations(html: string): Array<{ name: string; amount: number; c
 
     if (candidates.length === 0) continue;
 
-    // Prefer the name closest to the amount (latest candidate in the chunk).
+    // Prefer the name closest to the amount (latest candidate in the chunk before amount position).
     const chosen = candidates[candidates.length - 1].name;
-    const hasComment = new RegExp(`\\b${REQUIRED_COMMENT}\\b`, 'i').test(chunk);
+    
+    // Look for "СН" comment in the chunk - can be anywhere near the donation entry
+    // Accept both Cyrillic "СН" and Latin "CH" (users often confuse them)
+    const commentPatterns = [
+      />\s*СН\s*</i,      // Cyrillic <tag>СН</tag>
+      />\s*CH\s*</i,      // Latin <tag>CH</tag>
+      />\s*сн\s*</i,      // lowercase Cyrillic
+      />\s*ch\s*</i,      // lowercase Latin
+      /\bСН\b/,           // standalone Cyrillic СН
+      /\bCH\b/i,          // standalone Latin CH
+      /\bсн\b/i,          // case insensitive Cyrillic
+    ];
+    const hasComment = commentPatterns.some(pattern => pattern.test(chunk));
 
     const exists = donations.some(
       (d) => normalizeName(d.name) === normalizeName(chosen) && d.amount === amount,
@@ -84,6 +96,88 @@ function extractDonations(html: string): Array<{ name: string; amount: number; c
   }
 
   return donations;
+}
+
+// Fetch page HTML using Firecrawl (renders JavaScript)
+async function fetchPageWithFirecrawl(url: string): Promise<string | null> {
+  const apiKey = Deno.env.get('FIRECRAWL_API_KEY');
+  if (!apiKey) {
+    console.error('FIRECRAWL_API_KEY not configured');
+    return null;
+  }
+
+  console.log('Using Firecrawl to fetch:', url);
+
+  try {
+    const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        url,
+        formats: ['html'],
+        onlyMainContent: false,
+        waitFor: 3000, // Wait 3 seconds for JS to render
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Firecrawl API error:', response.status, errorText);
+      return null;
+    }
+
+    const data = await response.json();
+    console.log('Firecrawl response success:', data.success);
+
+    // Firecrawl v1 nests content in data.data
+    const html = data.data?.html || data.html;
+    if (html) {
+      console.log('Firecrawl HTML length:', html.length);
+      // Log a sample of the HTML around the donors section for debugging
+      const lowerHtml = html.toLowerCase();
+      const participantsIdx = lowerHtml.indexOf('уже участвуют');
+      if (participantsIdx >= 0) {
+        const sample = html.substring(participantsIdx, participantsIdx + 3000);
+        console.log('HTML sample around participants:', sample);
+      }
+      return html;
+    }
+
+    console.error('Firecrawl returned no HTML');
+    return null;
+  } catch (error) {
+    console.error('Firecrawl fetch error:', error);
+    return null;
+  }
+}
+
+// Fallback: simple fetch without JS rendering
+async function fetchPageSimple(url: string): Promise<string | null> {
+  console.log('Using simple fetch for:', url);
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Cache-Control': 'no-cache',
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Simple fetch failed:', response.status);
+      return null;
+    }
+
+    return await response.text();
+  } catch (error) {
+    console.error('Simple fetch error:', error);
+    return null;
+  }
 }
 
 Deno.serve(async (req) => {
@@ -176,17 +270,14 @@ Deno.serve(async (req) => {
     
     console.log('Fetching donations from:', estafetaUrl);
 
-    const response = await fetch(estafetaUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-        'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
-        'Cache-Control': 'no-cache',
-      },
-    });
+    // Try Firecrawl first (renders JS), fallback to simple fetch
+    let html = await fetchPageWithFirecrawl(estafetaUrl);
+    if (!html) {
+      console.log('Firecrawl failed, trying simple fetch...');
+      html = await fetchPageSimple(estafetaUrl);
+    }
 
-    if (!response.ok) {
-      console.error('Failed to fetch estafeta page:', response.status);
+    if (!html) {
       return new Response(
         JSON.stringify({ 
           success: false, 
@@ -197,7 +288,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    const html = await response.text();
     console.log('HTML length:', html.length);
     
     // Extract all donations from the page
@@ -322,12 +412,12 @@ Deno.serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         verified: false,
-          message: `Оплата не найдена. Убедитесь, что указали точное имя и комментарий "${REQUIRED_COMMENT}" при пожертвовании.`,
+        message: `Оплата не найдена. Убедитесь, что указали точное имя и комментарий "${REQUIRED_COMMENT}" при пожертвовании.`,
         minutes_left: minutesLeft,
         expected_name: booking.guest_name,
         expected_amount: booking.total_amount,
         found_donations: donations.length,
-          hint: `При пожертвовании обязательно добавьте комментарий "${REQUIRED_COMMENT}" (Стратегия Наследия)`
+        hint: `При пожертвовании обязательно добавьте комментарий "${REQUIRED_COMMENT}" (Стратегия Наследия)`
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
