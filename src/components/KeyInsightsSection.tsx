@@ -19,7 +19,7 @@ const InsightCard = ({ title, description, image, reverse }: InsightCardProps) =
           <img 
             src={image} 
             alt={title}
-            className="w-full h-48 lg:h-64 object-cover transition-transform duration-700 hover:scale-105"
+            className="w-full h-auto aspect-[3/2] object-contain bg-cream-dark transition-transform duration-700 hover:scale-105"
           />
         </div>
       </div>
