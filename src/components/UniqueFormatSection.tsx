@@ -32,41 +32,37 @@ const FormatFeature = ({ image, title, description, scale = "scale-[1.12]" }: Fo
   );
 };
 
-const UniqueFormatSection = () => {
-  const features = [
-    {
-      image: formatIconTouch,
-      title: "Прикосновение к вечности",
-      description: "Все участники лично взаимодействуют с книгами музейного уровня, многим из которых более 200 лет, включая первые издания и автографы авторов.",
-      scale: "scale-[1.12]",
-    },
-    {
-      image: formatIconClosed,
-      title: "Закрытый доступ",
-      description: "Мероприятия проводятся на территории закрытых сообществ, куда попасть без приглашения и рекомендации невозможно.",
-      scale: "scale-[1.25]",
-    },
-    {
-      image: formatIconLimited,
-      title: "Ограниченное количество гостей",
-      description: "У каждого будет время и возможность «пообщаться» с каждым артефактом лично.",
-      scale: "scale-[1.25]",
-    },
-    {
-      image: formatIconTea,
-      title: "Чаепитие в русских традициях",
-      description: "Тёплый разговор за столом, предметы с историей и живая связь с культурным кодом.",
-      scale: "scale-[1.25]",
-    },
-  ];
+const features = [
+  {
+    image: formatIconTouch,
+    title: "Прикосновение к вечности",
+    description: "Все участники лично взаимодействуют с книгами музейного уровня, многим из которых более 200 лет, включая первые издания и автографы авторов.",
+    scale: "scale-[1.12]",
+  },
+  {
+    image: formatIconClosed,
+    title: "Закрытый доступ",
+    description: "Мероприятия проводятся на территории закрытых сообществ, куда попасть без приглашения и рекомендации невозможно.",
+    scale: "scale-[1.25]",
+  },
+  {
+    image: formatIconLimited,
+    title: "Ограниченное количество гостей",
+    description: "У каждого будет время и возможность «пообщаться» с каждым артефактом лично.",
+    scale: "scale-[1.25]",
+  },
+  {
+    image: formatIconTea,
+    title: "Чаепитие в русских традициях",
+    description: "Тёплый разговор за столом, предметы с историей и живая связь с культурным кодом.",
+    scale: "scale-[1.25]",
+  },
+];
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ 
-    loop: false,
-    align: "start",
-  });
-  
+// Mobile carousel - 1 item per slide, 4 dots
+const MobileCarousel = () => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, align: "start" });
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -75,7 +71,6 @@ const UniqueFormatSection = () => {
 
   useEffect(() => {
     if (!emblaApi) return;
-    setScrollSnaps(emblaApi.scrollSnapList());
     emblaApi.on("select", onSelect);
     onSelect();
   }, [emblaApi, onSelect]);
@@ -84,6 +79,99 @@ const UniqueFormatSection = () => {
     if (emblaApi) emblaApi.scrollTo(index);
   }, [emblaApi]);
 
+  return (
+    <div className="md:hidden">
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex">
+          {features.map((feature, index) => (
+            <div key={index} className="flex-[0_0_100%] min-w-0">
+              <FormatFeature {...feature} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 4 dots for mobile */}
+      <div className="flex justify-center gap-2 mt-6">
+        {[0, 1, 2, 3].map((index) => (
+          <button
+            key={index}
+            onClick={() => scrollTo(index)}
+            className={`h-2.5 rounded-full transition-all duration-300 ${
+              index === selectedIndex 
+                ? "bg-gold w-6" 
+                : "bg-sepia/30 hover:bg-sepia/50 w-2.5"
+            }`}
+            aria-label={`Перейти к слайду ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Tablet carousel - 2 items per slide, 2 dots
+const TabletCarousel = () => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, align: "start" });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.on("select", onSelect);
+    onSelect();
+  }, [emblaApi, onSelect]);
+
+  const scrollTo = useCallback((index: number) => {
+    if (emblaApi) emblaApi.scrollTo(index);
+  }, [emblaApi]);
+
+  // Group features into pairs for tablet
+  const slides = [
+    [features[0], features[1]],
+    [features[2], features[3]],
+  ];
+
+  return (
+    <div className="hidden md:block lg:hidden">
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex">
+          {slides.map((pair, slideIndex) => (
+            <div key={slideIndex} className="flex-[0_0_100%] min-w-0 flex">
+              {pair.map((feature, featureIndex) => (
+                <div key={featureIndex} className="w-1/2">
+                  <FormatFeature {...feature} />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 2 dots for tablet */}
+      <div className="flex justify-center gap-2 mt-6">
+        {[0, 1].map((index) => (
+          <button
+            key={index}
+            onClick={() => scrollTo(index)}
+            className={`h-2.5 rounded-full transition-all duration-300 ${
+              index === selectedIndex 
+                ? "bg-gold w-6" 
+                : "bg-sepia/30 hover:bg-sepia/50 w-2.5"
+            }`}
+            aria-label={`Перейти к слайду ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const UniqueFormatSection = () => {
   return (
     <section id="format" className="py-6 md:py-8 px-6 bg-cream">
       <div className="max-w-6xl mx-auto">
@@ -110,60 +198,11 @@ const UniqueFormatSection = () => {
           ))}
         </div>
 
-        {/* Tablet & Mobile: Carousel */}
-        <div className="lg:hidden">
-          <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex">
-              {/* Mobile: 1 item per slide */}
-              <div className="flex-[0_0_100%] min-w-0 md:hidden">
-                <FormatFeature {...features[0]} />
-              </div>
-              <div className="flex-[0_0_100%] min-w-0 md:hidden">
-                <FormatFeature {...features[1]} />
-              </div>
-              <div className="flex-[0_0_100%] min-w-0 md:hidden">
-                <FormatFeature {...features[2]} />
-              </div>
-              <div className="flex-[0_0_100%] min-w-0 md:hidden">
-                <FormatFeature {...features[3]} />
-              </div>
+        {/* Mobile carousel - 4 slides */}
+        <MobileCarousel />
 
-              {/* Tablet: 2 items per slide */}
-              <div className="hidden md:flex flex-[0_0_100%] min-w-0 lg:hidden">
-                <div className="w-1/2">
-                  <FormatFeature {...features[0]} />
-                </div>
-                <div className="w-1/2">
-                  <FormatFeature {...features[1]} />
-                </div>
-              </div>
-              <div className="hidden md:flex flex-[0_0_100%] min-w-0 lg:hidden">
-                <div className="w-1/2">
-                  <FormatFeature {...features[2]} />
-                </div>
-                <div className="w-1/2">
-                  <FormatFeature {...features[3]} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Dots indicator */}
-          <div className="flex justify-center gap-2 mt-6">
-            {scrollSnaps.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => scrollTo(index)}
-                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                  index === selectedIndex 
-                    ? "bg-gold w-6" 
-                    : "bg-sepia/30 hover:bg-sepia/50"
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
-        </div>
+        {/* Tablet carousel - 2 slides */}
+        <TabletCarousel />
       </div>
     </section>
   );
