@@ -78,30 +78,30 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
     <section id="charity" className="py-6 md:py-8 px-6 bg-navy text-cream">
       <div className="max-w-5xl mx-auto">
         {/* Top row: Logo + Text */}
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10 mb-8">
-          {/* Logo on the left - sized to match text height */}
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 mb-6">
+          {/* Logo on the left - sized to align with text block */}
           <div className="flex-shrink-0">
             <img 
               src={charityLogo} 
               alt="Жизнь как чудо" 
-              className="w-28 md:w-36 h-auto"
+              className="w-32 md:w-[140px] h-auto"
             />
           </div>
           
           {/* Text on the right */}
           <div className="flex-1 text-center md:text-left">
-            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl mb-4">
+            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl mb-3">
               Благотворительная миссия
             </h2>
             
-            <p className="font-body text-cream/80 text-lg leading-relaxed mb-4">
+            <p className="font-body text-cream/80 text-lg leading-relaxed mb-3">
               Проект носит исключительно благотворительный характер. Все средства от участия 
               направляются в фонд{" "}
               <a 
                 href="https://kakchudo.ru" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-gold font-medium hover:underline inline-flex items-center gap-1"
+                className="text-charity-teal font-medium hover:underline inline-flex items-center gap-1"
               >
                 «Жизнь как чудо»
                 <ExternalLink className="w-4 h-4" />
@@ -115,29 +115,29 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
           </div>
         </div>
 
-        {/* Progress counter - full width */}
-        <div className="bg-cream/5 backdrop-blur-sm rounded-lg p-6 md:p-8 border border-cream/10">
-          <p className="font-display text-xl text-cream/60 mb-2">
+        {/* Progress counter - full width, compact */}
+        <div className="bg-cream/5 backdrop-blur-sm rounded-lg px-6 py-4 md:px-8 md:py-5 border border-cream/10">
+          <p className="font-display text-lg text-cream/60 mb-1">
             Собрано
           </p>
           
-          <div className="font-display text-4xl md:text-5xl lg:text-6xl text-gold mb-4">
+          <div className="font-display text-3xl md:text-4xl lg:text-5xl text-charity-teal mb-2">
             {formatNumber(displayAmount)} ₽
           </div>
           
-          <p className="font-body text-cream/50 mb-6">
+          <p className="font-body text-cream/50 text-sm mb-4">
             из {formatNumber(goal)} ₽
           </p>
 
           {/* Progress bar */}
-          <div className="h-3 bg-cream/10 rounded-full overflow-hidden">
+          <div className="h-2 bg-cream/10 rounded-full overflow-hidden">
             <div 
-              className="h-full gradient-gold rounded-full transition-all duration-1000 ease-out"
+              className="h-full bg-charity-teal rounded-full transition-all duration-1000 ease-out"
               style={{ width: isVisible ? `${percentage}%` : '0%' }}
             />
           </div>
           
-          <p className="font-body text-sm text-cream/40 mt-4">
+          <p className="font-body text-xs text-cream/40 mt-3">
             Цель на текущий год
           </p>
         </div>
