@@ -183,8 +183,7 @@ const PaymentVerificationDialog = ({
                   <p className="font-medium" style={{ color: 'hsl(38 70% 50%)' }}>Напоминание:</p>
                   <ul className="list-disc list-inside space-y-1" style={{ color: 'hsl(35 20% 75%)' }}>
                     <li>Сумма пожертвования: <strong>{totalAmount} ₽</strong></li>
-                    <li>Имя донатора: <strong>{guestName}</strong></li>
-                    <li>Комментарий: <strong>СН</strong></li>
+                    <li>Имя на сайте Эстафеты: <strong>{guestName.trim().split(/\s+/)[0] || ''} {guestName.trim().split(/\s+/)[1]?.charAt(0).toUpperCase() || ''}.</strong></li>
                   </ul>
                 </div>
 
