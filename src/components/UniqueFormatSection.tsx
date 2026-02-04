@@ -7,16 +7,17 @@ interface FormatFeatureProps {
   image: string;
   title: string;
   description: string;
+  scale?: string;
 }
 
-const FormatFeature = ({ image, title, description }: FormatFeatureProps) => {
+const FormatFeature = ({ image, title, description, scale = "scale-[1.12]" }: FormatFeatureProps) => {
   return (
     <div className="text-center p-6 group">
       <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden bg-cream">
         <img 
           src={image} 
           alt={title}
-          className="w-full h-full object-cover scale-[1.12] mix-blend-multiply"
+          className={`w-full h-full object-cover ${scale} mix-blend-multiply`}
         />
       </div>
       <h3 className="font-display text-xl md:text-2xl text-sepia mb-3">
@@ -35,21 +36,25 @@ const UniqueFormatSection = () => {
       image: formatIconTouch,
       title: "Прикосновение к вечности",
       description: "Все участники лично взаимодействуют с книгами музейного уровня, многим из которых более 200 лет, включая первые издания и автографы авторов.",
+      scale: "scale-[1.12]",
     },
     {
       image: formatIconClosed,
       title: "Закрытый доступ",
       description: "Мероприятия проводятся на территории закрытых сообществ, куда попасть без приглашения и рекомендации невозможно.",
+      scale: "scale-[1.25]",
     },
     {
       image: formatIconLimited,
       title: "Ограниченное количество гостей",
       description: "У каждого будет время и возможность «пообщаться» с каждым артефактом лично.",
+      scale: "scale-[1.25]",
     },
     {
       image: formatIconTea,
       title: "Чаепитие в русских традициях",
       description: "Тёплый разговор за столом, предметы с историей и живая связь с культурным кодом.",
+      scale: "scale-[1.25]",
     },
   ];
 
@@ -73,6 +78,7 @@ const UniqueFormatSection = () => {
               image={feature.image}
               title={feature.title}
               description={feature.description}
+              scale={feature.scale}
             />
           ))}
         </div>
