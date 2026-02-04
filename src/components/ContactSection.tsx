@@ -33,9 +33,9 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="py-8 md:py-10 px-6 bg-cream-dark">
+    <section id="contact" className="py-6 md:py-8 px-6 bg-cream-dark">
       <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <div className="section-divider" />
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-sepia mb-4">
             Оставить заявку
