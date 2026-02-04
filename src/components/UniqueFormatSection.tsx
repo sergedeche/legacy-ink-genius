@@ -12,11 +12,11 @@ interface FormatFeatureProps {
 const FormatFeature = ({ image, title, description }: FormatFeatureProps) => {
   return (
     <div className="text-center p-6 group">
-      <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden">
+      <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden bg-cream">
         <img 
           src={image} 
           alt={title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover scale-[1.12] mix-blend-multiply"
         />
       </div>
       <h3 className="font-display text-xl md:text-2xl text-sepia mb-3">
