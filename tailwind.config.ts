@@ -68,7 +68,7 @@ export default {
           DEFAULT: "hsl(var(--navy))",
           light: "hsl(var(--navy-light))",
         },
-        "charity-teal": "hsl(var(--charity-teal))",
+        "charity-red": "hsl(var(--charity-red))",
       },
       borderRadius: {
         lg: "var(--radius)",
