@@ -364,18 +364,39 @@ Deno.serve(async (req) => {
         throw updateError;
       }
 
-      // Create ticket
-      const { data: ticket, error: ticketError } = await supabase
+      // Check if ticket already exists (race condition protection)
+      const { data: existingTicket } = await supabase
         .from('tickets')
-        .insert({
-          booking_id
-        })
-        .select()
+        .select('*')
+        .eq('booking_id', booking_id)
         .single();
 
-      if (ticketError) {
-        console.error('Error creating ticket:', ticketError);
-        throw ticketError;
+      let ticket = existingTicket;
+
+      if (!existingTicket) {
+        // Create ticket
+        const { data: newTicket, error: ticketError } = await supabase
+          .from('tickets')
+          .insert({ booking_id })
+          .select()
+          .single();
+
+        if (ticketError) {
+          // Handle race condition: another request may have created it
+          if (ticketError.code === '23505') {
+            const { data: t } = await supabase
+              .from('tickets')
+              .select('*')
+              .eq('booking_id', booking_id)
+              .single();
+            ticket = t;
+          } else {
+            console.error('Error creating ticket:', ticketError);
+            throw ticketError;
+          }
+        } else {
+          ticket = newTicket;
+        }
       }
 
       console.log('Ticket created:', ticket.ticket_code);
