@@ -243,13 +243,13 @@ const EventCalendarSection = () => {
                     {nextEvent.price_per_seat} ₽ <span className="text-base" style={{ color: 'hsl(35 20% 65%)' }}>/ место</span>
                   </p>
                   
-                  {nextEvent.available_seats > 0 ? (
+                {nextEvent.available_seats > 0 ? (
                     <button
                       onClick={() => {
                         setSelectedEvent(nextEvent);
                         setSeatDialogOpen(true);
                       }}
-                      className="btn-primary-heritage w-full md:w-auto"
+                      className="btn-primary-heritage w-full md:w-auto text-sm md:text-base py-3 px-6 md:py-4 md:px-8"
                     >
                       Забронировать место
                     </button>
