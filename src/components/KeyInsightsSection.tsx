@@ -2,7 +2,7 @@ import sectionGenius from "@/assets/section-genius.png";
 import sectionDetails from "@/assets/section-details.png";
 import sectionReputation from "@/assets/section-reputation-v3.png";
 import sectionTimeless from "@/assets/section-timeless-v2.png";
-import sectionLegacy from "@/assets/section-legacy-v2.png";
+import sectionLegacy from "@/assets/section-legacy-v3.png";
 
 interface InsightCardProps {
   title: string;
