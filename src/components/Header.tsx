@@ -16,7 +16,7 @@ const Header = () => {
 
   return (
     <header className="absolute top-0 left-0 right-0 z-50">
-      <div className="bg-navy/80 backdrop-blur-md border-b border-gold/20">
+      <div className="bg-navy/30 backdrop-blur-[2px]">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <nav className="flex items-center justify-between h-12 md:h-14">
             {/* Home link */}
