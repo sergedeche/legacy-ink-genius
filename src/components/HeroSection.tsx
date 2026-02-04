@@ -47,7 +47,7 @@ const HeroSection = ({ onContactClick }: HeroSectionProps) => {
             onClick={onContactClick}
             className="btn-heritage text-sm px-6 py-3 opacity-0 animate-fade-up delay-400"
           >
-            Подробнее
+            Забронировать место
           </button>
         </div>
       </section>
@@ -92,7 +92,7 @@ const HeroSection = ({ onContactClick }: HeroSectionProps) => {
             onClick={onContactClick}
             className="btn-heritage text-sm px-6 py-3 opacity-0 animate-fade-up delay-400"
           >
-            Подробнее
+            Забронировать место
           </button>
         </div>
       </div>
