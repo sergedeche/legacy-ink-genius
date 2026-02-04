@@ -2,7 +2,7 @@ import aboutBg from "@/assets/about-bg.png";
 
 const AboutSection = () => {
   return (
-    <section className="py-12 md:py-16 px-6 bg-cream relative overflow-hidden">
+    <section id="about" className="py-8 md:py-10 px-6 bg-cream relative overflow-hidden">
       {/* Background image with low opacity */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-15"
