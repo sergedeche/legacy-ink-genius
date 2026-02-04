@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Heart } from "lucide-react";
+import { Heart, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const CharitySection = () => {
@@ -85,7 +85,16 @@ const CharitySection = () => {
         
         <p className="font-body text-cream/80 text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
           Проект носит исключительно благотворительный характер. Все средства от участия 
-          направляются в фонд <span className="text-gold font-medium">«Жизнь как чудо»</span>.
+          направляются в фонд{" "}
+          <a 
+            href="https://kakchudo.ru" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-gold font-medium hover:underline inline-flex items-center gap-1"
+          >
+            «Жизнь как чудо»
+            <ExternalLink className="w-4 h-4" />
+          </a>.
         </p>
         
         <p className="font-body text-cream/70 mb-12">

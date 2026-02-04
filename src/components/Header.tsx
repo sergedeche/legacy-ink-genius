@@ -1,4 +1,4 @@
-import { Home, ExternalLink } from "lucide-react";
+import { Home } from "lucide-react";
 
 const Header = () => {
   const navItems = [
@@ -32,12 +32,12 @@ const Header = () => {
             </a>
 
             {/* Navigation */}
-            <ul className="hidden lg:flex items-center gap-1">
+            <ul className="hidden md:flex items-center gap-1">
               {navItems.map((item) => (
                 <li key={item.href}>
                   <button
                     onClick={() => scrollToSection(item.href)}
-                    className="font-body text-xs text-cream/80 hover:text-gold px-3 py-2 transition-colors"
+                    className="font-body text-xs text-cream/80 hover:text-gold px-2 lg:px-3 py-2 transition-colors"
                   >
                     {item.label}
                   </button>
@@ -45,16 +45,21 @@ const Header = () => {
               ))}
             </ul>
 
-            {/* Charity link */}
-            <a 
-              href="https://kakchudo.ru" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-cream hover:text-gold transition-colors"
-            >
-              <span className="font-body text-xs md:text-sm">Жизнь как чудо</span>
-              <ExternalLink className="w-3 h-3 md:w-4 md:h-4" />
-            </a>
+            {/* Mobile: simplified nav */}
+            <div className="md:hidden flex items-center gap-4">
+              <button
+                onClick={() => scrollToSection('#about')}
+                className="font-body text-xs text-cream/80 hover:text-gold"
+              >
+                О проекте
+              </button>
+              <button
+                onClick={() => scrollToSection('#contact')}
+                className="font-body text-xs text-cream/80 hover:text-gold"
+              >
+                Контакты
+              </button>
+            </div>
           </nav>
         </div>
       </div>
