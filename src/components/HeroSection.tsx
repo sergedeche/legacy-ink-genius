@@ -13,34 +13,34 @@ const HeroSection = () => {
         style={{ backgroundImage: `url(${heroBg})` }}
       />
       
-      {/* Content with backdrop */}
-      <div className="relative z-10 text-center px-6 py-12 max-w-3xl mx-auto animate-fade-in">
+      {/* Content with compact backdrop */}
+      <div className="relative z-10 text-center px-4 py-6 max-w-xl mx-auto animate-fade-in">
         {/* Semi-transparent card backdrop */}
-        <div className="absolute inset-0 bg-cream/80 backdrop-blur-sm rounded-lg border border-gold/20 shadow-elegant -z-10" />
+        <div className="absolute inset-0 bg-cream/75 backdrop-blur-sm rounded border border-gold/20 shadow-elegant -z-10" />
         
-        <div className="px-8 py-10 md:px-12 md:py-14">
-          <p className="font-display text-base md:text-lg tracking-[0.25em] uppercase text-gold-dark mb-3 opacity-0 animate-fade-up">
+        <div className="px-6 py-6 md:px-8 md:py-8">
+          <p className="font-display text-sm md:text-base tracking-[0.2em] uppercase text-gold-dark mb-2 opacity-0 animate-fade-up">
             Интеллектуальный экскурс:
           </p>
           
-          <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-medium tracking-wide text-sepia mb-4 opacity-0 animate-fade-up delay-100">
+          <h1 className="font-display text-3xl md:text-5xl font-medium tracking-wide text-sepia mb-2 opacity-0 animate-fade-up delay-100">
             Стратегия Наследия
           </h1>
           
-          <p className="font-display text-lg md:text-xl italic text-sepia-light mb-3 opacity-0 animate-fade-up delay-200">
+          <p className="font-display text-base md:text-lg italic text-sepia-light mb-2 opacity-0 animate-fade-up delay-200">
             Наследие прошлого — стратегии будущего
           </p>
           
-          <div className="w-16 h-px bg-gold/50 mx-auto my-6 opacity-0 animate-fade-up delay-200" />
+          <div className="w-12 h-px bg-gold/50 mx-auto my-4 opacity-0 animate-fade-up delay-200" />
           
-          <p className="font-body text-sm md:text-base text-muted-foreground max-w-lg mx-auto mb-8 opacity-0 animate-fade-up delay-300">
+          <p className="font-body text-xs md:text-sm text-muted-foreground max-w-md mx-auto mb-5 opacity-0 animate-fade-up delay-300">
             Формат для тех, кто готов создавать историю,
             <br />а не просто управлять бизнесом.
           </p>
           
           <button 
             onClick={scrollToContact}
-            className="btn-heritage opacity-0 animate-fade-up delay-400"
+            className="btn-heritage text-sm px-6 py-3 opacity-0 animate-fade-up delay-400"
           >
             Подробнее
           </button>
