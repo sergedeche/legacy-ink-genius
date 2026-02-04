@@ -8,8 +8,8 @@ interface FormatFeatureProps {
 
 const FormatFeature = ({ icon, title, description }: FormatFeatureProps) => {
   return (
-    <div className="text-center p-8 group">
-      <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-cream transition-all duration-300">
+    <div className="text-center p-6 group">
+      <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-cream transition-all duration-300">
         {icon}
       </div>
       <h3 className="font-display text-xl md:text-2xl text-sepia mb-3">
@@ -42,9 +42,9 @@ const UniqueFormatSection = () => {
   ];
 
   return (
-    <section className="py-24 px-6 bg-cream">
+    <section className="py-12 md:py-16 px-6 bg-cream">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <div className="section-divider" />
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-sepia mb-4">
             Уникальность формата

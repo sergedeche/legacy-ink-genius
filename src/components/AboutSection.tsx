@@ -1,14 +1,14 @@
 const AboutSection = () => {
   return (
-    <section className="py-24 px-6 bg-cream">
+    <section className="py-12 md:py-16 px-6 bg-cream">
       <div className="max-w-4xl mx-auto text-center">
         <div className="section-divider" />
         
-        <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-sepia mb-8">
+        <h2 className="font-display text-2xl md:text-3xl lg:text-4xl text-sepia mb-5">
           О проекте
         </h2>
         
-        <div className="space-y-6 text-muted-foreground font-body text-lg leading-relaxed">
+        <div className="space-y-4 text-muted-foreground font-body text-base leading-relaxed">
           <p>
             Этот проект — не классическая лекция по литературе, а исследование механик успеха, 
             визионерства и личного следа через призму великих редких книг и их известных авторов.
@@ -25,7 +25,7 @@ const AboutSection = () => {
           </p>
         </div>
         
-        <div className="section-divider mt-12" />
+        <div className="section-divider mt-8" />
       </div>
     </section>
   );

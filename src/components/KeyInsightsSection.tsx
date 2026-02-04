@@ -13,13 +13,13 @@ interface InsightCardProps {
 
 const InsightCard = ({ title, description, image, reverse }: InsightCardProps) => {
   return (
-    <div className={`flex flex-col ${reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-8 lg:gap-16 items-center`}>
+    <div className={`flex flex-col ${reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-6 lg:gap-10 items-center`}>
       <div className="w-full lg:w-1/2">
         <div className="overflow-hidden rounded shadow-card">
           <img 
             src={image} 
             alt={title}
-            className="w-full h-64 lg:h-80 object-cover transition-transform duration-700 hover:scale-105"
+            className="w-full h-48 lg:h-64 object-cover transition-transform duration-700 hover:scale-105"
           />
         </div>
       </div>
@@ -66,9 +66,9 @@ const KeyInsightsSection = () => {
   ];
 
   return (
-    <section id="insights" className="py-24 px-6 bg-cream-dark">
+    <section id="insights" className="py-12 md:py-16 px-6 bg-cream-dark">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <div className="section-divider" />
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-sepia mb-4">
             Ключевые смыслы
@@ -78,7 +78,7 @@ const KeyInsightsSection = () => {
           </p>
         </div>
         
-        <div className="space-y-20">
+        <div className="space-y-12">
           {insights.map((insight, index) => (
             <InsightCard
               key={index}
