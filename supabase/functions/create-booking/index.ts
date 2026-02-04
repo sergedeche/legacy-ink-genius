@@ -64,12 +64,16 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get client IP for rate limiting
-    const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
-                     req.headers.get('cf-connecting-ip') || 
+    // Get client IP for rate limiting - prefer platform-provided headers over client-spoofable ones
+    // cf-connecting-ip is set by Cloudflare and cannot be spoofed by clients
+    // x-real-ip is set by nginx/reverse proxy
+    // x-forwarded-for is easily spoofable, use only as last resort
+    const clientIP = req.headers.get('cf-connecting-ip') || 
+                     req.headers.get('x-real-ip') ||
+                     req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
                      'unknown';
 
-    // Rate limiting check
+    // IP-based rate limiting check
     const { data: rateLimitOk, error: rateLimitError } = await supabase
       .rpc('check_booking_rate_limit', { p_client_ip: clientIP });
 
@@ -112,6 +116,22 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ success: false, error: 'Некорректный формат email' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Email-based rate limiting (harder to bypass than IP)
+    const { data: emailRateLimitOk, error: emailRateLimitError } = await supabase
+      .rpc('check_email_rate_limit', { p_email: trimmedEmail });
+
+    if (emailRateLimitError) {
+      console.error('Email rate limit check error:', emailRateLimitError);
+    } else if (!emailRateLimitOk) {
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Слишком много бронирований с этого email. Попробуйте через час.' 
+        }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 

@@ -260,6 +260,12 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Get client IP for rate limiting - prefer platform-provided headers
+    const clientIP = req.headers.get('cf-connecting-ip') || 
+                     req.headers.get('x-real-ip') ||
+                     req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
+                     'unknown';
+
     const body: VerifyRequest = await req.json();
     const { booking_id } = body;
 

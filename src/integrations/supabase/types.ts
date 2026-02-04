@@ -160,6 +160,11 @@ export type Database = {
         Args: { p_client_ip: string }
         Returns: boolean
       }
+      check_email_rate_limit: { Args: { p_email: string }; Returns: boolean }
+      check_verification_rate_limit: {
+        Args: { p_booking_id: string }
+        Returns: boolean
+      }
       get_booked_seats: { Args: { p_event_id: string }; Returns: number }
     }
     Enums: {
