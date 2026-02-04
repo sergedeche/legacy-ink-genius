@@ -1,11 +1,34 @@
 import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const CharitySection = () => {
   const goal = 5000000;
-  const currentAmount = 1850000; // This would come from API in real implementation
+  const [currentAmount, setCurrentAmount] = useState(4432610); // Fallback value
   const [displayAmount, setDisplayAmount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Fetch real donation amount from estafeta.ru
+  useEffect(() => {
+    const fetchDonationAmount = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('fetch-donation-amount');
+        
+        if (error) {
+          console.error('Error fetching donation amount:', error);
+          return;
+        }
+        
+        if (data?.success && data?.amount) {
+          setCurrentAmount(data.amount);
+        }
+      } catch (err) {
+        console.error('Failed to fetch donation amount:', err);
+      }
+    };
+
+    fetchDonationAmount();
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
