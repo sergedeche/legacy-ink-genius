@@ -255,6 +255,7 @@ const CheckoutDialog = ({
 
       {bookingId && (
         <PaymentVerificationDialog
+          key={bookingId}
           open={verificationOpen}
           onOpenChange={setVerificationOpen}
           bookingId={bookingId}
@@ -266,7 +267,11 @@ const CheckoutDialog = ({
             event.estafeta_url ||
             "https://estafeta.ru/events/master-klass/ekskurs-strategiya-naslediya-343403/"
           }
-          onVerified={onBookingComplete}
+          onVerified={() => {
+            onBookingComplete();
+            setVerificationOpen(false);
+            setBookingId(null);
+          }}
           onCancel={() => {
             setVerificationOpen(false);
             setBookingId(null);
