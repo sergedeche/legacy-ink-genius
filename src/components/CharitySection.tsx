@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Heart, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import charityLogo from "@/assets/charity-logo.webp";
 
 interface CharitySectionProps {
   onContactClick: () => void;
@@ -75,61 +76,70 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
 
   return (
     <section id="charity" className="py-6 md:py-8 px-6 bg-navy text-cream">
-      <div className="max-w-4xl mx-auto text-center">
-        <div className="flex justify-center mb-6">
-          <Heart className="w-12 h-12 text-gold animate-pulse" />
-        </div>
-        
-        <h2 className="font-display text-3xl md:text-4xl lg:text-5xl mb-6">
-          Благотворительная миссия
-        </h2>
-        
-        <p className="font-body text-cream/80 text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
-          Проект носит исключительно благотворительный характер. Все средства от участия 
-          направляются в фонд{" "}
-          <a 
-            href="https://kakchudo.ru" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-gold font-medium hover:underline inline-flex items-center gap-1"
-          >
-            «Жизнь как чудо»
-            <ExternalLink className="w-4 h-4" />
-          </a>.
-        </p>
-        
-        <p className="font-body text-cream/70 mb-12">
-          Ваше участие — это возможность трансформировать интеллектуальный поиск 
-          в реальную помощь детям с заболеваниями печени.
-        </p>
-
-        {/* Progress counter */}
-        <div className="bg-cream/5 backdrop-blur-sm rounded-lg p-8 mb-8 border border-cream/10">
-          <p className="font-display text-xl text-cream/60 mb-2">
-            Собрано
-          </p>
-          
-          <div className="font-display text-4xl md:text-5xl lg:text-6xl text-gold mb-4">
-            {formatNumber(displayAmount)} ₽
-          </div>
-          
-          <p className="font-body text-cream/50 mb-6">
-            из {formatNumber(goal)} ₽
-          </p>
-
-          {/* Progress bar */}
-          <div className="h-3 bg-cream/10 rounded-full overflow-hidden">
-            <div 
-              className="h-full gradient-gold rounded-full transition-all duration-1000 ease-out"
-              style={{ width: isVisible ? `${percentage}%` : '0%' }}
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12">
+          {/* Logo on the left */}
+          <div className="flex-shrink-0">
+            <img 
+              src={charityLogo} 
+              alt="Жизнь как чудо" 
+              className="w-48 md:w-64 h-auto"
             />
           </div>
           
-          <p className="font-body text-sm text-cream/40 mt-4">
-            Цель на текущий год
-          </p>
-        </div>
+          {/* All text on the right */}
+          <div className="flex-1 text-center md:text-left">
+            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl mb-6">
+              Благотворительная миссия
+            </h2>
+            
+            <p className="font-body text-cream/80 text-lg leading-relaxed mb-6">
+              Проект носит исключительно благотворительный характер. Все средства от участия 
+              направляются в фонд{" "}
+              <a 
+                href="https://kakchudo.ru" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gold font-medium hover:underline inline-flex items-center gap-1"
+              >
+                «Жизнь как чудо»
+                <ExternalLink className="w-4 h-4" />
+              </a>.
+            </p>
+            
+            <p className="font-body text-cream/70 mb-8">
+              Ваше участие — это возможность трансформировать интеллектуальный поиск 
+              в реальную помощь детям с заболеваниями печени.
+            </p>
 
+            {/* Progress counter */}
+            <div className="bg-cream/5 backdrop-blur-sm rounded-lg p-6 md:p-8 border border-cream/10">
+              <p className="font-display text-xl text-cream/60 mb-2">
+                Собрано
+              </p>
+              
+              <div className="font-display text-4xl md:text-5xl lg:text-6xl text-gold mb-4">
+                {formatNumber(displayAmount)} ₽
+              </div>
+              
+              <p className="font-body text-cream/50 mb-6">
+                из {formatNumber(goal)} ₽
+              </p>
+
+              {/* Progress bar */}
+              <div className="h-3 bg-cream/10 rounded-full overflow-hidden">
+                <div 
+                  className="h-full gradient-gold rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: isVisible ? `${percentage}%` : '0%' }}
+                />
+              </div>
+              
+              <p className="font-body text-sm text-cream/40 mt-4">
+                Цель на текущий год
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
