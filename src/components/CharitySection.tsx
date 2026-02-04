@@ -83,7 +83,7 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
             <img 
               src={charityLogo} 
               alt="Жизнь как чудо" 
-              className="w-48 md:w-64 h-auto"
+              className="w-32 md:w-40 h-auto"
             />
           </div>
           
