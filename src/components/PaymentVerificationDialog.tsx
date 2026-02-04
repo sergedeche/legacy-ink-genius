@@ -1,6 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { format } from "date-fns";
-import { ru } from "date-fns/locale";
 import { Clock, CheckCircle2, AlertCircle, ExternalLink, RefreshCw } from "lucide-react";
 import {
   Dialog,
@@ -12,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import TicketDialog from "./TicketDialog";
+import TelegramDialog from "./TelegramDialog";
 
 interface PaymentVerificationDialogProps {
   open: boolean;
@@ -50,6 +49,7 @@ const PaymentVerificationDialog = ({
   const [minutesLeft, setMinutesLeft] = useState(15);
   const [error, setError] = useState<string | null>(null);
   const [ticketDialogOpen, setTicketDialogOpen] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
 
   const checkPayment = useCallback(async () => {
     if (checking || verified) return;
@@ -184,6 +184,7 @@ const PaymentVerificationDialog = ({
                   <ul className="list-disc list-inside space-y-1" style={{ color: 'hsl(35 20% 75%)' }}>
                     <li>Сумма пожертвования: <strong>{totalAmount} ₽</strong></li>
                     <li>Имя донатора: <strong>{guestName}</strong></li>
+                    <li>Комментарий: <strong>СН</strong></li>
                   </ul>
                 </div>
 
@@ -235,6 +236,21 @@ const PaymentVerificationDialog = ({
                       </>
                     )}
                   </Button>
+
+                  {(!!error || minutesLeft <= 0) && (
+                    <Button
+                      onClick={() => setSupportOpen(true)}
+                      variant="outline"
+                      className="w-full h-12"
+                      style={{
+                        borderColor: 'hsl(215 30% 25%)',
+                        color: 'hsl(35 20% 75%)',
+                        backgroundColor: 'transparent',
+                      }}
+                    >
+                      Написать в поддержку
+                    </Button>
+                  )}
 
                   <Button
                     onClick={handleClose}
@@ -288,6 +304,8 @@ const PaymentVerificationDialog = ({
           seatsCount={Math.round(totalAmount / 100)}
         />
       )}
+
+      <TelegramDialog open={supportOpen} onOpenChange={setSupportOpen} />
     </>
   );
 };
