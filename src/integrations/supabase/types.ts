@@ -124,11 +124,33 @@ export type Database = {
             referencedRelation: "bookings"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "tickets_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings_with_events"
+            referencedColumns: ["booking_id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      bookings_with_events: {
+        Row: {
+          booking_created_at: string | null
+          booking_id: string | null
+          event_date: string | null
+          event_title: string | null
+          guest_email: string | null
+          guest_name: string | null
+          seats_count: number | null
+          status: string | null
+          ticket_code: string | null
+          total_amount: number | null
+          verified_at: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_booked_seats: { Args: { p_event_id: string }; Returns: number }
