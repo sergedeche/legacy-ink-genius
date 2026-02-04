@@ -48,6 +48,7 @@ const PaymentVerificationDialog = ({
   const [ticket, setTicket] = useState<TicketData | null>(null);
   const [minutesLeft, setMinutesLeft] = useState(15);
   const [error, setError] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [ticketDialogOpen, setTicketDialogOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
 
@@ -61,6 +62,7 @@ const PaymentVerificationDialog = ({
     setTicket(null);
     setMinutesLeft(15);
     setError(null);
+    setStatusMessage(null);
     setTicketDialogOpen(false);
     setSupportOpen(false);
   }, [open, bookingId]);
@@ -70,6 +72,7 @@ const PaymentVerificationDialog = ({
     
     setChecking(true);
     setError(null);
+    setStatusMessage(null);
 
     try {
       const { data, error: verifyError } = await supabase.functions.invoke('verify-payment', {
@@ -88,11 +91,16 @@ const PaymentVerificationDialog = ({
         setTicketDialogOpen(true);
       } else if (data?.minutes_left !== undefined) {
         setMinutesLeft(data.minutes_left);
+        if (typeof data?.message === 'string' && data.message.trim()) {
+          setStatusMessage(data.message);
+        }
         if (data.minutes_left <= 0) {
           setError("Время бронирования истекло. Пожалуйста, создайте новое бронирование.");
         }
       } else if (data?.error) {
         setError(data.error);
+      } else if (typeof data?.message === 'string' && data.message.trim()) {
+        setStatusMessage(data.message);
       }
     } catch (err) {
       console.error('Error checking payment:', err);
@@ -209,6 +217,16 @@ const PaymentVerificationDialog = ({
                   >
                     <AlertCircle className="w-4 h-4 flex-shrink-0" />
                     {error}
+                  </div>
+                )}
+
+                {/* Status message from backend */}
+                {!error && statusMessage && (
+                  <div
+                    className="p-3 rounded-lg text-sm"
+                    style={{ backgroundColor: 'hsla(38, 70%, 50%, 0.1)', color: 'hsl(35 20% 75%)' }}
+                  >
+                    {statusMessage}
                   </div>
                 )}
 
