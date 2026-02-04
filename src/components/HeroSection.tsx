@@ -3,10 +3,10 @@ import heroMobile from "@/assets/hero-mobile.png";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface HeroSectionProps {
-  onContactClick: () => void;
+  onBookingClick: () => void;
 }
 
-const HeroSection = ({ onContactClick }: HeroSectionProps) => {
+const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
   const isMobile = useIsMobile();
 
   // Mobile layout: image on top, text below
@@ -44,7 +44,7 @@ const HeroSection = ({ onContactClick }: HeroSectionProps) => {
           </p>
           
           <button 
-            onClick={onContactClick}
+            onClick={onBookingClick}
             className="btn-heritage text-sm px-6 py-3 opacity-0 animate-fade-up delay-400"
           >
             Забронировать место
@@ -89,7 +89,7 @@ const HeroSection = ({ onContactClick }: HeroSectionProps) => {
           </p>
           
           <button 
-            onClick={onContactClick}
+            onClick={onBookingClick}
             className="btn-heritage text-sm px-6 py-3 opacity-0 animate-fade-up delay-400"
           >
             Забронировать место

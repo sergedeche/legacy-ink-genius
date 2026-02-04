@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
@@ -12,11 +12,19 @@ import TelegramDialog from "@/components/TelegramDialog";
 
 const Index = () => {
   const [telegramOpen, setTelegramOpen] = useState(false);
+  
+  const handleBookingClick = () => {
+    // Scroll to calendar section
+    const calendarSection = document.getElementById('calendar');
+    if (calendarSection) {
+      calendarSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <main className="min-h-screen">
       <Header onContactClick={() => setTelegramOpen(true)} />
-      <HeroSection onContactClick={() => setTelegramOpen(true)} />
+      <HeroSection onBookingClick={handleBookingClick} />
       <AboutSection />
       <KeyInsightsSection />
       <UniqueFormatSection />
