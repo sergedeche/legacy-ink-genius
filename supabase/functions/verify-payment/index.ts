@@ -9,7 +9,16 @@ interface VerifyRequest {
   booking_id: string;
 }
 
-const REQUIRED_COMMENT = 'СН';
+// Generate expected donor name format: "Имя П" from "Имя Фамилия"
+function getExpectedDonorName(fullName: string): string {
+  const parts = fullName.trim().split(/\s+/);
+  if (parts.length < 2) {
+    return parts[0] || '';
+  }
+  const firstName = parts[0];
+  const lastNameInitial = parts[1].charAt(0).toUpperCase();
+  return `${firstName} ${lastNameInitial}`;
+}
 
 // Normalize name for comparison (remove extra spaces, lowercase)
 function normalizeName(name: string): string {
@@ -21,13 +30,13 @@ function normalizeName(name: string): string {
 }
 
 // Extract donations from the HTML page
-function extractDonations(html: string): Array<{ name: string; amount: number; comment: string }> {
+function extractDonations(html: string): Array<{ name: string; amount: number }> {
   // Narrow parsing to the "уже участвуют" section when present to avoid false positives.
   const lower = html.toLowerCase();
   const markerIndex = lower.indexOf('уже участвуют');
   const slice = markerIndex >= 0 ? html.slice(markerIndex, markerIndex + 60000) : html;
 
-  const donations: Array<{ name: string; amount: number; comment: string }> = [];
+  const donations: Array<{ name: string; amount: number }> = [];
 
   // Match amounts like "200 ₽" or "1 200 ₽".
   const amountRegex = /(\d{1,3}(?:\s\d{3})*|\d+)\s*₽/g;
@@ -69,19 +78,6 @@ function extractDonations(html: string): Array<{ name: string; amount: number; c
     // Prefer the name closest to the amount (latest candidate in the chunk before amount position).
     const chosen = candidates[candidates.length - 1].name;
     
-    // Look for "СН" comment in the chunk - can be anywhere near the donation entry
-    // Accept both Cyrillic "СН" and Latin "CH" (users often confuse them)
-    const commentPatterns = [
-      />\s*СН\s*</i,      // Cyrillic <tag>СН</tag>
-      />\s*CH\s*</i,      // Latin <tag>CH</tag>
-      />\s*сн\s*</i,      // lowercase Cyrillic
-      />\s*ch\s*</i,      // lowercase Latin
-      /\bСН\b/,           // standalone Cyrillic СН
-      /\bCH\b/i,          // standalone Latin CH
-      /\bсн\b/i,          // case insensitive Cyrillic
-    ];
-    const hasComment = commentPatterns.some(pattern => pattern.test(chunk));
-
     const exists = donations.some(
       (d) => normalizeName(d.name) === normalizeName(chosen) && d.amount === amount,
     );
@@ -90,7 +86,6 @@ function extractDonations(html: string): Array<{ name: string; amount: number; c
       donations.push({
         name: chosen,
         amount,
-        comment: hasComment ? REQUIRED_COMMENT : '',
       });
     }
   }
@@ -294,34 +289,11 @@ Deno.serve(async (req) => {
     const donations = extractDonations(html);
     console.log('Found donations:', donations);
     
-    // Search for donations matching the guest name and amount
-    const normalizedGuestName = normalizeName(booking.guest_name);
+    // Generate expected donor name format: "Имя П" from full name
+    const expectedDonorName = getExpectedDonorName(booking.guest_name);
     const expectedAmount = booking.total_amount;
     
-    console.log('Looking for:', { normalizedGuestName, expectedAmount });
-
-    // Find matching donation
-    const guestTokens = normalizedGuestName
-      .split(' ')
-      .map((t) => t.trim())
-      .filter(Boolean);
-
-    const namesMatch = (normalizedDonorName: string) => {
-      if (normalizedGuestName.length < 2 || normalizedDonorName.length < 2) return false;
-      if (normalizedDonorName === normalizedGuestName) return true;
-
-      // Require first token to match to avoid "".includes("") style false positives.
-      const guestFirst = guestTokens[0];
-      if (!guestFirst || guestFirst.length < 2) return false;
-
-      const donorTokens = normalizedDonorName.split(' ').filter(Boolean);
-      const firstOk = donorTokens.includes(guestFirst) || normalizedDonorName.startsWith(`${guestFirst} `);
-      if (!firstOk) return false;
-
-      // If user provided multiple tokens (e.g. first+last name), require all meaningful tokens.
-      const restTokens = guestTokens.slice(1).filter((t) => t.length >= 3);
-      return restTokens.every((t) => normalizedDonorName.includes(t));
-    };
+    console.log('Looking for:', { expectedDonorName, expectedAmount });
 
     let found = false;
 
@@ -330,19 +302,22 @@ Deno.serve(async (req) => {
 
       console.log('Comparing:', {
         donorName: normalizedDonorName,
-        guestName: normalizedGuestName,
+        expectedDonorName: normalizeName(expectedDonorName),
         donorAmount: donation.amount,
         expectedAmount,
-        comment: donation.comment,
       });
 
       const amountsMatch = donation.amount === expectedAmount;
-      const commentMatch = donation.comment === REQUIRED_COMMENT;
+      
+      // Match by expected format: "Имя П" (first name + first letter of last name)
+      const expectedNormalized = normalizeName(expectedDonorName);
+      const nameMatches = normalizedDonorName === expectedNormalized ||
+        normalizedDonorName.startsWith(expectedNormalized) ||
+        expectedNormalized.startsWith(normalizedDonorName);
 
-      // For security, require: matching name + matching amount + required comment
-      if (amountsMatch && namesMatch(normalizedDonorName) && commentMatch) {
+      if (amountsMatch && nameMatches) {
         found = true;
-        console.log('Found matching donation!', { donation });
+        console.log('Found matching donation!', { donation, expectedDonorName });
         break;
       }
     }
@@ -429,16 +404,18 @@ Deno.serve(async (req) => {
     const expiresIn = new Date(booking.expires_at).getTime() - Date.now();
     const minutesLeft = Math.max(0, Math.floor(expiresIn / 60000));
 
+    // expectedDonorName already defined above
+
     return new Response(
       JSON.stringify({ 
         success: true, 
         verified: false,
-        message: `Оплата не найдена. Убедитесь, что указали точное имя и комментарий "${REQUIRED_COMMENT}" при пожертвовании.`,
+        message: `Оплата не найдена. Убедитесь, что при пожертвовании указали имя "${expectedDonorName}".`,
         minutes_left: minutesLeft,
-        expected_name: booking.guest_name,
+        expected_name: expectedDonorName,
         expected_amount: booking.total_amount,
         found_donations: donations.length,
-        hint: `При пожертвовании обязательно добавьте комментарий "${REQUIRED_COMMENT}" (Стратегия Наследия)`
+        hint: `При пожертвовании укажите имя: ${expectedDonorName}`
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

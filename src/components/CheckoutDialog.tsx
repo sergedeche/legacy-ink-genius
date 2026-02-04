@@ -151,7 +151,7 @@ const CheckoutDialog = ({
                 }}
               />
               <p className="text-xs" style={{ color: 'hsl(38 70% 50%)' }}>
-                ⚠️ Важно: укажите точно такое же имя и комментарий "СН" (или "CH" латиницей) при пожертвовании
+                ⚠️ Важно: при пожертвовании укажите имя в формате "<strong>{guestName.trim().split(/\s+/)[0] || 'Имя'} {guestName.trim().split(/\s+/)[1]?.charAt(0).toUpperCase() || 'Ф'}.</strong>" (Имя + первая буква фамилии)
               </p>
             </div>
 
@@ -225,8 +225,7 @@ const CheckoutDialog = ({
               <ol className="list-decimal list-inside space-y-1 text-xs">
                 <li>Нажмите "Оплатить" — откроется страница Эстафеты Чудес</li>
                 <li>Сделайте пожертвование на сумму {totalAmount} ₽</li>
-                <li>Укажите имя: <strong>{guestName || "ваше имя"}</strong></li>
-                <li>В комментарии напишите: <strong>СН</strong></li>
+                <li>Укажите имя: <strong>{guestName.trim().split(/\s+/)[0] || 'Имя'} {guestName.trim().split(/\s+/)[1]?.charAt(0).toUpperCase() || 'Ф'}.</strong> (Имя + первая буква фамилии)</li>
                 <li>Вернитесь сюда — система автоматически подтвердит оплату</li>
               </ol>
             </div>
