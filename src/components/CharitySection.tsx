@@ -130,12 +130,6 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
           </p>
         </div>
 
-        <button 
-          onClick={onContactClick}
-          className="btn-primary-heritage"
-        >
-          Оставить заявку
-        </button>
       </div>
     </section>
   );
