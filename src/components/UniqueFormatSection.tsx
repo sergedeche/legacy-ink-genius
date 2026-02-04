@@ -1,6 +1,7 @@
 import formatIconTouch from "@/assets/format-icon-touch.png";
 import formatIconClosed from "@/assets/format-icon-closed.png";
 import formatIconLimited from "@/assets/format-icon-limited.png";
+import formatIconTea from "@/assets/format-icon-tea.png";
 
 interface FormatFeatureProps {
   image: string;
@@ -11,11 +12,11 @@ interface FormatFeatureProps {
 const FormatFeature = ({ image, title, description }: FormatFeatureProps) => {
   return (
     <div className="text-center p-6 group">
-      <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden bg-cream">
+      <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden">
         <img 
           src={image} 
           alt={title}
-          className="w-full h-full object-cover scale-[1.02] mix-blend-multiply"
+          className="w-full h-full object-cover"
         />
       </div>
       <h3 className="font-display text-xl md:text-2xl text-sepia mb-3">
@@ -45,6 +46,11 @@ const UniqueFormatSection = () => {
       title: "Ограниченное количество гостей",
       description: "У каждого будет время и возможность «пообщаться» с каждым артефактом лично.",
     },
+    {
+      image: formatIconTea,
+      title: "Чаепитие в русских традициях",
+      description: "Тёплый разговор за столом, предметы с историей и живая связь с культурным кодом.",
+    },
   ];
 
   return (
@@ -60,7 +66,7 @@ const UniqueFormatSection = () => {
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {features.map((feature, index) => (
             <FormatFeature
               key={index}
