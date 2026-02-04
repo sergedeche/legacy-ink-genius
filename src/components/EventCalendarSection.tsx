@@ -92,11 +92,8 @@ const EventCalendarSection = () => {
       <div className="container mx-auto px-4 md:px-8">
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
-          <p className="text-sm md:text-base tracking-[0.3em] uppercase mb-4" style={{ color: 'hsl(38 70% 50%)' }}>
+          <h2 className="font-display text-4xl md:text-6xl lg:text-7xl tracking-[0.2em] uppercase mb-6" style={{ color: 'hsl(38 70% 50%)' }}>
             Расписание
-          </p>
-          <h2 className="font-display text-3xl md:text-5xl lg:text-6xl font-light mb-6" style={{ color: 'hsl(35 25% 95%)' }}>
-            Мастер-классы
           </h2>
           <div className="w-24 h-px mx-auto" style={{ background: 'linear-gradient(90deg, transparent, hsl(38 70% 50%), transparent)' }} />
         </div>
