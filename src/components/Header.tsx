@@ -24,11 +24,10 @@ const Header = () => {
               href="https://sergeichernenko.ru/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-cream hover:text-gold transition-colors"
+              className="flex items-center text-cream hover:text-gold transition-colors"
               title="sergeichernenko.ru"
             >
-              <Home className="w-4 h-4 md:w-5 md:h-5" />
-              <span className="hidden sm:inline font-body text-xs md:text-sm">sergeichernenko.ru</span>
+              <Home className="w-5 h-5 md:w-6 md:h-6" />
             </a>
 
             {/* Navigation */}
