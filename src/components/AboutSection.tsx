@@ -1,7 +1,15 @@
+import aboutBg from "@/assets/about-bg.png";
+
 const AboutSection = () => {
   return (
-    <section className="py-12 md:py-16 px-6 bg-cream">
-      <div className="max-w-4xl mx-auto text-center">
+    <section className="py-12 md:py-16 px-6 bg-cream relative overflow-hidden">
+      {/* Background image with low opacity */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-15"
+        style={{ backgroundImage: `url(${aboutBg})` }}
+      />
+      
+      <div className="max-w-4xl mx-auto text-center relative z-10">
         <div className="section-divider" />
         
         <h2 className="font-display text-2xl md:text-3xl lg:text-4xl text-sepia mb-5">
