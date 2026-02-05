@@ -76,7 +76,7 @@ const SeatSelectionDialog = ({ open, onOpenChange, event, onBookingComplete }: S
               </p>
               
               {/* Large number */}
-              <div className="mb-4">
+              <div className="mb-4 flex items-baseline justify-center gap-2">
                 <span 
                   className="text-6xl font-display font-medium"
                   style={{ color: 'hsl(38 70% 50%)' }}
@@ -84,29 +84,56 @@ const SeatSelectionDialog = ({ open, onOpenChange, event, onBookingComplete }: S
                   {event.available_seats}
                 </span>
                 <span 
-                  className="text-xl font-display ml-2"
+                  className="text-6xl font-display font-medium"
                   style={{ color: 'hsl(35 20% 65%)' }}
                 >
-                  из {event.total_seats}
+                  из
+                </span>
+                <span 
+                  className="text-6xl font-display font-medium"
+                  style={{ color: 'hsl(38 70% 50%)' }}
+                >
+                  {event.total_seats}
                 </span>
               </div>
               
-              {/* Dots visualization */}
-              <div className="flex flex-wrap justify-center gap-2 max-w-xs mx-auto">
-                {Array.from({ length: event.total_seats }).map((_, index) => {
-                  const isAvailable = index >= event.booked_seats;
-                  return (
-                    <div
-                      key={index}
-                      className="w-3 h-3 rounded-full transition-all"
-                      style={{
-                        backgroundColor: isAvailable 
-                          ? 'hsl(38 70% 50%)' 
-                          : 'hsl(0 0% 35%)',
-                      }}
-                    />
-                  );
-                })}
+              {/* Dots visualization - 2 rows of 10 */}
+              <div className="flex flex-col items-center gap-2">
+                {/* First row - seats 1-10 */}
+                <div className="flex justify-center gap-2">
+                  {Array.from({ length: 10 }).map((_, index) => {
+                    const isAvailable = index >= event.booked_seats;
+                    return (
+                      <div
+                        key={index}
+                        className="w-3 h-3 rounded-full transition-all"
+                        style={{
+                          backgroundColor: isAvailable 
+                            ? 'hsl(38 70% 50%)' 
+                            : 'hsl(0 0% 35%)',
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+                {/* Second row - seats 11-20 */}
+                <div className="flex justify-center gap-2">
+                  {Array.from({ length: 10 }).map((_, index) => {
+                    const seatIndex = index + 10;
+                    const isAvailable = seatIndex >= event.booked_seats;
+                    return (
+                      <div
+                        key={seatIndex}
+                        className="w-3 h-3 rounded-full transition-all"
+                        style={{
+                          backgroundColor: isAvailable 
+                            ? 'hsl(38 70% 50%)' 
+                            : 'hsl(0 0% 35%)',
+                        }}
+                      />
+                    );
+                  })}
+                </div>
               </div>
               
               {/* Legend */}
