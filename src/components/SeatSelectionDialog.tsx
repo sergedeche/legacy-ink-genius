@@ -38,10 +38,6 @@ const SeatSelectionDialog = ({ open, onOpenChange, event, onBookingComplete }: S
   const maxSeats = Math.min(5, event.available_seats);
   const totalAmount = selectedSeats * event.price_per_seat;
 
-  // Generate seat grid (4 rows x 5 columns = 20 seats)
-  const rows = 4;
-  const cols = 5;
-  const bookedSeats = event.booked_seats;
 
   const handleIncrement = () => {
     if (selectedSeats < maxSeats) {
@@ -73,59 +69,55 @@ const SeatSelectionDialog = ({ open, onOpenChange, event, onBookingComplete }: S
           </DialogHeader>
 
           <div className="py-6 space-y-6">
-            {/* Seat Map */}
-            <div>
+            {/* Available Seats Display */}
+            <div className="text-center">
               <p className="text-sm mb-4" style={{ color: 'hsl(35 20% 65%)' }}>
-                Схема мест
+                Свободные места
               </p>
-              <div className="p-4 rounded-lg" style={{ backgroundColor: 'hsl(215 30% 12%)' }}>
-                {/* Stage indicator */}
-                <div 
-                  className="w-full h-8 rounded mb-4 flex items-center justify-center text-xs font-medium"
-                  style={{ backgroundColor: 'hsl(215 30% 25%)', color: 'hsl(35 20% 65%)' }}
+              
+              {/* Large number */}
+              <div className="mb-4">
+                <span 
+                  className="text-6xl font-display font-medium"
+                  style={{ color: 'hsl(38 70% 50%)' }}
                 >
-                  СЦЕНА
+                  {event.available_seats}
+                </span>
+                <span 
+                  className="text-xl font-display ml-2"
+                  style={{ color: 'hsl(35 20% 65%)' }}
+                >
+                  из {event.total_seats}
+                </span>
+              </div>
+              
+              {/* Dots visualization */}
+              <div className="flex flex-wrap justify-center gap-2 max-w-xs mx-auto">
+                {Array.from({ length: event.total_seats }).map((_, index) => {
+                  const isAvailable = index >= event.booked_seats;
+                  return (
+                    <div
+                      key={index}
+                      className="w-3 h-3 rounded-full transition-all"
+                      style={{
+                        backgroundColor: isAvailable 
+                          ? 'hsl(38 70% 50%)' 
+                          : 'hsl(0 0% 35%)',
+                      }}
+                    />
+                  );
+                })}
+              </div>
+              
+              {/* Legend */}
+              <div className="flex items-center justify-center gap-6 mt-4 text-xs" style={{ color: 'hsl(35 20% 65%)' }}>
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: 'hsl(38 70% 50%)' }} />
+                  <span>Свободно</span>
                 </div>
-                
-                {/* Seats grid */}
-                <div className="space-y-2">
-                  {Array.from({ length: rows }).map((_, rowIndex) => (
-                    <div key={rowIndex} className="flex justify-center gap-2">
-                      {Array.from({ length: cols }).map((_, colIndex) => {
-                        const seatNumber = rowIndex * cols + colIndex + 1;
-                        const isBooked = seatNumber <= bookedSeats;
-                        
-                        return (
-                          <div
-                            key={colIndex}
-                            className="w-8 h-8 rounded flex items-center justify-center text-xs font-medium transition-all"
-                            style={{
-                              backgroundColor: isBooked 
-                                ? 'hsl(0 0% 35%)' 
-                                : 'hsl(38 70% 50%)',
-                              color: isBooked 
-                                ? 'hsl(0 0% 55%)' 
-                                : 'hsl(25 20% 10%)',
-                            }}
-                          >
-                            {seatNumber}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Legend */}
-                <div className="flex items-center justify-center gap-6 mt-4 text-xs" style={{ color: 'hsl(35 20% 65%)' }}>
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded" style={{ backgroundColor: 'hsl(38 70% 50%)' }} />
-                    <span>Свободно</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded" style={{ backgroundColor: 'hsl(0 0% 35%)' }} />
-                    <span>Занято</span>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: 'hsl(0 0% 35%)' }} />
+                  <span>Занято</span>
                 </div>
               </div>
             </div>
