@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths, isToday, isBefore, startOfDay } from "date-fns";
 import { ru } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, Calendar, Users, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SeatSelectionDialog from "./SeatSelectionDialog";
 
@@ -293,6 +294,13 @@ const EventCalendarSection = () => {
             <p className="text-xs md:text-sm leading-relaxed mt-3" style={{ color: 'hsl(35 20% 70%)' }}>
               Рекомендую подписаться, чтобы не пропустить важные сообщения. В канале также можно написать мне личное сообщение, если у вас возникнут вопросы.
             </p>
+            <Link 
+              to="/rules" 
+              className="inline-block text-xs md:text-sm mt-4 underline underline-offset-2 transition-colors hover:text-[hsl(38_70%_50%)]"
+              style={{ color: 'hsl(38 70% 50%)' }}
+            >
+              Правила участия
+            </Link>
           </div>
         </div>
       </div>
