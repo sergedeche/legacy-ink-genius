@@ -4,6 +4,7 @@ import formatIconTouch from "@/assets/format-icon-touch-transparent.png";
 import formatIconClosed from "@/assets/format-icon-closed-transparent.png";
 import formatIconLimited from "@/assets/format-icon-limited-transparent.png";
 import formatIconTea from "@/assets/format-icon-tea.png";
+import formatBg from "@/assets/format-bg.png";
 
 interface FormatFeatureProps {
   image: string;
@@ -173,8 +174,14 @@ const TabletCarousel = () => {
 
 const UniqueFormatSection = () => {
   return (
-    <section id="format" className="py-6 md:py-8 px-6 bg-cream">
-      <div className="max-w-6xl mx-auto">
+    <section id="format" className="py-6 md:py-8 px-6 bg-cream relative overflow-hidden">
+      {/* Background image with super low opacity */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center opacity-[0.08] pointer-events-none"
+        style={{ backgroundImage: `url(${formatBg})` }}
+      />
+      
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-8">
           <div className="section-divider" />
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-sepia mb-4">
