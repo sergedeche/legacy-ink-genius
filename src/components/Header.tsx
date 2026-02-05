@@ -45,12 +45,12 @@ const Header = ({ onContactClick }: HeaderProps) => {
             </a>
 
             {/* Desktop Navigation */}
-            <ul className="hidden md:flex items-center gap-1">
+            <ul className="hidden md:flex items-center gap-1 ml-6">
               {navItems.map((item) => (
                 <li key={item.href}>
                   <button
                     onClick={() => scrollToSection(item.href)}
-                    className="font-body text-xs text-cream/80 hover:text-gold px-2 lg:px-3 py-2 transition-colors"
+                    className="font-body text-xs text-cream/80 hover:text-gold px-2 lg:px-3 py-2 transition-colors whitespace-nowrap"
                   >
                     {item.label}
                   </button>
