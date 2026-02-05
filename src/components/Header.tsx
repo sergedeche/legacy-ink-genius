@@ -29,9 +29,9 @@ const Header = ({ onContactClick }: HeaderProps) => {
   };
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-50">
+    <header className="absolute top-0 left-0 right-0 z-50 overflow-hidden">
       <div className="bg-navy/30 backdrop-blur-[2px]">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="w-full px-4 md:px-6">
           <nav className="flex items-center justify-between h-12 md:h-14">
             {/* Home link */}
             <a 
@@ -45,21 +45,21 @@ const Header = ({ onContactClick }: HeaderProps) => {
             </a>
 
             {/* Desktop Navigation */}
-            <ul className="hidden md:flex items-center gap-1 ml-6">
+            <ul className="hidden md:flex items-center gap-0.5 lg:gap-1 ml-4 lg:ml-6 overflow-hidden">
               {navItems.map((item) => (
-                <li key={item.href}>
+                <li key={item.href} className="flex-shrink-0">
                   <button
                     onClick={() => scrollToSection(item.href)}
-                    className="font-body text-xs text-cream/80 hover:text-gold px-2 lg:px-3 py-2 transition-colors whitespace-nowrap"
+                    className="font-body text-[10px] lg:text-xs text-cream/80 hover:text-gold px-1.5 lg:px-3 py-2 transition-colors whitespace-nowrap"
                   >
                     {item.label}
                   </button>
                 </li>
               ))}
-              <li>
+              <li className="flex-shrink-0">
                 <button
                   onClick={onContactClick}
-                  className="font-body text-xs text-cream/80 hover:text-gold px-2 lg:px-3 py-2 transition-colors"
+                  className="font-body text-[10px] lg:text-xs text-cream/80 hover:text-gold px-1.5 lg:px-3 py-2 transition-colors whitespace-nowrap"
                 >
                   Контакты
                 </button>
