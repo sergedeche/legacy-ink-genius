@@ -9,31 +9,30 @@ interface HeroSectionProps {
 const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
   const isMobile = useIsMobile();
 
-  // Mobile layout: text overlaid on image with backdrop
+  // Mobile layout: text overlaid on image with cloud backdrop
   if (isMobile) {
     return (
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex flex-col items-center justify-start overflow-hidden pt-24">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${heroMobile})` }}
         />
         
-        {/* Content with glass backdrop - rounded corners, transparent edges */}
-        <div className="relative z-10 text-center mx-6 animate-fade-in" style={{ marginTop: '8vh' }}>
-          {/* Background with gradient fade and rounded border */}
+        {/* Text content with cloud backdrop - top visible, bottom fully transparent */}
+        <div className="relative z-10 text-center mx-6 animate-fade-in mt-8">
+          {/* Cloud backdrop - visible at top, fades to 100% transparent at bottom */}
           <div 
             className="absolute inset-0 -z-20"
             style={{
-              background: 'linear-gradient(to bottom, transparent 0%, hsl(40 35% 93% / 0.7) 15%, hsl(40 35% 93% / 0.75) 50%, hsl(40 35% 93% / 0.7) 85%, transparent 100%)',
+              background: 'linear-gradient(to bottom, hsl(40 35% 93% / 0.85) 0%, hsl(40 35% 93% / 0.8) 30%, hsl(40 35% 93% / 0.5) 60%, transparent 100%)',
               backdropFilter: 'blur(12px)',
               WebkitBackdropFilter: 'blur(12px)',
-              border: '1px solid hsl(38 70% 50% / 0.2)',
-              borderRadius: '2rem',
+              borderRadius: '2rem 2rem 2rem 2rem',
             }}
           />
           
-          <div className="px-8 py-10">
+          <div className="px-8 pt-8 pb-12">
             <p className="font-display text-xs tracking-[0.15em] uppercase text-gold-dark mb-2 opacity-0 animate-fade-up">
               Интеллектуальный экскурс
             </p>
@@ -48,18 +47,30 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
             <p className="font-display text-base italic text-sepia-light leading-snug opacity-0 animate-fade-up delay-200">
               Наследие прошлого — стратегия
             </p>
-            <p className="font-display text-base italic text-sepia-light mb-6 leading-snug opacity-0 animate-fade-up delay-200">
+            <p className="font-display text-base italic text-sepia-light leading-snug opacity-0 animate-fade-up delay-200">
               будущего
             </p>
-            
-            {/* Button inside the card */}
-            <button 
-              onClick={onBookingClick}
-              className="btn-heritage text-xs px-8 py-3 opacity-0 animate-fade-up delay-400 tracking-[0.15em]"
-            >
-              Забронировать место
-            </button>
           </div>
+        </div>
+        
+        {/* Button with its own backdrop - positioned lower */}
+        <div className="relative z-10 mt-16 animate-fade-in">
+          <div 
+            className="absolute inset-0 -z-10"
+            style={{
+              background: 'hsl(40 35% 93% / 0.75)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              borderRadius: '2rem',
+              border: '1px solid hsl(38 70% 50% / 0.2)',
+            }}
+          />
+          <button 
+            onClick={onBookingClick}
+            className="btn-heritage text-xs px-8 py-3 opacity-0 animate-fade-up delay-400 tracking-[0.15em]"
+          >
+            Забронировать место
+          </button>
         </div>
       </section>
     );
