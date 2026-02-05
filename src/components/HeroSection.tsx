@@ -19,36 +19,49 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
           style={{ backgroundImage: `url(${heroMobile})` }}
         />
         
-        {/* Content with gradient backdrop - transparent top/bottom, solid sides */}
-        <div className="relative z-10 text-center mx-6 animate-fade-in" style={{ marginTop: '10vh' }}>
-          {/* Backdrop with gradient fade on top and bottom */}
+        {/* Content with gradient backdrop - transparent top/bottom edges */}
+        <div className="relative z-10 text-center mx-6 animate-fade-in" style={{ marginTop: '8vh' }}>
+          {/* Left border - fades at top and bottom */}
           <div 
-            className="absolute inset-0 -z-10"
+            className="absolute left-0 top-0 bottom-0 w-px -z-10"
             style={{
-              background: 'linear-gradient(to bottom, transparent 0%, hsl(40 35% 93% / 0.85) 15%, hsl(40 35% 93% / 0.9) 50%, hsl(40 35% 93% / 0.85) 85%, transparent 100%)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              borderLeft: '1px solid hsl(38 70% 50% / 0.2)',
-              borderRight: '1px solid hsl(38 70% 50% / 0.2)',
+              background: 'linear-gradient(to bottom, transparent 0%, hsl(38 70% 50% / 0.3) 20%, hsl(38 70% 50% / 0.3) 80%, transparent 100%)',
+            }}
+          />
+          {/* Right border - fades at top and bottom */}
+          <div 
+            className="absolute right-0 top-0 bottom-0 w-px -z-10"
+            style={{
+              background: 'linear-gradient(to bottom, transparent 0%, hsl(38 70% 50% / 0.3) 20%, hsl(38 70% 50% / 0.3) 80%, transparent 100%)',
             }}
           />
           
-          <div className="px-8 py-12">
-            <p className="font-display text-xs tracking-[0.15em] uppercase text-gold-dark mb-4 opacity-0 animate-fade-up">
+          {/* Background with gradient fade */}
+          <div 
+            className="absolute inset-0 -z-20"
+            style={{
+              background: 'linear-gradient(to bottom, transparent 0%, hsl(40 35% 93% / 0.9) 12%, hsl(40 35% 93% / 0.92) 50%, hsl(40 35% 93% / 0.9) 88%, transparent 100%)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+            }}
+          />
+          
+          <div className="px-8 py-10">
+            <p className="font-display text-xs tracking-[0.15em] uppercase text-gold-dark mb-2 opacity-0 animate-fade-up">
               Интеллектуальный экскурс
             </p>
             
-            <h1 className="font-display text-4xl font-medium tracking-wide text-sepia mb-1 opacity-0 animate-fade-up delay-100 leading-tight">
+            <h1 className="font-display text-4xl font-medium tracking-wide text-sepia leading-none opacity-0 animate-fade-up delay-100">
               Стратегия
             </h1>
-            <h1 className="font-display text-4xl font-medium tracking-wide text-sepia mb-4 opacity-0 animate-fade-up delay-100 leading-tight">
+            <h1 className="font-display text-4xl font-medium tracking-wide text-sepia mb-2 leading-none opacity-0 animate-fade-up delay-100">
               Наследия
             </h1>
             
-            <p className="font-display text-base italic text-sepia-light opacity-0 animate-fade-up delay-200">
+            <p className="font-display text-base italic text-sepia-light leading-snug opacity-0 animate-fade-up delay-200">
               Наследие прошлого — стратегия
             </p>
-            <p className="font-display text-base italic text-sepia-light mb-8 opacity-0 animate-fade-up delay-200">
+            <p className="font-display text-base italic text-sepia-light mb-6 leading-snug opacity-0 animate-fade-up delay-200">
               будущего
             </p>
             
