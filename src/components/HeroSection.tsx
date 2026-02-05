@@ -23,12 +23,13 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
         <div className="relative z-10 text-center mx-6 animate-fade-in" style={{ marginTop: '8vh' }}>
           {/* Background with gradient fade and rounded border */}
           <div 
-            className="absolute inset-0 -z-20 rounded-2xl"
+            className="absolute inset-0 -z-20"
             style={{
               background: 'linear-gradient(to bottom, transparent 0%, hsl(40 35% 93% / 0.7) 15%, hsl(40 35% 93% / 0.75) 50%, hsl(40 35% 93% / 0.7) 85%, transparent 100%)',
               backdropFilter: 'blur(12px)',
               WebkitBackdropFilter: 'blur(12px)',
-              border: '1px solid hsl(38 70% 50% / 0.15)',
+              border: '1px solid hsl(38 70% 50% / 0.2)',
+              borderRadius: '2rem',
             }}
           />
           
