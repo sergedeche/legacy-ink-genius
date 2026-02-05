@@ -12,7 +12,7 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
   // Mobile layout: text overlaid on image with cloud backdrop
   if (isMobile) {
     return (
-      <section className="relative min-h-screen flex flex-col items-center justify-end overflow-hidden pb-24">
+      <section className="relative min-h-screen flex flex-col items-center justify-end overflow-hidden pb-12">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -54,20 +54,18 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
         </div>
         
         {/* Button with its own backdrop - positioned lower */}
-        <div className="relative z-10 mt-12 animate-fade-in">
-          <div 
-            className="absolute inset-0 -z-10"
+        <div className="relative z-10 mt-10 animate-fade-in">
+          <button 
+            onClick={onBookingClick}
+            className="relative text-xs px-8 py-3 opacity-0 animate-fade-up delay-400 tracking-[0.15em] font-display uppercase transition-all duration-300"
             style={{
               background: 'hsl(40 35% 93% / 0.75)',
               backdropFilter: 'blur(8px)',
               WebkitBackdropFilter: 'blur(8px)',
-              borderRadius: '50px',
-              border: '1px solid hsl(38 70% 50% / 0.25)',
+              borderRadius: '9999px',
+              border: '1px solid hsl(38 70% 50% / 0.4)',
+              color: 'hsl(35 60% 30%)',
             }}
-          />
-          <button 
-            onClick={onBookingClick}
-            className="btn-heritage text-xs px-8 py-3 opacity-0 animate-fade-up delay-400 tracking-[0.15em]"
           >
             Забронировать место
           </button>
