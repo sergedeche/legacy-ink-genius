@@ -77,7 +77,7 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
       {/* Content with compact backdrop */}
       <div className="relative z-10 text-center px-4 py-6 max-w-xl mx-auto animate-fade-in">
         {/* Semi-transparent card backdrop */}
-        <div className="absolute inset-0 bg-cream/75 backdrop-blur-sm rounded border border-gold/20 shadow-elegant -z-10" />
+        <div className="absolute inset-0 bg-cream/75 backdrop-blur-sm border border-gold/20 shadow-elegant -z-10" style={{ borderRadius: '2rem' }} />
         
         <div className="px-8 py-8">
           <p className="font-display text-base tracking-[0.2em] uppercase text-gold-dark mb-2 opacity-0 animate-fade-up">
