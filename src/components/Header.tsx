@@ -87,7 +87,7 @@ const Header = ({ onContactClick }: HeaderProps) => {
                 <li key={item.href}>
                   <button
                     onClick={() => scrollToSection(item.href)}
-                    className="w-full text-left font-body text-sm text-cream/90 hover:text-gold py-3 px-2 transition-colors border-b border-cream/10"
+                    className="w-full text-left font-body text-base font-medium text-cream hover:text-gold py-3 px-2 transition-colors border-b border-cream/10"
                   >
                     {item.label}
                   </button>
@@ -96,7 +96,7 @@ const Header = ({ onContactClick }: HeaderProps) => {
               <li>
                 <button
                   onClick={handleContactClick}
-                  className="w-full text-left font-body text-sm text-cream/90 hover:text-gold py-3 px-2 transition-colors"
+                  className="w-full text-left font-body text-base font-medium text-cream hover:text-gold py-3 px-2 transition-colors"
                 >
                   Контакты
                 </button>
