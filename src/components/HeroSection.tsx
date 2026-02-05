@@ -44,10 +44,10 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
               Наследия
             </h1>
             
-            <p className="font-display text-base italic text-sepia-light leading-snug opacity-0 animate-fade-up delay-200">
+            <p className="font-display text-base italic text-sepia leading-snug opacity-0 animate-fade-up delay-200">
               Наследие прошлого — стратегия
             </p>
-            <p className="font-display text-base italic text-sepia-light leading-snug opacity-0 animate-fade-up delay-200">
+            <p className="font-display text-base italic text-sepia leading-snug opacity-0 animate-fade-up delay-200">
               будущего
             </p>
           </div>
