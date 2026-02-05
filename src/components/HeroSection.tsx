@@ -21,28 +21,14 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
         
         {/* Content with glass backdrop - rounded corners, transparent edges */}
         <div className="relative z-10 text-center mx-6 animate-fade-in" style={{ marginTop: '8vh' }}>
-          {/* Left border - fades at top and bottom */}
+          {/* Background with gradient fade and rounded border */}
           <div 
-            className="absolute left-0 top-0 bottom-0 w-px -z-10 rounded-l-xl"
-            style={{
-              background: 'linear-gradient(to bottom, transparent 0%, hsl(38 70% 50% / 0.15) 25%, hsl(38 70% 50% / 0.15) 75%, transparent 100%)',
-            }}
-          />
-          {/* Right border - fades at top and bottom */}
-          <div 
-            className="absolute right-0 top-0 bottom-0 w-px -z-10 rounded-r-xl"
-            style={{
-              background: 'linear-gradient(to bottom, transparent 0%, hsl(38 70% 50% / 0.15) 25%, hsl(38 70% 50% / 0.15) 75%, transparent 100%)',
-            }}
-          />
-          
-          {/* Background with gradient fade - more transparent overall */}
-          <div 
-            className="absolute inset-0 -z-20 rounded-xl"
+            className="absolute inset-0 -z-20 rounded-2xl"
             style={{
               background: 'linear-gradient(to bottom, transparent 0%, hsl(40 35% 93% / 0.7) 15%, hsl(40 35% 93% / 0.75) 50%, hsl(40 35% 93% / 0.7) 85%, transparent 100%)',
               backdropFilter: 'blur(12px)',
               WebkitBackdropFilter: 'blur(12px)',
+              border: '1px solid hsl(38 70% 50% / 0.15)',
             }}
           />
           
