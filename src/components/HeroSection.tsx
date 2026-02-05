@@ -12,7 +12,7 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
   // Mobile layout: text overlaid on image with cloud backdrop
   if (isMobile) {
     return (
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex flex-col items-center justify-end overflow-hidden pb-24">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -20,7 +20,7 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
         />
         
         {/* Text content with cloud backdrop - top visible, bottom fully transparent */}
-        <div className="relative z-10 text-center mx-6 animate-fade-in" style={{ marginTop: '5vh' }}>
+        <div className="relative z-10 text-center mx-6 animate-fade-in">
           {/* Cloud backdrop - visible at top, fades to 100% transparent at bottom */}
           <div 
             className="absolute inset-0 -z-20"
@@ -61,7 +61,7 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
               background: 'hsl(40 35% 93% / 0.75)',
               backdropFilter: 'blur(8px)',
               WebkitBackdropFilter: 'blur(8px)',
-              borderRadius: '3rem',
+              borderRadius: '50px',
               border: '1px solid hsl(38 70% 50% / 0.25)',
             }}
           />
