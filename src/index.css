@@ -118,6 +118,11 @@
     font-family: var(--font-display);
     @apply font-medium tracking-wide;
   }
+
+  /* Global image rounding */
+  img {
+    @apply rounded-2xl;
+  }
 }
 
 @layer components {
@@ -175,6 +180,7 @@
     background: linear-gradient(135deg, hsla(38, 70%, 50%, 0.1), hsla(35, 60%, 35%, 0.15));
     border: 1px solid hsl(var(--gold) / 0.5);
     color: hsl(var(--gold-dark));
+    border-radius: 9999px;
   }
 
   .btn-heritage:hover {
@@ -189,6 +195,7 @@
     background: var(--gradient-gold);
     color: hsl(var(--cream));
     border: none;
+    border-radius: 9999px;
   }
 
   .btn-primary-heritage:hover {
