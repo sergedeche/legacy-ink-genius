@@ -98,7 +98,7 @@ const SeatSelectionDialog = ({ open, onOpenChange, event, onBookingComplete }: S
               </div>
               
               {/* Dots visualization - 2 rows of 10 */}
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col items-center gap-2 mb-4">
                 {/* First row - seats 1-10 */}
                 <div className="flex justify-center gap-2">
                   {Array.from({ length: 10 }).map((_, index) => {
