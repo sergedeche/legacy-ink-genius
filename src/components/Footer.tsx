@@ -14,12 +14,23 @@ const Footer = () => {
           Все средства направляются в благотворительный фонд «Жизнь как чудо»
         </p>
         
-        <Link 
-          to="/rules" 
-          className="inline-block font-body text-sm text-cream/60 hover:text-gold transition-colors mb-4 underline underline-offset-2"
-        >
-          Правила участия
-        </Link>
+        <div className="flex items-center justify-center gap-4 mb-4">
+          <Link 
+            to="/rules" 
+            className="font-body text-sm text-cream/60 hover:text-gold transition-colors underline underline-offset-2"
+          >
+            Правила участия
+          </Link>
+          <span className="text-cream/30">•</span>
+          <a 
+            href="https://t.me/corphacker" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="font-body text-sm text-cream/60 hover:text-gold transition-colors underline underline-offset-2"
+          >
+            Telegram-канал
+          </a>
+        </div>
         
         <p className="font-body text-xs text-cream/40">
           © {new Date().getFullYear()} Все права защищены
