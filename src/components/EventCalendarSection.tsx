@@ -268,6 +268,33 @@ const EventCalendarSection = () => {
             )}
           </div>
         </div>
+
+        {/* Disclaimer note */}
+        <div className="max-w-5xl mx-auto mt-8 md:mt-12">
+          <div 
+            className="p-5 rounded-lg text-center"
+            style={{ backgroundColor: 'hsl(215 30% 15%)', border: '1px solid hsl(35 20% 30%)' }}
+          >
+            <p className="text-xs md:text-sm leading-relaxed" style={{ color: 'hsl(35 20% 70%)' }}>
+              На сайте не осуществляется сбор и хранение персональных данных. Участие в мероприятии подтверждается пожертвованием, после которого вы получаете билет.
+            </p>
+            <p className="text-xs md:text-sm leading-relaxed mt-3" style={{ color: 'hsl(35 20% 70%)' }}>
+              Вся важная информация — возможные изменения времени, организационные обновления и уведомления — публикуется в моём{' '}
+              <a 
+                href="https://t.me/corphacker" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="font-medium underline underline-offset-2 transition-colors hover:text-[hsl(38_70%_50%)]"
+                style={{ color: 'hsl(38 70% 50%)' }}
+              >
+                Telegram-канале
+              </a>.
+            </p>
+            <p className="text-xs md:text-sm leading-relaxed mt-3" style={{ color: 'hsl(35 20% 70%)' }}>
+              Рекомендую подписаться, чтобы не пропустить важные сообщения. В канале также можно написать мне личное сообщение, если у вас возникнут вопросы.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Seat Selection Dialog */}
