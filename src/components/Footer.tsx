@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Footer = () => {
   return (
     <footer className="py-12 px-6 bg-sepia text-cream/60">
@@ -11,6 +13,13 @@ const Footer = () => {
         <p className="font-body text-sm mb-2">
           Все средства направляются в благотворительный фонд «Жизнь как чудо»
         </p>
+        
+        <Link 
+          to="/rules" 
+          className="inline-block font-body text-sm text-cream/60 hover:text-gold transition-colors mb-4 underline underline-offset-2"
+        >
+          Правила участия
+        </Link>
         
         <p className="font-body text-xs text-cream/40">
           © {new Date().getFullYear()} Все права защищены
