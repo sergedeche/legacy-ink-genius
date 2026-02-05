@@ -13,6 +13,7 @@ const Header = ({ onContactClick }: HeaderProps) => {
     { label: "Ключевые смыслы", href: "#insights" },
     { label: "Формат", href: "#format" },
     { label: "Благотворительность", href: "#charity" },
+    { label: "Бронирование", href: "#calendar" },
     { label: "Об авторе", href: "#author" },
   ];
 
