@@ -23,10 +23,11 @@ const AuthorSection = () => {
           {/* Image */}
           <div className="flex justify-center">
             <div 
-              className="relative w-64 h-80 md:w-80 md:h-96 rounded-lg overflow-hidden"
+              className="relative w-64 h-80 md:w-80 md:h-96 overflow-hidden"
               style={{ 
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                border: '2px solid hsl(38 70% 50% / 0.3)'
+                border: '2px solid hsl(38 70% 50% / 0.3)',
+                borderRadius: '1rem'
               }}
             >
               <img 
