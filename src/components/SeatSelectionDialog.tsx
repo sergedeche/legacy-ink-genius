@@ -84,7 +84,7 @@ const SeatSelectionDialog = ({ open, onOpenChange, event, onBookingComplete }: S
                   {event.available_seats}
                 </span>
                 <span 
-                  className="text-6xl font-display font-medium"
+                  className="text-4xl font-display font-medium"
                   style={{ color: 'hsl(35 20% 65%)' }}
                 >
                   из
@@ -98,7 +98,7 @@ const SeatSelectionDialog = ({ open, onOpenChange, event, onBookingComplete }: S
               </div>
               
               {/* Dots visualization - 2 rows of 10 */}
-              <div className="flex flex-col items-center gap-2">
+              <div className="flex flex-col items-center gap-3">
                 {/* First row - seats 1-10 */}
                 <div className="flex justify-center gap-2">
                   {Array.from({ length: 10 }).map((_, index) => {
