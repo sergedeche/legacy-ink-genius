@@ -209,6 +209,20 @@ const SeatSelectionDialog = ({ open, onOpenChange, event, onBookingComplete }: S
               </div>
             </div>
 
+            {/* Important note */}
+            <div 
+              className="p-4 rounded-lg text-center"
+              style={{ backgroundColor: 'hsl(38 70% 50% / 0.1)', border: '1px solid hsl(38 70% 50% / 0.3)' }}
+            >
+              <p className="text-sm font-medium mb-1" style={{ color: 'hsl(38 70% 50%)' }}>
+                ВАЖНО
+              </p>
+              <p className="text-xs leading-relaxed" style={{ color: 'hsl(35 20% 75%)' }}>
+                Оплата билета проходит на сайте благотворительного фонда «Жизнь как чудо». 
+                Информация есть ниже. Только после подтверждения пожертвования ваш билет будет доступен здесь.
+              </p>
+            </div>
+
             {/* Proceed Button */}
             <Button
               onClick={handleProceedToCheckout}
