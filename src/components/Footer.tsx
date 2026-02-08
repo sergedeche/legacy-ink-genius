@@ -23,12 +23,12 @@ const Footer = () => {
           </Link>
           <span className="text-cream/30">•</span>
           <a 
-            href="https://t.me/corphacker" 
+            href="https://t.me/corphacker?direct" 
             target="_blank" 
             rel="noopener noreferrer"
             className="font-body text-sm text-cream/60 hover:text-gold transition-colors underline underline-offset-2"
           >
-            Telegram-канал
+            Связаться с организатором
           </a>
         </div>
         
