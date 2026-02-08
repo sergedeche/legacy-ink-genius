@@ -1,4 +1,4 @@
-import authorImage from "@/assets/author-sergey.png";
+import authorImage from "@/assets/author-sergey.jpg";
 
 const AuthorSection = () => {
   const achievements = [
