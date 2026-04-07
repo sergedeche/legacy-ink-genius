@@ -27,8 +27,8 @@ const Index = () => {
       <Header onContactClick={() => setTelegramOpen(true)} />
       <HeroSection onBookingClick={handleBookingClick} />
       <AboutSection />
-      <KeyInsightsSection />
       <UniqueFormatSection />
+      <KeyInsightsSection />
       <CharitySection onContactClick={() => setTelegramOpen(true)} />
       <EventCalendarSection />
       <AuthorSection />
