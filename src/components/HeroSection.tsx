@@ -10,6 +10,10 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
   const isMobile = useIsMobile();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  useScrollVideo(videoRef, containerRef);
 
   // Mobile layout: text overlaid on image with cloud backdrop
   if (isMobile) {
