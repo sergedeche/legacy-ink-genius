@@ -93,7 +93,6 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
           muted
           playsInline
           preload="auto"
-          poster={heroBg}
         />
         
         {/* Content with compact backdrop */}
