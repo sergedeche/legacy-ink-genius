@@ -31,6 +31,7 @@ const Index = () => {
       <UniqueFormatSection />
       <KeyInsightsSection />
       <CharitySection onContactClick={() => setTelegramOpen(true)} />
+      <PartnersSection />
       <EventCalendarSection />
       <AuthorSection />
       <Footer />
