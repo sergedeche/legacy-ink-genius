@@ -1,6 +1,8 @@
+import { useRef } from "react";
 import heroBg from "@/assets/hero-bg.png";
 import heroMobile from "@/assets/hero-mobile.png";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useScrollVideo } from "@/hooks/useScrollVideo";
 
 interface HeroSectionProps {
   onBookingClick: () => void;
@@ -8,6 +10,10 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
   const isMobile = useIsMobile();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  useScrollVideo(videoRef, containerRef);
 
   // Mobile layout: text overlaid on image with cloud backdrop
   if (isMobile) {
@@ -74,52 +80,60 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
     );
   }
 
-  // Desktop layout: original overlay style
+  // Desktop layout: scroll-driven video
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroBg})` }}
-      />
-      
-      {/* Content with compact backdrop */}
-      <div className="relative z-10 text-center px-4 py-6 max-w-xl mx-auto animate-fade-in">
-        {/* Semi-transparent card backdrop */}
-        <div className="absolute inset-0 bg-cream/75 backdrop-blur-sm border border-gold/20 shadow-elegant -z-10" style={{ borderRadius: '2rem' }} />
+    <section ref={containerRef} className="relative" style={{ height: '300vh' }}>
+      {/* Sticky viewport */}
+      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+        {/* Video Background */}
+        <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full object-cover"
+          src="/hero-video.mp4"
+          muted
+          playsInline
+          preload="auto"
+          poster={heroBg}
+        />
         
-        <div className="px-8 py-8">
-          <p className="font-display text-base tracking-[0.2em] uppercase text-gold-dark mb-2 opacity-0 animate-fade-up">
-            Интеллектуальный экскурс:
-          </p>
+        {/* Content with compact backdrop */}
+        <div className="relative z-10 text-center px-4 py-6 max-w-xl mx-auto animate-fade-in">
+          {/* Semi-transparent card backdrop */}
+          <div className="absolute inset-0 bg-cream/75 backdrop-blur-sm border border-gold/20 shadow-elegant -z-10" style={{ borderRadius: '2rem' }} />
           
-          <h1 className="font-display text-5xl font-medium tracking-wide text-sepia mb-2 opacity-0 animate-fade-up delay-100">
-            Стратегия Наследия
-          </h1>
-          
-          <p className="font-display text-lg italic text-sepia-light mb-2 opacity-0 animate-fade-up delay-200">
-            Наследие прошлого — стратегии будущего
-          </p>
-          
-          <div className="w-12 h-px bg-gold/50 mx-auto my-4 opacity-0 animate-fade-up delay-200" />
-          
-          <p className="font-body text-sm text-muted-foreground max-w-md mx-auto mb-5 opacity-0 animate-fade-up delay-300">
-            Формат для тех, кто готов создавать историю,
-            <br />а не просто управлять бизнесом.
-          </p>
-          
-          <button 
-            onClick={onBookingClick}
-            className="btn-heritage text-sm px-6 py-3 opacity-0 animate-fade-up delay-400"
-          >
-            Забронировать место
-          </button>
+          <div className="px-8 py-8">
+            <p className="font-display text-base tracking-[0.2em] uppercase text-gold-dark mb-2 opacity-0 animate-fade-up">
+              Интеллектуальный экскурс:
+            </p>
+            
+            <h1 className="font-display text-5xl font-medium tracking-wide text-sepia mb-2 opacity-0 animate-fade-up delay-100">
+              Стратегия Наследия
+            </h1>
+            
+            <p className="font-display text-lg italic text-sepia-light mb-2 opacity-0 animate-fade-up delay-200">
+              Наследие прошлого — стратегии будущего
+            </p>
+            
+            <div className="w-12 h-px bg-gold/50 mx-auto my-4 opacity-0 animate-fade-up delay-200" />
+            
+            <p className="font-body text-sm text-muted-foreground max-w-md mx-auto mb-5 opacity-0 animate-fade-up delay-300">
+              Формат для тех, кто готов создавать историю,
+              <br />а не просто управлять бизнесом.
+            </p>
+            
+            <button 
+              onClick={onBookingClick}
+              className="btn-heritage text-sm px-6 py-3 opacity-0 animate-fade-up delay-400"
+            >
+              Забронировать место
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
-        <div className="w-px h-16 bg-gradient-to-b from-gold to-transparent" />
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
+          <div className="w-px h-16 bg-gradient-to-b from-gold to-transparent" />
+        </div>
       </div>
     </section>
   );
