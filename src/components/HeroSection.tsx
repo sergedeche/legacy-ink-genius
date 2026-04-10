@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import heroBg from "@/assets/hero-bg.png";
 import heroMobile from "@/assets/hero-mobile.png";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useScrollVideo } from "@/hooks/useScrollVideo";

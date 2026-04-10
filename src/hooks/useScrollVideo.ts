@@ -10,37 +10,47 @@ export function useScrollVideo(
     if (!video || !container) return;
 
     let ticking = false;
+    let frameId = 0;
 
-    const onScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const rect = container.getBoundingClientRect();
-          const scrollableDistance = container.offsetHeight - window.innerHeight;
-          
-          if (scrollableDistance <= 0) {
-            ticking = false;
-            return;
-          }
+    const updateFrame = () => {
+      const rect = container.getBoundingClientRect();
+      const scrollableDistance = container.offsetHeight - window.innerHeight;
 
-          // progress 0→1 as container scrolls through
-          const progress = Math.min(
-            Math.max(0, -rect.top / scrollableDistance),
-            1
-          );
+      if (scrollableDistance > 0 && video.readyState >= 1 && isFinite(video.duration)) {
+        const progress = Math.min(
+          Math.max(0, -rect.top / scrollableDistance),
+          1
+        );
+        const targetTime = progress * video.duration;
 
-          if (video.duration && isFinite(video.duration)) {
-            video.currentTime = progress * video.duration;
-          }
-
-          ticking = false;
-        });
-        ticking = true;
+        if (Math.abs(video.currentTime - targetTime) > 0.016) {
+          video.currentTime = targetTime;
+        }
       }
+
+      ticking = false;
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll(); // initial position
+    const requestFrameUpdate = () => {
+      if (ticking) return;
+      ticking = true;
+      frameId = requestAnimationFrame(updateFrame);
+    };
 
-    return () => window.removeEventListener("scroll", onScroll);
+    video.pause();
+
+    window.addEventListener("scroll", requestFrameUpdate, { passive: true });
+    window.addEventListener("resize", requestFrameUpdate);
+    video.addEventListener("loadedmetadata", requestFrameUpdate);
+    video.addEventListener("loadeddata", requestFrameUpdate);
+    requestFrameUpdate();
+
+    return () => {
+      window.removeEventListener("scroll", requestFrameUpdate);
+      window.removeEventListener("resize", requestFrameUpdate);
+      video.removeEventListener("loadedmetadata", requestFrameUpdate);
+      video.removeEventListener("loadeddata", requestFrameUpdate);
+      cancelAnimationFrame(frameId);
+    };
   }, [videoRef, containerRef]);
 }
