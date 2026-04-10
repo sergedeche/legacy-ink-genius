@@ -140,7 +140,6 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
 };
 
 export default HeroSection;
-      {/* Content with compact backdrop */}
       <div className="relative z-10 text-center px-4 py-6 max-w-xl mx-auto animate-fade-in">
         {/* Semi-transparent card backdrop */}
         <div className="absolute inset-0 bg-cream/75 backdrop-blur-sm border border-gold/20 shadow-elegant -z-10" style={{ borderRadius: '2rem' }} />
