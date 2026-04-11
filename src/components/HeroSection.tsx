@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import heroMobile from "@/assets/hero-mobile.png";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useScrollVideo } from "@/hooks/useScrollVideo";
+import { useScrollFrames } from "@/hooks/useScrollFrames";
 
 interface HeroSectionProps {
   onBookingClick: () => void;
@@ -9,10 +9,9 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
   const isMobile = useIsMobile();
-  const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  useScrollVideo(videoRef, containerRef);
+  const currentFrameSrc = useScrollFrames(containerRef);
 
   // Mobile layout: text overlaid on image with cloud backdrop
   if (isMobile) {
@@ -79,19 +78,15 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
     );
   }
 
-  // Desktop layout: scroll-driven video
+  // Desktop layout: scroll-driven frame sequence
   return (
-    <section ref={containerRef} className="relative" style={{ height: '300vh' }}>
+    <section ref={containerRef} className="relative" style={{ height: '200vh' }}>
       {/* Sticky viewport */}
       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
-        {/* Video Background */}
-        <video
-          ref={videoRef}
-          className="absolute inset-0 w-full h-full object-cover"
-          src="/hero-video.mp4"
-          muted
-          playsInline
-          preload="auto"
+        {/* Frame Background */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-none"
+          style={{ backgroundImage: `url(${currentFrameSrc})` }}
         />
         
         {/* Content with compact backdrop */}
