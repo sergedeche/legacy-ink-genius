@@ -146,7 +146,7 @@ const CheckoutDialog = ({
                 }}
               />
               <p className="text-xs" style={{ color: 'hsl(38 70% 50%)' }}>
-                ⚠️ Важно: при пожертвовании укажите имя в формате "<strong>{guestName.trim().split(/\s+/)[0] || 'Имя'} {guestName.trim().split(/\s+/)[1]?.charAt(0).toUpperCase() || 'Ф'}.</strong>" (Имя + первая буква фамилии)
+                ⚠️ Введите имя и фамилию — так же, как укажете при пожертвовании
               </p>
             </div>
 
