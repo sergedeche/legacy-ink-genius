@@ -48,14 +48,18 @@ const TicketDialog = ({
 
     setSendingEmail(true);
     try {
-      const { data, error } = await supabase.functions.invoke('send-ticket-email', {
+      const { data, error } = await supabase.functions.invoke('send-transactional-email', {
         body: {
-          email,
-          ticket_code: ticketCode,
-          guest_name: guestName,
-          event_title: eventTitle,
-          event_date: eventDate,
-          seats_count: seatsCount,
+          templateName: 'ticket-confirmation',
+          recipientEmail: email,
+          idempotencyKey: `ticket-${ticketCode}-${email}`,
+          templateData: {
+            guest_name: guestName,
+            ticket_code: ticketCode,
+            event_title: eventTitle,
+            event_date: eventDate,
+            seats_count: seatsCount,
+          },
         }
       });
 
