@@ -190,10 +190,11 @@ const CheckoutDialog = ({
             >
               <p className="font-medium" style={{ color: 'hsl(38 70% 50%)' }}>Как это работает:</p>
               <ol className="list-decimal list-inside space-y-1 text-xs">
-                <li>Нажмите "Оплатить" — откроется страница Эстафеты Чудес</li>
+                <li>Нажмите «Оплатить» — откроется страница Эстафеты Чудес</li>
                 <li>Сделайте пожертвование на сумму {totalAmount} ₽</li>
-                <li>Укажите имя: <strong>{guestName.trim().split(/\s+/)[0] || 'Имя'} {guestName.trim().split(/\s+/)[1]?.charAt(0).toUpperCase() || 'Ф'}.</strong> (Имя + первая буква фамилии)</li>
+                <li>Укажите своё имя и фамилию</li>
                 <li>Вернитесь сюда — система автоматически подтвердит оплату</li>
+                <li>После подтверждения вы сможете указать email для получения билета</li>
               </ol>
             </div>
 
