@@ -112,29 +112,33 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate email format
+    // Validate email format only if a real email was provided
     const trimmedEmail = guest_email.trim().toLowerCase();
-    if (!isValidEmail(trimmedEmail)) {
+    const isPlaceholderEmail = trimmedEmail === 'pending@placeholder.local';
+    
+    if (!isPlaceholderEmail && !isValidEmail(trimmedEmail)) {
       return new Response(
         JSON.stringify({ success: false, error: 'Некорректный формат email' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Email-based rate limiting (harder to bypass than IP)
-    const { data: emailRateLimitOk, error: emailRateLimitError } = await supabase
-      .rpc('check_email_rate_limit', { p_email: trimmedEmail });
+    // Email-based rate limiting (skip for placeholder)
+    if (!isPlaceholderEmail) {
+      const { data: emailRateLimitOk, error: emailRateLimitError } = await supabase
+        .rpc('check_email_rate_limit', { p_email: trimmedEmail });
 
-    if (emailRateLimitError) {
-      console.error('Email rate limit check error:', emailRateLimitError);
-    } else if (!emailRateLimitOk) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'Слишком много бронирований с этого email. Попробуйте через час.' 
-        }),
-        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      if (emailRateLimitError) {
+        console.error('Email rate limit check error:', emailRateLimitError);
+      } else if (!emailRateLimitOk) {
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: 'Слишком много бронирований с этого email. Попробуйте через час.' 
+          }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     // Validate and sanitize name
