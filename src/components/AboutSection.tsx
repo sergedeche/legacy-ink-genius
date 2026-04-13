@@ -1,4 +1,4 @@
-import aboutBg from "@/assets/about-bg.png";
+import aboutBg from "@/assets/about-bg.webp";
 
 const AboutSection = () => {
   return (

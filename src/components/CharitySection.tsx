@@ -94,6 +94,10 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
             <img 
               src={charityLogo} 
               alt="Жизнь как чудо" 
+              loading="lazy"
+              decoding="async"
+              width={180}
+              height={180}
               className="w-40 md:w-[180px] h-auto"
             />
           </div>

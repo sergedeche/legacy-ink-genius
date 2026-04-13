@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import formatIconTouch from "@/assets/format-icon-touch-transparent.png";
-import formatIconClosed from "@/assets/format-icon-closed-transparent.png";
-import formatIconLimited from "@/assets/format-icon-limited-transparent.png";
-import formatIconTea from "@/assets/format-icon-tea.png";
-import formatBg from "@/assets/format-bg.png";
+import formatIconTouch from "@/assets/format-icon-touch-transparent.webp";
+import formatIconClosed from "@/assets/format-icon-closed-transparent.webp";
+import formatIconLimited from "@/assets/format-icon-limited-transparent.webp";
+import formatIconTea from "@/assets/format-icon-tea.webp";
+import formatBg from "@/assets/format-bg.webp";
 
 interface FormatFeatureProps {
   image: string;
@@ -20,6 +20,8 @@ const FormatFeature = ({ image, title, description, scale = "scale-[1.12]" }: Fo
         <img 
           src={image} 
           alt={title}
+          loading="lazy"
+          decoding="async"
           className={`w-full h-full object-cover ${scale} mix-blend-multiply`}
         />
       </div>

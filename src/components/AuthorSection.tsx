@@ -1,4 +1,4 @@
-import authorImage from "@/assets/author-sergey.jpg";
+import authorImage from "@/assets/author-sergey.webp";
 
 const AuthorSection = () => {
   const achievements = [
@@ -33,6 +33,8 @@ const AuthorSection = () => {
               <img 
                 src={authorImage} 
                 alt="Сергей Черненко" 
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover object-top"
               />
             </div>
