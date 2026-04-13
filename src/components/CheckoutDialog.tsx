@@ -102,7 +102,7 @@ const CheckoutDialog = ({
   const handleClose = () => {
     if (!loading) {
       setGuestName("");
-      setGuestEmail("");
+      setGuestName("");
       setError(null);
       onOpenChange(false);
     }
