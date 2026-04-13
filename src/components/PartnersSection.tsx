@@ -32,7 +32,6 @@ const PartnerCard = ({ partner }: { partner: Partner }) => (
         className="w-full h-full object-cover !rounded-none"
       />
     </div>
-    <h3 className="font-display text-2xl md:text-3xl mb-3 text-foreground">{partner.name}</h3>
     <p className="font-body text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-line">
       {partner.description}
     </p>
