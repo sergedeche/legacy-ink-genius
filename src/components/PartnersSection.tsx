@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import React from "react";
 
 interface Partner {
   name: string;
@@ -33,8 +33,6 @@ const PartnerCard = ({ partner }: { partner: Partner }) => (
 );
 
 const PartnersSection = () => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     const container = scrollRef.current;
