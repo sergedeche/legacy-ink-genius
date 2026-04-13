@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import heroMobile from "@/assets/hero-mobile.png";
+import heroDesktop from "@/assets/hero-desktop.png";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useScrollFrames } from "@/hooks/useScrollFrames";
 
 interface HeroSectionProps {
   onBookingClick: () => void;
@@ -9,9 +9,6 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
   const isMobile = useIsMobile();
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  const currentFrameSrc = useScrollFrames(containerRef);
 
   // Mobile layout: text overlaid on image with cloud backdrop
   if (isMobile) {
@@ -23,9 +20,8 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
           style={{ backgroundImage: `url(${heroMobile})` }}
         />
         
-        {/* Text content with cloud backdrop - top visible, bottom fully transparent */}
+        {/* Text content with cloud backdrop */}
         <div className="relative z-10 text-center mx-6 animate-fade-in">
-          {/* Cloud backdrop - visible at top, fades to 100% transparent at bottom */}
           <div 
             className="absolute inset-0 -z-20"
             style={{
@@ -57,7 +53,7 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
           </div>
         </div>
         
-        {/* Button with its own backdrop - positioned lower */}
+        {/* Button */}
         <div className="relative z-10 mt-10 animate-fade-in">
           <button 
             onClick={onBookingClick}
@@ -78,54 +74,57 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
     );
   }
 
-  // Desktop layout: scroll-driven frame sequence
+  // Desktop layout: static hero image with text at bottom
   return (
-    <section ref={containerRef} className="relative" style={{ height: '200vh' }}>
-      {/* Sticky viewport */}
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
-        {/* Frame Background */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-none"
-          style={{ backgroundImage: `url(${currentFrameSrc})` }}
-        />
-        
-        {/* Content with compact backdrop */}
-        <div className="relative z-10 text-center px-4 py-6 max-w-xl mx-auto animate-fade-in">
-          {/* Semi-transparent card backdrop */}
-          <div className="absolute inset-0 bg-cream/75 backdrop-blur-sm border border-gold/20 shadow-elegant -z-10" style={{ borderRadius: '2rem' }} />
-          
-          <div className="px-8 py-8">
-            <p className="font-display text-base tracking-[0.2em] uppercase text-gold-dark mb-2 opacity-0 animate-fade-up">
-              Интеллектуальный экскурс:
-            </p>
-            
-            <h1 className="font-display text-5xl font-medium tracking-wide text-sepia mb-2 opacity-0 animate-fade-up delay-100">
-              Стратегия Наследия
-            </h1>
-            
-            <p className="font-display text-lg italic text-sepia-light mb-2 opacity-0 animate-fade-up delay-200">
-              Наследие прошлого — стратегии будущего
-            </p>
-            
-            <div className="w-12 h-px bg-gold/50 mx-auto my-4 opacity-0 animate-fade-up delay-200" />
-            
-            <p className="font-body text-sm text-muted-foreground max-w-md mx-auto mb-5 opacity-0 animate-fade-up delay-300">
-              Формат для тех, кто готов создавать историю,
-              <br />а не просто управлять бизнесом.
-            </p>
-            
-            <button 
-              onClick={onBookingClick}
-              className="btn-heritage text-sm px-6 py-3 opacity-0 animate-fade-up delay-400"
-            >
-              Забронировать место
-            </button>
-          </div>
-        </div>
+    <section className="relative h-screen overflow-hidden">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${heroDesktop})` }}
+      />
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
-          <div className="w-px h-16 bg-gradient-to-b from-gold to-transparent" />
+      {/* Content overlay — pinned to bottom, 80% width */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[80%] z-10 animate-fade-in">
+        <div className="relative px-10 py-8">
+          {/* Semi-transparent backdrop */}
+          <div
+            className="absolute inset-0 bg-cream/75 backdrop-blur-sm border border-gold/20 shadow-elegant -z-10"
+            style={{ borderRadius: '2rem' }}
+          />
+
+          <div className="flex items-center justify-between gap-8">
+            {/* Left: titles */}
+            <div className="flex-1">
+              <p className="font-display text-base tracking-[0.2em] uppercase text-gold-dark mb-1 opacity-0 animate-fade-up">
+                Интеллектуальный экскурс:
+              </p>
+              <h1 className="font-display text-5xl font-medium tracking-wide text-sepia opacity-0 animate-fade-up delay-100">
+                Стратегия Наследия
+              </h1>
+            </div>
+
+            {/* Center: divider + subtitle */}
+            <div className="flex-1 text-center">
+              <p className="font-display text-lg italic text-sepia-light opacity-0 animate-fade-up delay-200">
+                Наследие прошлого — стратегии будущего
+              </p>
+              <div className="w-12 h-px bg-gold/50 mx-auto mt-3 opacity-0 animate-fade-up delay-200" />
+              <p className="font-body text-sm text-muted-foreground mt-3 opacity-0 animate-fade-up delay-300">
+                Формат для тех, кто готов создавать историю,
+                <br />а не просто управлять бизнесом.
+              </p>
+            </div>
+
+            {/* Right: CTA */}
+            <div className="flex-shrink-0 opacity-0 animate-fade-up delay-400">
+              <button
+                onClick={onBookingClick}
+                className="btn-heritage text-sm px-6 py-3"
+              >
+                Забронировать место
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
