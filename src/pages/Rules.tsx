@@ -3,12 +3,13 @@ import { ArrowLeft } from "lucide-react";
 
 const Rules = () => {
   return (
-    <main className="min-h-screen bg-heritage-dark">
+    <main className="min-h-screen" style={{ backgroundColor: 'hsl(25 20% 10%)' }}>
       <div className="container mx-auto px-4 md:px-8 py-12 md:py-20">
         {/* Back link */}
         <Link 
           to="/" 
-          className="inline-flex items-center gap-2 text-gold hover:text-gold-light transition-colors mb-8"
+          className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity mb-8"
+          style={{ color: 'hsl(38 70% 50%)' }}
         >
           <ArrowLeft className="w-4 h-4" />
           <span className="font-display text-sm tracking-wide">Вернуться на главную</span>
@@ -16,15 +17,15 @@ const Rules = () => {
 
         {/* Content */}
         <article className="max-w-3xl mx-auto">
-          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl text-gold tracking-wide mb-4">
+          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl tracking-wide mb-4" style={{ color: 'hsl(38 70% 50%)' }}>
             Правила участия в интеллектуальном экскурсе
           </h1>
           
-          <h2 className="font-display text-xl md:text-2xl text-cream mb-8">
+          <h2 className="font-display text-xl md:text-2xl mb-8" style={{ color: 'hsl(35 25% 95%)' }}>
             «Стратегия наследия»
           </h2>
 
-          <div className="prose prose-invert max-w-none space-y-8 text-cream/80 font-body">
+          <div className="prose max-w-none space-y-8 font-body" style={{ color: 'hsl(35 20% 75%)' }}>
             <p className="text-base md:text-lg leading-relaxed">
               Интеллектуальный экскурс «Стратегия наследия» является авторским некоммерческим мероприятием, 
               проводимым в формате личной инициативы автора.
