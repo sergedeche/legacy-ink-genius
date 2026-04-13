@@ -1,22 +1,22 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import AboutSection from "@/components/AboutSection";
-import KeyInsightsSection from "@/components/KeyInsightsSection";
-import UniqueFormatSection from "@/components/UniqueFormatSection";
-import EventCalendarSection from "@/components/EventCalendarSection";
-import AuthorSection from "@/components/AuthorSection";
-import CharitySection from "@/components/CharitySection";
-import PartnersSection from "@/components/PartnersSection";
-import Footer from "@/components/Footer";
-import TelegramDialog from "@/components/TelegramDialog";
-import SavedTicketButton from "@/components/SavedTicketButton";
+
+const AboutSection = lazy(() => import("@/components/AboutSection"));
+const KeyInsightsSection = lazy(() => import("@/components/KeyInsightsSection"));
+const UniqueFormatSection = lazy(() => import("@/components/UniqueFormatSection"));
+const EventCalendarSection = lazy(() => import("@/components/EventCalendarSection"));
+const AuthorSection = lazy(() => import("@/components/AuthorSection"));
+const CharitySection = lazy(() => import("@/components/CharitySection"));
+const PartnersSection = lazy(() => import("@/components/PartnersSection"));
+const Footer = lazy(() => import("@/components/Footer"));
+const TelegramDialog = lazy(() => import("@/components/TelegramDialog"));
+const SavedTicketButton = lazy(() => import("@/components/SavedTicketButton"));
 
 const Index = () => {
   const [telegramOpen, setTelegramOpen] = useState(false);
   
   const handleBookingClick = () => {
-    // Scroll to calendar section
     const calendarSection = document.getElementById('calendar');
     if (calendarSection) {
       calendarSection.scrollIntoView({ behavior: 'smooth' });
@@ -27,16 +27,18 @@ const Index = () => {
     <main className="min-h-screen">
       <Header onContactClick={() => setTelegramOpen(true)} />
       <HeroSection onBookingClick={handleBookingClick} />
-      <AboutSection />
-      <UniqueFormatSection />
-      <KeyInsightsSection />
-      <CharitySection onContactClick={() => setTelegramOpen(true)} />
-      <PartnersSection />
-      <EventCalendarSection />
-      <AuthorSection />
-      <Footer />
-      <TelegramDialog open={telegramOpen} onOpenChange={setTelegramOpen} />
-      <SavedTicketButton />
+      <Suspense fallback={null}>
+        <AboutSection />
+        <UniqueFormatSection />
+        <KeyInsightsSection />
+        <CharitySection onContactClick={() => setTelegramOpen(true)} />
+        <PartnersSection />
+        <EventCalendarSection />
+        <AuthorSection />
+        <Footer />
+        <TelegramDialog open={telegramOpen} onOpenChange={setTelegramOpen} />
+        <SavedTicketButton />
+      </Suspense>
     </main>
   );
 };
