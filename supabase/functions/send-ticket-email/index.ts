@@ -126,7 +126,7 @@ serve(async (req) => {
           "Authorization": `Bearer ${resendApiKey}`,
         },
         body: JSON.stringify({
-          from: "Стратегия наследия <tickets@updates.lovable.app>",
+          from: "Стратегия наследия <onboarding@resend.dev>",
           to: [email],
           subject: `🎫 Ваш билет: ${event_title}`,
           html: emailHtml,
