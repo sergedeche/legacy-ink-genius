@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 import savvaLogo from "@/assets/partner-savva.jpeg";
 import kulturaDoma from "@/assets/partner-kultura-doma.png";
 
@@ -24,7 +24,7 @@ const partners: Partner[] = [
 ];
 
 const PartnerCard = ({ partner }: { partner: Partner }) => (
-  <div className="flex flex-col items-center text-center p-6 md:p-8">
+  <div className="flex flex-col items-center text-center p-6 md:p-8 min-w-[85vw] md:min-w-0 snap-center">
     <div className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden mb-5 border border-border">
       <img
         src={partner.logo}
@@ -39,16 +39,58 @@ const PartnerCard = ({ partner }: { partner: Partner }) => (
 );
 
 const PartnersSection = () => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const onScroll = () => {
+      const scrollLeft = container.scrollLeft;
+      const width = container.clientWidth;
+      setActiveIndex(Math.round(scrollLeft / width));
+    };
+    container.addEventListener("scroll", onScroll, { passive: true });
+    return () => container.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <section id="partners" className="py-8 md:py-12 px-6 bg-background">
       <div className="max-w-5xl mx-auto">
         <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-center mb-8 md:mb-12 text-foreground">
           Партнёры мероприятия
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {/* Desktop grid */}
+        <div className="hidden md:grid grid-cols-2 gap-6">
           {partners.map((p) => (
             <PartnerCard key={p.name} partner={p} />
           ))}
+        </div>
+
+        {/* Mobile swipe */}
+        <div className="md:hidden">
+          <div
+            ref={scrollRef}
+            className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-4"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
+          >
+            {partners.map((p) => (
+              <PartnerCard key={p.name} partner={p} />
+            ))}
+          </div>
+          {/* Dots */}
+          <div className="flex justify-center gap-2 mt-4">
+            {partners.map((_, i) => (
+              <div
+                key={i}
+                className="w-2 h-2 rounded-full transition-colors duration-300"
+                style={{
+                  backgroundColor: i === activeIndex ? 'hsl(var(--gold))' : 'hsl(var(--border))',
+                }}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
