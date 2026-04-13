@@ -217,6 +217,11 @@ const EventCalendarSection = () => {
                 <h3 className="font-display text-2xl md:text-3xl lg:text-4xl" style={{ color: 'hsl(35 25% 95%)' }}>
                   {nextEvent.title}
                 </h3>
+                {nextEvent.description && (
+                  <p className="font-body text-sm" style={{ color: 'hsl(35 20% 65%)' }}>
+                    {nextEvent.description}
+                  </p>
+                )}
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3" style={{ color: 'hsl(35 20% 75%)' }}>
@@ -234,7 +239,9 @@ const EventCalendarSection = () => {
                   <div className="flex items-center gap-3" style={{ color: 'hsl(35 20% 75%)' }}>
                     <Users className="w-5 h-5" style={{ color: 'hsl(38 70% 50%)' }} />
                     <span className="font-display text-lg">
-                      {nextEvent.available_seats} из {nextEvent.total_seats} мест свободно
+                      {nextEvent.available_seats > 0 
+                        ? `${nextEvent.available_seats} из ${nextEvent.total_seats} мест свободно`
+                        : 'Все места заняты'}
                     </span>
                   </div>
                 </div>
