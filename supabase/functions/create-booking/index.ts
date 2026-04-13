@@ -89,13 +89,15 @@ Deno.serve(async (req) => {
       );
     }
 
-    const body: BookingRequest = await req.json();
-    const { event_id, guest_name, guest_email, seats_count } = body;
+    const body = await req.json();
+    const { event_id, guest_name, seats_count } = body;
+    // Email is now optional at booking time — collected after payment verification
+    const guest_email = body.guest_email || 'pending@placeholder.local';
 
     console.log('Creating booking:', { event_id, guest_name: '[REDACTED]', guest_email: '[REDACTED]', seats_count });
 
     // Comprehensive input validation
-    if (!event_id || !guest_name || !guest_email || seats_count === undefined) {
+    if (!event_id || !guest_name || seats_count === undefined) {
       return new Response(
         JSON.stringify({ success: false, error: 'Заполните все обязательные поля' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
