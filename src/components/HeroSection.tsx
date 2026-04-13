@@ -83,6 +83,22 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
         style={{ backgroundImage: `url(${heroDesktop})` }}
       />
 
+      {/* CTA button — top left with pulsing effect */}
+      <div className="absolute top-24 left-8 z-10 opacity-0 animate-fade-up delay-400">
+        <button
+          onClick={onBookingClick}
+          className="relative btn-heritage text-xs px-6 py-2.5 pulse"
+          style={{
+            background: 'hsl(40 35% 93% / 0.8)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            border: '1px solid hsl(38 70% 50% / 0.3)',
+          }}
+        >
+          Забронировать место
+        </button>
+      </div>
+
       {/* Content overlay — pinned to bottom, 80% width */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[80%] z-10 animate-fade-in">
         <div className="relative px-10 py-4">
@@ -107,16 +123,6 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
               Формат для тех, кто готов создавать историю, а не просто управлять бизнесом.
             </p>
           </div>
-        </div>
-
-        {/* CTA button — immediately below */}
-        <div className="flex justify-center mt-2 opacity-0 animate-fade-up delay-400">
-          <button
-            onClick={onBookingClick}
-            className="btn-heritage text-xs px-6 py-2.5"
-          >
-            Забронировать место
-          </button>
         </div>
       </div>
     </section>
