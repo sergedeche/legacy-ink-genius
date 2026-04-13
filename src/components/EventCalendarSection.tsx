@@ -209,63 +209,61 @@ const EventCalendarSection = () => {
               <div className="text-center" style={{ color: 'hsl(35 20% 65%)' }}>
                 <div className="animate-pulse">Загрузка...</div>
               </div>
-            ) : nextEvent ? (
+            ) : events.length > 0 ? (
               <div className="space-y-6">
                 <p className="text-sm tracking-[0.2em] uppercase" style={{ color: 'hsl(38 70% 50%)' }}>
-                  Ближайший экскурс
+                  Расписание экскурсов
                 </p>
-                <h3 className="font-display text-2xl md:text-3xl lg:text-4xl" style={{ color: 'hsl(35 25% 95%)' }}>
-                  {nextEvent.title}
-                </h3>
-                {nextEvent.description && (
-                  <p className="font-body text-sm" style={{ color: 'hsl(35 20% 65%)' }}>
-                    {nextEvent.description}
-                  </p>
-                )}
-                
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3" style={{ color: 'hsl(35 20% 75%)' }}>
-                    <Calendar className="w-5 h-5" style={{ color: 'hsl(38 70% 50%)' }} />
-                    <span className="font-display text-lg">
-                      {format(new Date(nextEvent.event_date), 'd MMMM yyyy', { locale: ru })}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3" style={{ color: 'hsl(35 20% 75%)' }}>
-                    <Clock className="w-5 h-5" style={{ color: 'hsl(38 70% 50%)' }} />
-                    <span className="font-display text-lg">
-                      {format(new Date(nextEvent.event_date), 'HH:mm', { locale: ru })}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3" style={{ color: 'hsl(35 20% 75%)' }}>
-                    <Users className="w-5 h-5" style={{ color: 'hsl(38 70% 50%)' }} />
-                    <span className="font-display text-lg">
-                      {nextEvent.available_seats > 0 
-                        ? `${nextEvent.available_seats} из ${nextEvent.total_seats} мест свободно`
-                        : 'Все места заняты'}
-                    </span>
-                  </div>
-                </div>
 
-                <div className="pt-4">
-                  <p className="text-2xl font-display mb-4" style={{ color: 'hsl(38 70% 50%)' }}>
-                    {nextEvent.price_per_seat} ₽ <span className="text-base" style={{ color: 'hsl(35 20% 65%)' }}>/ место</span>
-                  </p>
-                  
-                {nextEvent.available_seats > 0 ? (
-                    <button
-                      onClick={() => {
-                        setSelectedEvent(nextEvent);
-                        setSeatDialogOpen(true);
+                <div className="space-y-5">
+                  {events.map((event) => (
+                    <div
+                      key={event.id}
+                      className="p-4 rounded-lg"
+                      style={{
+                        backgroundColor: 'hsl(215 30% 15%)',
+                        border: '1px solid hsl(35 20% 25%)',
+                        opacity: event.available_seats === 0 ? 0.6 : 1,
                       }}
-                      className="btn-primary-heritage w-full md:w-auto text-sm md:text-base py-3 px-6 md:py-4 md:px-8"
                     >
-                      Забронировать место
-                    </button>
-                  ) : (
-                    <p className="text-lg font-display" style={{ color: 'hsl(0 0% 60%)' }}>
-                      Все места заняты
-                    </p>
-                  )}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
+                          <Calendar className="w-4 h-4 shrink-0" style={{ color: 'hsl(38 70% 50%)' }} />
+                          <span className="font-display text-base">
+                            {format(new Date(event.event_date), 'd MMMM yyyy', { locale: ru })}
+                          </span>
+                          <span className="font-display text-base ml-1">
+                            {format(new Date(event.event_date), 'HH:mm')}
+                          </span>
+                        </div>
+                        {event.description && event.description !== 'Мест нет' && (
+                          <div className="flex items-center gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
+                            <MapPin className="w-4 h-4 shrink-0" style={{ color: 'hsl(38 70% 50%)' }} />
+                            <span className="font-body text-sm">{event.description}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
+                          <Users className="w-4 h-4 shrink-0" style={{ color: 'hsl(38 70% 50%)' }} />
+                          <span className="font-body text-sm">
+                            {event.available_seats > 0
+                              ? `${event.available_seats} из ${event.total_seats} мест`
+                              : 'Все места заняты'}
+                          </span>
+                        </div>
+                      </div>
+                      {event.available_seats > 0 && (
+                        <button
+                          onClick={() => {
+                            setSelectedEvent(event);
+                            setSeatDialogOpen(true);
+                          }}
+                          className="btn-primary-heritage w-full text-xs py-2.5 px-4 mt-3"
+                        >
+                          Забронировать — {event.price_per_seat} ₽
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
             ) : (
