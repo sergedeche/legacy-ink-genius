@@ -151,34 +151,6 @@ const CheckoutDialog = ({
               </p>
             </div>
 
-            {/* Email Input */}
-            <div className="space-y-2">
-              <label 
-                htmlFor="email" 
-                className="text-sm font-medium flex items-center gap-2"
-                style={{ color: 'hsl(35 20% 75%)' }}
-              >
-                <Mail className="w-4 h-4" />
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={guestEmail}
-                onChange={(e) => setGuestEmail(e.target.value)}
-                placeholder="your@email.com"
-                required
-                className="h-12"
-                style={{ 
-                  backgroundColor: 'hsl(215 30% 12%)', 
-                  borderColor: 'hsl(215 30% 25%)',
-                  color: 'hsl(35 25% 95%)'
-                }}
-              />
-              <p className="text-xs" style={{ color: 'hsl(35 20% 65%)' }}>
-                На этот адрес будет отправлен билет
-              </p>
-            </div>
 
             {/* Summary */}
             <div 
