@@ -44,7 +44,7 @@ const CheckoutDialog = ({
   onBookingComplete 
 }: CheckoutDialogProps) => {
   const [guestName, setGuestName] = useState("");
-  const [guestEmail, setGuestEmail] = useState("");
+  const [guestEmail] = useState(""); // Email collected after payment now
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bookingId, setBookingId] = useState<string | null>(null);
