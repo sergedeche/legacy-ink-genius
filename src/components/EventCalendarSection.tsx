@@ -179,10 +179,10 @@ const EventCalendarSection = () => {
                     title={hasEvent ? `${event.title} - ${event.available_seats} мест` : undefined}
                   >
                     {format(day, 'd')}
-                    {hasEvent && !isPast && (
+                    {hasEvent && !isPast && !isSoldOut && (
                       <span
                         className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                        style={{ backgroundColor: isSoldOut ? 'hsl(0 0% 60%)' : 'hsl(25 20% 10%)' }}
+                        style={{ backgroundColor: 'hsl(25 20% 10%)' }}
                       />
                     )}
                   </button>
