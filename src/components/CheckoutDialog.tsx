@@ -66,7 +66,6 @@ const CheckoutDialog = ({
         body: {
           event_id: event.id,
           guest_name: guestName.trim(),
-          guest_email: guestEmail.trim(),
           seats_count: seatsCount,
         }
       });
