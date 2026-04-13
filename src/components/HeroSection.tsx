@@ -84,38 +84,36 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
       />
 
       {/* Content overlay — pinned to bottom, 80% width */}
-      {/* Content overlay — pinned to bottom, 80% width */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[80%] z-10 animate-fade-in">
-        <div className="relative px-10 py-8">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[80%] z-10 animate-fade-in">
+        <div className="relative px-10 py-4">
           {/* Semi-transparent backdrop */}
           <div
             className="absolute inset-0 bg-cream/75 backdrop-blur-sm border border-gold/20 shadow-elegant -z-10"
-            style={{ borderRadius: '2rem' }}
+            style={{ borderRadius: '1.5rem' }}
           />
 
-          <div className="flex flex-col items-center text-center gap-4">
-            <p className="font-display text-base tracking-[0.2em] uppercase text-gold-dark opacity-0 animate-fade-up">
+          <div className="flex flex-col items-center text-center gap-1.5">
+            <p className="font-display text-sm tracking-[0.2em] uppercase text-gold-dark opacity-0 animate-fade-up">
               Интеллектуальный экскурс:
             </p>
-            <h1 className="font-display text-5xl font-medium tracking-wide text-sepia opacity-0 animate-fade-up delay-100">
+            <h1 className="font-display text-4xl font-medium tracking-wide text-sepia opacity-0 animate-fade-up delay-100">
               Стратегия Наследия
             </h1>
-            <div className="w-12 h-px bg-gold/50 opacity-0 animate-fade-up delay-200" />
-            <p className="font-display text-lg italic text-sepia-light opacity-0 animate-fade-up delay-200">
+            <div className="w-10 h-px bg-gold/50 opacity-0 animate-fade-up delay-200" />
+            <p className="font-display text-base italic text-sepia-light opacity-0 animate-fade-up delay-200">
               Наследие прошлого — стратегии будущего
             </p>
-            <p className="font-body text-sm text-muted-foreground opacity-0 animate-fade-up delay-300">
-              Формат для тех, кто готов создавать историю,
-              а не просто управлять бизнесом.
+            <p className="font-body text-xs text-muted-foreground opacity-0 animate-fade-up delay-300">
+              Формат для тех, кто готов создавать историю, а не просто управлять бизнесом.
             </p>
           </div>
         </div>
 
-        {/* CTA button — separate, below the card */}
-        <div className="flex justify-center mt-5 opacity-0 animate-fade-up delay-400">
+        {/* CTA button — immediately below */}
+        <div className="flex justify-center mt-2 opacity-0 animate-fade-up delay-400">
           <button
             onClick={onBookingClick}
-            className="btn-heritage text-sm px-8 py-3"
+            className="btn-heritage text-xs px-6 py-2.5"
           >
             Забронировать место
           </button>
