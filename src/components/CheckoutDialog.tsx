@@ -101,7 +101,6 @@ const CheckoutDialog = ({
   const handleClose = () => {
     if (!loading) {
       setGuestName("");
-      setGuestName("");
       setError(null);
       onOpenChange(false);
     }
