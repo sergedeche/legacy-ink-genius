@@ -34,20 +34,6 @@ const PartnerCard = ({ partner }: { partner: Partner }) => (
 
 const PartnersSection = () => {
 
-  useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      const width = container.clientWidth;
-      setActiveIndex(Math.round(scrollLeft / width));
-    };
-
-    container.addEventListener("scroll", handleScroll, { passive: true });
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <section id="partners" className="py-8 md:py-12 px-6 bg-background">
       <div className="max-w-5xl mx-auto">
