@@ -109,17 +109,17 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
             style={{ borderRadius: '1.5rem' }}
           />
 
+          {/* Flourishes at edges */}
+          <img src={flourishRight} alt="" className="absolute left-6 top-1/2 -translate-y-1/2 w-28 h-auto -scale-x-100 opacity-0 animate-fade-up delay-100" />
+          <img src={flourishRight} alt="" className="absolute right-6 top-1/2 -translate-y-1/2 w-28 h-auto opacity-0 animate-fade-up delay-100" />
+
           <div className="flex flex-col items-center text-center gap-1.5">
             <p className="font-display text-sm tracking-[0.2em] uppercase text-gold-dark opacity-0 animate-fade-up">
               Интеллектуальный экскурс
             </p>
-            <div className="flex items-center gap-4 opacity-0 animate-fade-up delay-100">
-              <img src={flourishRight} alt="" className="w-24 h-auto -scale-x-100" />
-              <h1 className="font-display text-4xl font-medium tracking-wide text-sepia whitespace-nowrap">
-                Стратегия Наследия
-              </h1>
-              <img src={flourishRight} alt="" className="w-24 h-auto" />
-            </div>
+            <h1 className="font-display text-4xl font-medium tracking-wide text-sepia whitespace-nowrap opacity-0 animate-fade-up delay-100">
+              Стратегия Наследия
+            </h1>
             <div className="w-10 h-px bg-gold/50 opacity-0 animate-fade-up delay-200" />
             <p className="font-display text-base italic text-sepia-light opacity-0 animate-fade-up delay-200">
               Наследие прошлого — стратегии будущего
