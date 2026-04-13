@@ -25,15 +25,21 @@ function getSafeErrorMessage(error: unknown, context: string): string {
   return 'Произошла ошибка. Попробуйте позже.';
 }
 
-// Generate expected donor name format: "Имя П" from "Имя Фамилия"
-function getExpectedDonorName(fullName: string): string {
+// Generate expected donor name parts: first name and first letter of last name
+function getExpectedDonorParts(fullName: string): { firstName: string; initial: string } {
   const parts = fullName.trim().split(/\s+/);
   if (parts.length < 2) {
-    return parts[0] || '';
+    return { firstName: parts[0] || '', initial: '' };
   }
   const firstName = parts[0];
-  const lastNameInitial = parts[1].charAt(0).toUpperCase();
-  return `${firstName} ${lastNameInitial}`;
+  const initial = parts[1].charAt(0).toUpperCase();
+  return { firstName, initial };
+}
+
+// Legacy helper for logging
+function getExpectedDonorName(fullName: string): string {
+  const { firstName, initial } = getExpectedDonorParts(fullName);
+  return initial ? `${firstName} ${initial}` : firstName;
 }
 
 // Normalize name for comparison (remove extra spaces, lowercase)
