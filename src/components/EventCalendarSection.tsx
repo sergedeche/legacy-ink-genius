@@ -28,8 +28,24 @@ const EventCalendarSection = () => {
   const [seatDialogOpen, setSeatDialogOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
 
+  // Defer fetch until section is near viewport to shorten critical request chain
   useEffect(() => {
-    fetchEvents();
+    const section = document.getElementById('events');
+    if (!section) {
+      fetchEvents();
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          observer.disconnect();
+          fetchEvents();
+        }
+      },
+      { rootMargin: '400px' }
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
   }, []);
 
   const fetchEvents = async () => {
