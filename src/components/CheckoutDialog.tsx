@@ -61,10 +61,6 @@ const CheckoutDialog = ({
         throw new Error("Пожалуйста, введите ваше имя");
       }
 
-      if (!guestEmail.trim() || !guestEmail.includes("@")) {
-        throw new Error("Пожалуйста, введите корректный email");
-      }
-
       // Create booking
       const { data, error: bookingError } = await supabase.functions.invoke('create-booking', {
         body: {
