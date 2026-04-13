@@ -121,7 +121,6 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
           </button>
         </div>
       </div>
-      </div>
     </section>
   );
 };
