@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import heroMobile from "@/assets/hero-mobile.png";
-import heroDesktop from "@/assets/hero-desktop.png";
+import heroMobile from "@/assets/hero-mobile.webp";
+import heroDesktop from "@/assets/hero-desktop.webp";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface HeroSectionProps {
