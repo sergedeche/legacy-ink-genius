@@ -29,6 +29,8 @@ const PartnerCard = ({ partner }: { partner: Partner }) => (
       <img
         src={partner.logo}
         alt={partner.name}
+        loading="lazy"
+        decoding="async"
         className="w-full h-full object-cover !rounded-none"
       />
     </div>

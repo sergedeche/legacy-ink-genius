@@ -33,6 +33,8 @@ const AuthorSection = () => {
               <img 
                 src={authorImage} 
                 alt="Сергей Черненко" 
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover object-top"
               />
             </div>
