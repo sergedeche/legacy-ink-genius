@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
-import { User, Mail, AlertCircle, ExternalLink } from "lucide-react";
+import { User, AlertCircle, ExternalLink } from "lucide-react";
 import {
   Dialog,
   DialogContent,
