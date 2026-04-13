@@ -402,11 +402,21 @@ Deno.serve(async (req) => {
 
       const amountsMatch = donation.amount === expectedAmount;
       
-      // Match by expected format: "Имя П" (first name + first letter of last name)
-      const expectedNormalized = normalizeName(expectedDonorName);
-      const nameMatches = normalizedDonorName === expectedNormalized ||
-        normalizedDonorName.startsWith(expectedNormalized) ||
-        expectedNormalized.startsWith(normalizedDonorName);
+      // Fuzzy name matching: check that first name and initial are both present
+      // regardless of order, and ignoring extra parts like patronymic
+      const { firstName, initial } = getExpectedDonorParts(booking.guest_name);
+      const normalizedFirstName = normalizeName(firstName);
+      const normalizedInitial = initial.toLowerCase();
+      
+      // Split donor name into parts for flexible matching
+      const donorParts = normalizedDonorName.split(' ').filter(p => p.length > 0);
+      
+      // Check if first name appears in donor parts (exact or as start of a part)
+      const firstNameFound = donorParts.some(p => p === normalizedFirstName || p.startsWith(normalizedFirstName));
+      // Check if initial matches any part's first character
+      const initialFound = !normalizedInitial || donorParts.some(p => p.charAt(0) === normalizedInitial);
+      
+      const nameMatches = firstNameFound && initialFound;
       
       // CRITICAL: Only accept donations made AFTER the booking was created
       // This prevents using old donations for new bookings
