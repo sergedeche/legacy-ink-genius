@@ -18,12 +18,15 @@ interface Event {
   available_seats: number;
 }
 
+const INITIAL_VISIBLE_COUNT = 3;
+
 const EventCalendarSection = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [seatDialogOpen, setSeatDialogOpen] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     fetchEvents();
