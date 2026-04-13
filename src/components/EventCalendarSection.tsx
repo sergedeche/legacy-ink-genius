@@ -207,19 +207,14 @@ const EventCalendarSection = () => {
           </div>
 
           {/* Event Details */}
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col">
             {loading ? (
               <div className="text-center" style={{ color: 'hsl(35 20% 65%)' }}>
                 <div className="animate-pulse">Загрузка...</div>
               </div>
             ) : events.length > 0 ? (
-              <div className="space-y-6">
-                <p className="text-sm tracking-[0.2em] uppercase" style={{ color: 'hsl(38 70% 50%)' }}>
-                  Расписание экскурсов
-                </p>
-
-                <div className="space-y-5">
-                  {events.map((event) => (
+              <div className="space-y-4">
+                {(showAll ? events : events.slice(0, INITIAL_VISIBLE_COUNT)).map((event) => (
                     <div
                       key={event.id}
                       className="p-4 rounded-lg"
@@ -266,8 +261,20 @@ const EventCalendarSection = () => {
                         </button>
                       )}
                     </div>
-                  ))}
-                </div>
+                ))}
+                {events.length > INITIAL_VISIBLE_COUNT && !showAll && (
+                  <button
+                    onClick={() => setShowAll(true)}
+                    className="w-full py-2.5 rounded-lg text-sm font-medium transition-colors"
+                    style={{
+                      color: 'hsl(38 70% 50%)',
+                      border: '1px solid hsl(35 20% 30%)',
+                      backgroundColor: 'transparent',
+                    }}
+                  >
+                    Ещё {events.length - INITIAL_VISIBLE_COUNT} мероприятий
+                  </button>
+                )}
               </div>
             ) : (
               <div className="text-center" style={{ color: 'hsl(35 20% 65%)' }}>
