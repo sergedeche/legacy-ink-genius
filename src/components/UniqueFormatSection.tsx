@@ -20,6 +20,8 @@ const FormatFeature = ({ image, title, description, scale = "scale-[1.12]" }: Fo
         <img 
           src={image} 
           alt={title}
+          loading="lazy"
+          decoding="async"
           className={`w-full h-full object-cover ${scale} mix-blend-multiply`}
         />
       </div>
