@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
-import { User, Mail, AlertCircle, ExternalLink } from "lucide-react";
+import { User, AlertCircle, ExternalLink } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -44,7 +44,7 @@ const CheckoutDialog = ({
   onBookingComplete 
 }: CheckoutDialogProps) => {
   const [guestName, setGuestName] = useState("");
-  const [guestEmail, setGuestEmail] = useState("");
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bookingId, setBookingId] = useState<string | null>(null);
@@ -61,16 +61,11 @@ const CheckoutDialog = ({
         throw new Error("Пожалуйста, введите ваше имя");
       }
 
-      if (!guestEmail.trim() || !guestEmail.includes("@")) {
-        throw new Error("Пожалуйста, введите корректный email");
-      }
-
       // Create booking
       const { data, error: bookingError } = await supabase.functions.invoke('create-booking', {
         body: {
           event_id: event.id,
           guest_name: guestName.trim(),
-          guest_email: guestEmail.trim(),
           seats_count: seatsCount,
         }
       });
@@ -106,7 +101,6 @@ const CheckoutDialog = ({
   const handleClose = () => {
     if (!loading) {
       setGuestName("");
-      setGuestEmail("");
       setError(null);
       onOpenChange(false);
     }
@@ -151,38 +145,10 @@ const CheckoutDialog = ({
                 }}
               />
               <p className="text-xs" style={{ color: 'hsl(38 70% 50%)' }}>
-                ⚠️ Важно: при пожертвовании укажите имя в формате "<strong>{guestName.trim().split(/\s+/)[0] || 'Имя'} {guestName.trim().split(/\s+/)[1]?.charAt(0).toUpperCase() || 'Ф'}.</strong>" (Имя + первая буква фамилии)
+                ⚠️ Введите имя и фамилию — так же, как укажете при пожертвовании
               </p>
             </div>
 
-            {/* Email Input */}
-            <div className="space-y-2">
-              <label 
-                htmlFor="email" 
-                className="text-sm font-medium flex items-center gap-2"
-                style={{ color: 'hsl(35 20% 75%)' }}
-              >
-                <Mail className="w-4 h-4" />
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={guestEmail}
-                onChange={(e) => setGuestEmail(e.target.value)}
-                placeholder="your@email.com"
-                required
-                className="h-12"
-                style={{ 
-                  backgroundColor: 'hsl(215 30% 12%)', 
-                  borderColor: 'hsl(215 30% 25%)',
-                  color: 'hsl(35 25% 95%)'
-                }}
-              />
-              <p className="text-xs" style={{ color: 'hsl(35 20% 65%)' }}>
-                На этот адрес будет отправлен билет
-              </p>
-            </div>
 
             {/* Summary */}
             <div 
@@ -223,10 +189,11 @@ const CheckoutDialog = ({
             >
               <p className="font-medium" style={{ color: 'hsl(38 70% 50%)' }}>Как это работает:</p>
               <ol className="list-decimal list-inside space-y-1 text-xs">
-                <li>Нажмите "Оплатить" — откроется страница Эстафеты Чудес</li>
+                <li>Нажмите «Оплатить» — откроется страница Эстафеты Чудес</li>
                 <li>Сделайте пожертвование на сумму {totalAmount} ₽</li>
-                <li>Укажите имя: <strong>{guestName.trim().split(/\s+/)[0] || 'Имя'} {guestName.trim().split(/\s+/)[1]?.charAt(0).toUpperCase() || 'Ф'}.</strong> (Имя + первая буква фамилии)</li>
+                <li>Укажите своё имя и фамилию</li>
                 <li>Вернитесь сюда — система автоматически подтвердит оплату</li>
+                <li>После подтверждения вы сможете указать email для получения билета</li>
               </ol>
             </div>
 
