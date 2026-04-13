@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import heroMobile from "@/assets/hero-mobile.png";
 import heroDesktop from "@/assets/hero-desktop.png";
+import flourishRight from "@/assets/flourish-right.png";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface HeroSectionProps {
@@ -110,11 +111,15 @@ const HeroSection = ({ onBookingClick }: HeroSectionProps) => {
 
           <div className="flex flex-col items-center text-center gap-1.5">
             <p className="font-display text-sm tracking-[0.2em] uppercase text-gold-dark opacity-0 animate-fade-up">
-              Интеллектуальный экскурс:
+              Интеллектуальный экскурс
             </p>
-            <h1 className="font-display text-4xl font-medium tracking-wide text-sepia opacity-0 animate-fade-up delay-100">
-              Стратегия Наследия
-            </h1>
+            <div className="flex items-center gap-4 opacity-0 animate-fade-up delay-100">
+              <img src={flourishRight} alt="" className="w-24 h-auto -scale-x-100" />
+              <h1 className="font-display text-4xl font-medium tracking-wide text-sepia whitespace-nowrap">
+                Стратегия Наследия
+              </h1>
+              <img src={flourishRight} alt="" className="w-24 h-auto" />
+            </div>
             <div className="w-10 h-px bg-gold/50 opacity-0 animate-fade-up delay-200" />
             <p className="font-display text-base italic text-sepia-light opacity-0 animate-fade-up delay-200">
               Наследие прошлого — стратегии будущего
