@@ -14,25 +14,35 @@ const CharitySection = ({ onContactClick }: CharitySectionProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   // Fetch real donation amount from estafeta.ru
+  // Defer fetch until section is near viewport to shorten critical request chain
   useEffect(() => {
-    const fetchDonationAmount = async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke('fetch-donation-amount');
-        
-        if (error) {
-          console.error('Error fetching donation amount:', error);
-          return;
-        }
-        
-        if (data?.success && typeof data?.amount === 'number') {
-          setCurrentAmount(data.amount);
-        }
-      } catch (err) {
-        console.error('Failed to fetch donation amount:', err);
-      }
-    };
+    const section = document.getElementById('charity');
+    if (!section) return;
 
-    fetchDonationAmount();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          observer.disconnect();
+          (async () => {
+            try {
+              const { data, error } = await supabase.functions.invoke('fetch-donation-amount');
+              if (error) {
+                console.error('Error fetching donation amount:', error);
+                return;
+              }
+              if (data?.success && typeof data?.amount === 'number') {
+                setCurrentAmount(data.amount);
+              }
+            } catch (err) {
+              console.error('Failed to fetch donation amount:', err);
+            }
+          })();
+        }
+      },
+      { rootMargin: '400px' }
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
