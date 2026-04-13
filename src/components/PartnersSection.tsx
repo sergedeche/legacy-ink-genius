@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import React from "react";
 
 interface Partner {
   name: string;
@@ -17,10 +17,6 @@ const partners: Partner[] = [
     description:
       "«Культура Дома» — российский бренд премиальных товаров для дома: текстиля, посуды, декора и домашней одежды для всей семьи.\n\nВдохновением для Культуры Дома является наша страна с огромным культурным наследием, в которой каждый регион славится своими уникальными промыслами. Эти промыслы передаются из поколения в поколение, сохраняя многовековые традиции и мастерство.\n\nКультура Дома поддерживает русские традиции и искусство, помогает создавать уникальную атмосферу в каждом доме с русским стилем и самобытностью в его современном прочтении.",
   },
-  {
-    name: "Кибердом",
-    description: "Описание будет добавлено позже.",
-  },
 ];
 
 const PartnerCard = ({ partner }: { partner: Partner }) => (
@@ -37,22 +33,6 @@ const PartnerCard = ({ partner }: { partner: Partner }) => (
 );
 
 const PartnersSection = () => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      const width = container.clientWidth;
-      setActiveIndex(Math.round(scrollLeft / width));
-    };
-
-    container.addEventListener("scroll", handleScroll, { passive: true });
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
     <section id="partners" className="py-8 md:py-12 px-6 bg-background">
@@ -61,37 +41,10 @@ const PartnersSection = () => {
           Партнёры мероприятия
         </h2>
 
-        {/* Desktop: 3 columns */}
-        <div className="hidden md:grid md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {partners.map((p) => (
             <PartnerCard key={p.name} partner={p} />
           ))}
-        </div>
-
-        {/* Mobile: horizontal scroll */}
-        <div className="md:hidden">
-          <div
-            ref={scrollRef}
-            className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {partners.map((p) => (
-              <div key={p.name} className="min-w-full snap-center px-6">
-                <PartnerCard partner={p} />
-              </div>
-            ))}
-          </div>
-          {/* Dots */}
-          <div className="flex justify-center gap-2 mt-4">
-            {partners.map((_, i) => (
-              <div
-                key={i}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  i === activeIndex ? "bg-primary" : "bg-border"
-                }`}
-              />
-            ))}
-          </div>
         </div>
       </div>
     </section>
