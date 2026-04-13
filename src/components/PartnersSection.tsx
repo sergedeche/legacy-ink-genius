@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
-import savvaLogo from "@/assets/partner-savva.jpeg";
-import kulturaDoma from "@/assets/partner-kultura-doma.png";
+import savvaLogo from "@/assets/partner-savva.webp";
+import kulturaDoma from "@/assets/partner-kultura-doma.webp";
 
 interface Partner {
   name: string;
