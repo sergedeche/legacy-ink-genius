@@ -98,10 +98,6 @@ const TicketConfirmationEmail = ({
                 </Text>
               )}
 
-              <Text style={fieldRow}>
-                <span style={fieldLabel}>Мест:</span>{' '}
-                <span style={fieldValue}>{seatsText}</span>
-              </Text>
             </Section>
 
             {/* Bottom decorative border */}
@@ -129,6 +125,10 @@ const TicketConfirmationEmail = ({
 
           {/* Footer hint */}
           <Text style={hintText}>💡 Сохраните это письмо или сделайте скриншот билета</Text>
+          <Text style={contactText}>
+            При возникновении любых вопросов обращайтесь:{' '}
+            <a href="https://t.me/corphacker" style={telegramLink}>@corphacker в Telegram</a>
+          </Text>
           <Text style={footerText}>{SITE_NAME} — экскурс для тех, кто думает о будущем</Text>
         </Container>
       </Body>
