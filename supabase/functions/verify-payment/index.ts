@@ -400,7 +400,7 @@ Deno.serve(async (req) => {
         bookingCreatedAt: bookingCreatedAt.toISOString(),
       });
 
-      const amountsMatch = donation.amount === expectedAmount;
+      const amountsMatch = donation.amount >= expectedAmount;
       
       // Fuzzy name matching: check that first name and initial are both present
       // regardless of order, and ignoring extra parts like patronymic
