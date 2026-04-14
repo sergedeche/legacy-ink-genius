@@ -23,7 +23,7 @@ const TicketConfirmationEmail = ({
   seats_count = 1,
   venue = '',
 }: TicketConfirmationProps) => {
-  const seatsText = seats_count === 1 ? '1 место' : seats_count < 5 ? `${seats_count} места` : `${seats_count} мест`;
+  
 
   let formattedDate = ''
   let formattedTime = ''
@@ -98,10 +98,6 @@ const TicketConfirmationEmail = ({
                 </Text>
               )}
 
-              <Text style={fieldRow}>
-                <span style={fieldLabel}>Мест:</span>{' '}
-                <span style={fieldValue}>{seatsText}</span>
-              </Text>
             </Section>
 
             {/* Bottom decorative border */}
@@ -129,6 +125,10 @@ const TicketConfirmationEmail = ({
 
           {/* Footer hint */}
           <Text style={hintText}>💡 Сохраните это письмо или сделайте скриншот билета</Text>
+          <Text style={contactText}>
+            При возникновении любых вопросов обращайтесь:{' '}
+            <a href="https://t.me/corphacker" style={telegramLink}>@corphacker в Telegram</a>
+          </Text>
           <Text style={footerText}>{SITE_NAME} — экскурс для тех, кто думает о будущем</Text>
         </Container>
       </Body>
@@ -345,6 +345,20 @@ const hintText = {
   fontSize: '12px',
   margin: '16px 0 4px',
   fontFamily: "'Playfair Display', Georgia, serif",
+}
+
+const contactText = {
+  textAlign: 'center' as const,
+  color: '#8a7a55',
+  fontSize: '12px',
+  margin: '8px 0 4px',
+  fontFamily: "'Playfair Display', Georgia, serif",
+}
+
+const telegramLink: React.CSSProperties = {
+  color: '#6a5530',
+  textDecoration: 'underline',
+  fontWeight: 700,
 }
 
 const footerText = {
