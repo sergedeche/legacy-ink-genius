@@ -1,6 +1,6 @@
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Container, Head, Heading, Html, Preview, Text, Section, Hr,
+  Body, Container, Head, Html, Preview, Text, Section, Row, Column,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
@@ -12,14 +12,16 @@ interface TicketConfirmationProps {
   event_title?: string
   event_date?: string
   seats_count?: number
+  venue?: string
 }
 
 const TicketConfirmationEmail = ({
   guest_name = 'Гость',
   ticket_code = 'XXXXXX',
-  event_title = 'Мероприятие',
+  event_title = 'Стратегия наследия',
   event_date = '',
   seats_count = 1,
+  venue = '',
 }: TicketConfirmationProps) => {
   const seatsText = seats_count === 1 ? '1 место' : seats_count < 5 ? `${seats_count} места` : `${seats_count} мест`;
 
@@ -31,39 +33,100 @@ const TicketConfirmationEmail = ({
     formattedTime = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
   }
 
+  // Pad ticket code for display
+  const displayCode = ticket_code.toUpperCase()
+
   return (
     <Html lang="ru" dir="ltr">
-      <Head />
+      <Head>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Cormorant+Garamond:wght@400;600;700&display=swap');
+        `}</style>
+      </Head>
       <Preview>🎫 Ваш билет на {event_title}</Preview>
       <Body style={main}>
-        <Container style={container}>
-          <Section style={header}>
-            <Text style={emoji}>🎫</Text>
-            <Heading style={h1}>Билет подтверждён</Heading>
+        <Container style={outerContainer}>
+          {/* Ticket wrapper */}
+          <Section style={ticketWrapper}>
+            <Row>
+              {/* Main ticket area */}
+              <Column style={mainTicket}>
+                {/* Ornamental top border */}
+                <Text style={ornamentTop}>═══════════════════════════════</Text>
+
+                {/* БИЛЕТ header */}
+                <Text style={ticketHeader}>БИЛЕТ</Text>
+
+                <Text style={ornamentLine}>─────────────────</Text>
+
+                {/* Event title */}
+                <Text style={eventSubtitle}>Экскурс</Text>
+                <Text style={eventTitle}>«{event_title}»</Text>
+
+                <Text style={ornamentLine}>─────────────────</Text>
+
+                {/* Tagline */}
+                <Text style={tagline}>
+                  Возможность прикоснуться к прошлому,{'\n'}чтобы повлиять на будущее.
+                </Text>
+
+                {/* Guest name - typewriter style */}
+                <Text style={fieldLabel}>
+                  Гость: <span style={fieldValue}>{guest_name}</span>
+                </Text>
+
+                {/* Date & Time - typewriter style */}
+                {formattedDate && (
+                  <Text style={fieldLabel}>
+                    Дата: <span style={fieldValue}>{formattedDate}</span>
+                  </Text>
+                )}
+
+                {formattedTime && (
+                  <Text style={fieldLabel}>
+                    Время: <span style={fieldValue}>{formattedTime}</span>
+                  </Text>
+                )}
+
+                {/* Venue */}
+                {venue && (
+                  <Text style={fieldLabel}>
+                    Место: <span style={fieldValue}>{venue}</span>
+                  </Text>
+                )}
+
+                {/* Seats */}
+                <Text style={fieldLabel}>
+                  Мест: <span style={fieldValue}>{seatsText}</span>
+                </Text>
+
+                {/* Bottom ornament */}
+                <Text style={ornamentBottom}>═══════════════════════════════</Text>
+              </Column>
+
+              {/* Dashed separator / tear line */}
+              <Column style={tearLine}>
+                <Text style={tearDashes}>┆</Text>
+              </Column>
+
+              {/* Right stub with ticket number */}
+              <Column style={stubColumn}>
+                <Section style={stubInner}>
+                  <Text style={stubOrnamentTop}>═══</Text>
+                  <Text style={stubLabel}>№</Text>
+                  {/* Vertical ticket code - each char on its own line */}
+                  {displayCode.split('').map((char, i) => (
+                    <Text key={i} style={stubCodeChar}>{char}</Text>
+                  ))}
+                  <Text style={stubOrnamentBottom}>═══</Text>
+                </Section>
+              </Column>
+            </Row>
           </Section>
 
-          <Section style={content}>
-            <Text style={label}>Код билета</Text>
-            <Section style={codeBox}>
-              <Text style={codeText}>{ticket_code}</Text>
-            </Section>
-            <Text style={hint}>Покажите этот код при входе</Text>
-
-            <Hr style={divider} />
-
-            <Heading style={h2}>{event_title}</Heading>
-
-            {formattedDate && (
-              <Text style={detail}>📅 {formattedDate}  🕐 {formattedTime}</Text>
-            )}
-            <Text style={detail}>👤 {guest_name}  👥 {seatsText}</Text>
-
-            <Section style={tipBox}>
-              <Text style={tipText}>💡 Сохраните это письмо или сделайте скриншот билета</Text>
-            </Section>
-          </Section>
-
-          <Text style={footer}>{SITE_NAME} — экскурс для тех, кто думает о будущем</Text>
+          {/* Hint below ticket */}
+          <Text style={hintText}>💡 Сохраните это письмо — покажите билет при входе</Text>
+          <Text style={footerText}>{SITE_NAME} — экскурс для тех, кто думает о будущем</Text>
         </Container>
       </Body>
     </Html>
@@ -80,27 +143,197 @@ export const template = {
     event_title: 'Стратегия наследия',
     event_date: '2026-05-15T19:00:00',
     seats_count: 2,
+    venue: 'Москва, ул. Тверская, 1',
   },
 } satisfies TemplateEntry
 
-const main = { backgroundColor: '#ffffff', fontFamily: "'Montserrat', Arial, sans-serif" }
-const container = { maxWidth: '400px', margin: '0 auto' }
-const header = {
-  background: 'linear-gradient(135deg, #c7923e, #8b6224)',
-  borderRadius: '16px 16px 0 0',
-  padding: '24px',
+/* ─── Styles ─── */
+
+const main = {
+  backgroundColor: '#ffffff',
+  fontFamily: "'Cormorant Garamond', 'Georgia', 'Times New Roman', serif",
+}
+
+const outerContainer = {
+  maxWidth: '520px',
+  margin: '20px auto',
+  padding: '0',
+}
+
+const ticketWrapper = {
+  backgroundColor: '#f0e6d3',
+  backgroundImage: 'linear-gradient(135deg, #e8dcc8 0%, #f0e6d3 30%, #ede2ce 60%, #e5d9c3 100%)',
+  borderRadius: '8px',
+  border: '2px solid #c4a97d',
+  boxShadow: '0 4px 20px rgba(139, 98, 36, 0.15), inset 0 0 40px rgba(196, 169, 125, 0.2)',
+  padding: '0',
+  overflow: 'hidden' as const,
+}
+
+const mainTicket = {
+  width: '78%',
+  padding: '28px 24px 20px 28px',
+  verticalAlign: 'top' as const,
+}
+
+const tearLine = {
+  width: '2%',
+  verticalAlign: 'top' as const,
+  paddingTop: '12px',
+  paddingBottom: '12px',
+}
+
+const tearDashes = {
+  color: '#b8a080',
+  fontSize: '14px',
+  lineHeight: '8px',
+  letterSpacing: '0',
+  margin: '0',
+  padding: '0',
+  whiteSpace: 'pre-wrap' as const,
   textAlign: 'center' as const,
 }
-const emoji = { fontSize: '40px', margin: '0 0 12px' }
-const h1 = { margin: '0', fontSize: '24px', fontWeight: '600', color: '#f5f3f0' }
-const content = { backgroundColor: '#f5f3f0', padding: '24px', borderRadius: '0 0 16px 16px' }
-const label = { margin: '0 0 8px', color: '#7a6f5d', fontSize: '12px', textTransform: 'uppercase' as const, letterSpacing: '1px', textAlign: 'center' as const }
-const codeBox = { backgroundColor: '#1a2332', borderRadius: '8px', padding: '16px 20px', textAlign: 'center' as const }
-const codeText = { color: '#c7923e', fontFamily: 'monospace', fontSize: '24px', letterSpacing: '4px', margin: '0' }
-const hint = { margin: '8px 0 0', color: '#7a6f5d', fontSize: '12px', textAlign: 'center' as const }
-const divider = { border: 'none', borderTop: '2px dashed #d4cfc4', margin: '20px 0' }
-const h2 = { margin: '0 0 16px', color: '#2a2318', fontSize: '20px', textAlign: 'center' as const }
-const detail = { fontSize: '14px', color: '#5a5145', textAlign: 'center' as const, margin: '4px 0' }
-const tipBox = { backgroundColor: 'rgba(199, 146, 62, 0.1)', padding: '12px', borderRadius: '8px', textAlign: 'center' as const, marginTop: '20px' }
-const tipText = { margin: '0', color: '#5a5145', fontSize: '12px' }
-const footer = { textAlign: 'center' as const, color: '#7a6f5d', fontSize: '12px', marginTop: '20px' }
+
+const stubColumn = {
+  width: '20%',
+  backgroundColor: 'rgba(196, 169, 125, 0.15)',
+  verticalAlign: 'top' as const,
+  borderLeft: '1px dashed #b8a080',
+}
+
+const stubInner = {
+  padding: '20px 8px',
+  textAlign: 'center' as const,
+}
+
+const stubOrnamentTop = {
+  color: '#8b6224',
+  fontSize: '10px',
+  margin: '0 0 12px',
+  letterSpacing: '2px',
+  textAlign: 'center' as const,
+}
+
+const stubOrnamentBottom = {
+  color: '#8b6224',
+  fontSize: '10px',
+  margin: '12px 0 0',
+  letterSpacing: '2px',
+  textAlign: 'center' as const,
+}
+
+const stubLabel = {
+  color: '#5a4a2e',
+  fontSize: '14px',
+  fontWeight: '700' as const,
+  margin: '0 0 6px',
+  textAlign: 'center' as const,
+  fontFamily: "'Cormorant Garamond', Georgia, serif",
+}
+
+const stubCodeChar = {
+  color: '#3a2a10',
+  fontSize: '20px',
+  fontWeight: '700' as const,
+  fontFamily: "'Special Elite', 'Courier New', monospace",
+  margin: '0',
+  padding: '1px 0',
+  lineHeight: '1.3',
+  textAlign: 'center' as const,
+  letterSpacing: '2px',
+}
+
+const ornamentTop = {
+  color: '#8b6224',
+  fontSize: '10px',
+  textAlign: 'center' as const,
+  margin: '0 0 8px',
+  letterSpacing: '1px',
+  opacity: '0.7',
+}
+
+const ornamentLine = {
+  color: '#c4a97d',
+  fontSize: '10px',
+  textAlign: 'center' as const,
+  margin: '4px 0',
+  letterSpacing: '2px',
+  opacity: '0.6',
+}
+
+const ornamentBottom = {
+  color: '#8b6224',
+  fontSize: '10px',
+  textAlign: 'center' as const,
+  margin: '12px 0 0',
+  letterSpacing: '1px',
+  opacity: '0.7',
+}
+
+const ticketHeader = {
+  fontSize: '28px',
+  fontWeight: '700' as const,
+  color: '#2a1a08',
+  textAlign: 'center' as const,
+  margin: '0 0 2px',
+  letterSpacing: '6px',
+  textTransform: 'uppercase' as const,
+  fontFamily: "'Cormorant Garamond', Georgia, serif",
+}
+
+const eventSubtitle = {
+  fontSize: '16px',
+  color: '#5a4a2e',
+  textAlign: 'center' as const,
+  margin: '8px 0 2px',
+  fontStyle: 'italic' as const,
+}
+
+const eventTitle = {
+  fontSize: '22px',
+  fontWeight: '700' as const,
+  color: '#2a1a08',
+  textAlign: 'center' as const,
+  margin: '0 0 4px',
+  fontFamily: "'Cormorant Garamond', Georgia, serif",
+}
+
+const tagline = {
+  fontSize: '13px',
+  color: '#6a5a3e',
+  textAlign: 'center' as const,
+  margin: '8px 0 16px',
+  lineHeight: '1.5',
+  fontStyle: 'italic' as const,
+}
+
+const fieldLabel = {
+  fontSize: '14px',
+  color: '#5a4a2e',
+  margin: '6px 0',
+  fontFamily: "'Cormorant Garamond', Georgia, serif",
+  fontWeight: '600' as const,
+}
+
+const fieldValue: React.CSSProperties = {
+  fontFamily: "'Special Elite', 'Courier New', monospace",
+  color: '#1a1008',
+  fontWeight: 'normal',
+  fontSize: '14px',
+}
+
+const hintText = {
+  textAlign: 'center' as const,
+  color: '#7a6a4e',
+  fontSize: '12px',
+  margin: '16px 0 4px',
+  fontFamily: "'Cormorant Garamond', Georgia, serif",
+}
+
+const footerText = {
+  textAlign: 'center' as const,
+  color: '#9a8a6e',
+  fontSize: '11px',
+  margin: '4px 0 0',
+  fontFamily: "'Cormorant Garamond', Georgia, serif",
+}
