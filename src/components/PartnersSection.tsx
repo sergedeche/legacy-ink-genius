@@ -6,6 +6,7 @@ interface Partner {
   name: string;
   description: string;
   logo: string;
+  url: string;
 }
 
 const partners: Partner[] = [
@@ -20,12 +21,13 @@ const partners: Partner[] = [
     description:
       "«Культура Дома» — российский бренд премиальных товаров для дома: текстиля, посуды, декора и домашней одежды для всей семьи.\n\nВдохновением для Культуры Дома является наша страна с огромным культурным наследием, в которой каждый регион славится своими уникальными промыслами. Эти промыслы передаются из поколения в поколение, сохраняя многовековые традиции и мастерство.\n\nКультура Дома поддерживает русские традиции и искусство, помогает создавать уникальную атмосферу в каждом доме с русским стилем и самобытностью в его современном прочтении.",
     logo: kulturaDoma,
+    url: "https://kultura-doma.ru",
   },
 ];
 
 const PartnerCard = ({ partner }: { partner: Partner }) => (
   <div className="flex flex-col items-center text-center p-6 md:p-8 min-w-[85vw] md:min-w-0 snap-center">
-    <div className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden mb-5 border border-border">
+    <a href={partner.url} target="_blank" rel="noopener noreferrer" className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden mb-5 border border-border block hover:shadow-lg transition-shadow">
       <img
         src={partner.logo}
         alt={partner.name}
@@ -33,7 +35,7 @@ const PartnerCard = ({ partner }: { partner: Partner }) => (
         decoding="async"
         className="w-full h-full object-cover !rounded-none"
       />
-    </div>
+    </a>
     <p className="font-body text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-line">
       {partner.description}
     </p>
