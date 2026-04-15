@@ -488,6 +488,39 @@ Deno.serve(async (req) => {
 
       console.log('Ticket created:', ticket.ticket_code);
 
+      // Send Telegram notification (non-blocking)
+      try {
+        const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+        const TELEGRAM_API_KEY = Deno.env.get('TELEGRAM_API_KEY');
+        if (LOVABLE_API_KEY && TELEGRAM_API_KEY) {
+          const TELEGRAM_CHAT_ID = '366095894';
+          const eventDate = booking.events?.event_date 
+            ? new Date(booking.events.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+            : 'не указана';
+          const formattedAmount = new Intl.NumberFormat('ru-RU').format(booking.total_amount);
+          const tgMessage = `📩 Новая покупка билета!\n\n👤 Гость: ${booking.guest_name}\n📧 Email: ${booking.guest_email}\n🎫 Билет: ${ticket.ticket_code}\n🎭 Мероприятие: ${booking.events?.title || 'не указано'}\n📅 Дата: ${eventDate}\n💰 Сумма: ${formattedAmount} ₽\n🪑 Мест: ${booking.seats_count}`;
+
+          await fetch('https://connector-gateway.lovable.dev/telegram/sendMessage', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+              'X-Connection-Api-Key': TELEGRAM_API_KEY,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              chat_id: TELEGRAM_CHAT_ID,
+              text: tgMessage,
+              parse_mode: 'HTML',
+            }),
+          });
+          console.log('Telegram notification sent');
+        } else {
+          console.warn('Telegram keys not configured, skipping notification');
+        }
+      } catch (tgError) {
+        console.error('Failed to send Telegram notification:', tgError);
+      }
+
       return new Response(
         JSON.stringify({ 
           success: true, 
