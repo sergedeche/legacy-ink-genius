@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
-import { Ticket, Calendar, User, Users, Mail, Wallet, Send, X, Loader2 } from "lucide-react";
+import { Ticket, Calendar, User, Users, Mail, Wallet, Send, X, Loader2, MapPin } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -188,6 +188,13 @@ const TicketDialog = ({
                 </span>
               </div>
             </div>
+
+            {venue && (
+              <div className="flex items-start gap-2 pt-1" style={{ color: 'hsl(35 20% 40%)' }}>
+                <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: 'hsl(38 70% 50%)' }} />
+                <span className="text-xs sm:text-sm">{venue}</span>
+              </div>
+            )}
           </div>
 
           {/* Save Ticket Options */}
