@@ -29,8 +29,14 @@ const TicketConfirmationEmail = ({
   let formattedTime = ''
   if (event_date) {
     const d = new Date(event_date)
-    formattedDate = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
-    formattedTime = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+    formattedDate = d.toLocaleDateString('ru-RU', {
+      day: 'numeric', month: 'long', year: 'numeric',
+      timeZone: 'Europe/Moscow',
+    })
+    formattedTime = d.toLocaleTimeString('ru-RU', {
+      hour: '2-digit', minute: '2-digit',
+      timeZone: 'Europe/Moscow',
+    })
   }
 
   const displayCode = ticket_code.toUpperCase()
