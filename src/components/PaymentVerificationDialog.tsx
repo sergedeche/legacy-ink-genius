@@ -24,6 +24,7 @@ interface PaymentVerificationDialogProps {
   onVerified: () => void;
   onCancel: () => void;
   seatsCount: number;
+  venue?: string;
 }
 
 interface TicketData {
@@ -44,6 +45,7 @@ const PaymentVerificationDialog = ({
   onVerified,
   onCancel,
   seatsCount,
+  venue,
 }: PaymentVerificationDialogProps) => {
   const [checking, setChecking] = useState(false);
   const [verified, setVerified] = useState(false);
@@ -98,6 +100,7 @@ const PaymentVerificationDialog = ({
           eventTitle,
           eventDate,
           seatsCount,
+          venue,
         });
         setTicketDialogOpen(true);
       } else if (data?.minutes_left !== undefined) {
@@ -344,6 +347,7 @@ const PaymentVerificationDialog = ({
           eventTitle={eventTitle}
           eventDate={eventDate}
           seatsCount={seatsCount}
+          venue={venue}
         />
       )}
 

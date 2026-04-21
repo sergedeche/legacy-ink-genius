@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { format } from "date-fns";
-import { ru } from "date-fns/locale";
-import { Ticket, Calendar, User, Users, Mail, Wallet, Send, X, Loader2 } from "lucide-react";
+import { Ticket, Calendar, User, Users, Mail, Wallet, Send, X, Loader2, MapPin } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +19,7 @@ interface TicketDialogProps {
   eventTitle: string;
   eventDate: string;
   seatsCount: number;
+  venue?: string;
 }
 
 const TicketDialog = ({
@@ -31,6 +30,7 @@ const TicketDialog = ({
   eventTitle,
   eventDate,
   seatsCount,
+  venue,
 }: TicketDialogProps) => {
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [email, setEmail] = useState("");
@@ -59,6 +59,7 @@ const TicketDialog = ({
             event_title: eventTitle,
             event_date: eventDate,
             seats_count: seatsCount,
+            venue: venue || '',
           },
         }
       });
@@ -91,8 +92,16 @@ const TicketDialog = ({
     });
   };
 
-  const formattedDate = format(new Date(eventDate), 'd MMMM yyyy', { locale: ru });
-  const formattedTime = format(new Date(eventDate), 'HH:mm', { locale: ru });
+  // Always render in Moscow time so it matches the site/event listing
+  const eventDateObj = new Date(eventDate);
+  const formattedDate = eventDateObj.toLocaleDateString('ru-RU', {
+    day: 'numeric', month: 'long', year: 'numeric',
+    timeZone: 'Europe/Moscow',
+  });
+  const formattedTime = eventDateObj.toLocaleTimeString('ru-RU', {
+    hour: '2-digit', minute: '2-digit',
+    timeZone: 'Europe/Moscow',
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -177,6 +186,13 @@ const TicketDialog = ({
                 </span>
               </div>
             </div>
+
+            {venue && (
+              <div className="flex items-start gap-2 pt-1" style={{ color: 'hsl(35 20% 40%)' }}>
+                <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: 'hsl(38 70% 50%)' }} />
+                <span className="text-xs sm:text-sm">{venue}</span>
+              </div>
+            )}
           </div>
 
           {/* Save Ticket Options */}

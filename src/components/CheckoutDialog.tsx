@@ -235,6 +235,7 @@ const CheckoutDialog = ({
             "https://estafeta.ru/events/master-klass/ekskurs-strategiya-naslediya-343403/"
           }
           seatsCount={seatsCount}
+          venue={event.description || undefined}
           onVerified={() => {
             onBookingComplete();
             setVerificationOpen(false);

@@ -494,11 +494,29 @@ Deno.serve(async (req) => {
         const TELEGRAM_API_KEY = Deno.env.get('TELEGRAM_API_KEY');
         if (LOVABLE_API_KEY && TELEGRAM_API_KEY) {
           const TELEGRAM_CHAT_ID = '366095894';
-          const eventDate = booking.events?.event_date 
-            ? new Date(booking.events.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+          const eventDateRaw = booking.events?.event_date;
+          const eventDateStr = eventDateRaw
+            ? new Date(eventDateRaw).toLocaleDateString('ru-RU', {
+                day: 'numeric', month: 'long', year: 'numeric',
+                timeZone: 'Europe/Moscow',
+              })
             : 'не указана';
+          const eventTimeStr = eventDateRaw
+            ? new Date(eventDateRaw).toLocaleTimeString('ru-RU', {
+                hour: '2-digit', minute: '2-digit',
+                timeZone: 'Europe/Moscow',
+              })
+            : '';
           const formattedAmount = new Intl.NumberFormat('ru-RU').format(booking.total_amount);
-          const tgMessage = `📩 Новая покупка билета!\n\n👤 Гость: ${booking.guest_name}\n📧 Email: ${booking.guest_email}\n🎫 Билет: ${ticket.ticket_code}\n🎭 Мероприятие: ${booking.events?.title || 'не указано'}\n📅 Дата: ${eventDate}\n💰 Сумма: ${formattedAmount} ₽\n🪑 Мест: ${booking.seats_count}`;
+          const isPlaceholderEmail = booking.guest_email === 'pending@placeholder.local';
+          const emailLine = isPlaceholderEmail ? 'не указан' : booking.guest_email;
+          const venueLine = booking.events?.description
+            ? `\n📍 Место: ${booking.events.description}`
+            : '';
+          const dateLine = eventTimeStr
+            ? `${eventDateStr}, ${eventTimeStr} (МСК)`
+            : eventDateStr;
+          const tgMessage = `📩 Новая покупка билета!\n\n👤 Гость: ${booking.guest_name}\n📧 Email: ${emailLine}\n🎫 Билет: ${ticket.ticket_code}\n🎭 Мероприятие: ${booking.events?.title || 'не указано'}\n📅 Дата: ${dateLine}${venueLine}\n💰 Сумма: ${formattedAmount} ₽\n🪑 Мест: ${booking.seats_count}`;
 
           await fetch('https://connector-gateway.lovable.dev/telegram/sendMessage', {
             method: 'POST',
