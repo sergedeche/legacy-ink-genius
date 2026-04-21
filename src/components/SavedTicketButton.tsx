@@ -44,6 +44,7 @@ const SavedTicketButton = () => {
           eventTitle={selectedTicket.eventTitle}
           eventDate={selectedTicket.eventDate}
           seatsCount={selectedTicket.seatsCount}
+          venue={selectedTicket.venue}
         />
       )}
     </>

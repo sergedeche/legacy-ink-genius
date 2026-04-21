@@ -6,6 +6,7 @@ export interface SavedTicket {
   eventTitle: string;
   eventDate: string;
   seatsCount: number;
+  venue?: string;
   savedAt: string;
 }
 
