@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { format } from "date-fns";
-import { ru } from "date-fns/locale";
 import { Ticket, Calendar, User, Users, Mail, Wallet, Send, X, Loader2, MapPin } from "lucide-react";
 import {
   Dialog,
