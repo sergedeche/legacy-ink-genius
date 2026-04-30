@@ -41,6 +41,53 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      // Auto-recover from stale Vite dependency chunks (blank screen on hash mismatch).
+      (function () {
+        var KEY = '__vite_chunk_reload__';
+        var MAX_RELOADS = 2;
+        var WINDOW_MS = 15000;
+
+        function shouldHandle(msg, filename) {
+          var s = (msg || '') + ' ' + (filename || '');
+          return /Importing a module script failed|Failed to fetch dynamically imported module|error loading dynamically imported module|Unable to preload CSS/i.test(s)
+            || /\/node_modules\/\.vite\/deps\//.test(filename || '');
+        }
+
+        function tryReload() {
+          try {
+            var raw = sessionStorage.getItem(KEY);
+            var rec = raw ? JSON.parse(raw) : { count: 0, ts: 0 };
+            var now = Date.now();
+            if (now - rec.ts > WINDOW_MS) rec = { count: 0, ts: now };
+            if (rec.count >= MAX_RELOADS) return; // give up to avoid loops
+            rec.count += 1;
+            rec.ts = now;
+            sessionStorage.setItem(KEY, JSON.stringify(rec));
+            // Short backoff before reloading
+            setTimeout(function () { window.location.reload(); }, 300 + rec.count * 400);
+          } catch (e) { /* no-op */ }
+        }
+
+        window.addEventListener('error', function (e) {
+          if (shouldHandle(e && e.message, e && e.filename)) tryReload();
+        }, true);
+
+        window.addEventListener('unhandledrejection', function (e) {
+          var reason = e && e.reason;
+          var msg = reason && (reason.message || String(reason));
+          var fn = reason && reason.stack;
+          if (shouldHandle(msg, fn)) tryReload();
+        });
+
+        // Clear the counter once the app has successfully booted.
+        window.addEventListener('load', function () {
+          setTimeout(function () {
+            try { sessionStorage.removeItem(KEY); } catch (e) {}
+          }, 4000);
+        });
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
