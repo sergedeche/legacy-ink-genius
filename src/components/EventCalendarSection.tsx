@@ -85,11 +85,24 @@ const EventCalendarSection = () => {
     });
   };
 
+  const CYBERDOME_URL = "https://cyberlevel.moscow/feed/26-05-legacy-strategy?utm_source=partner&utm_medium=partner&utm_campaign=chernenko";
+
+  const isCyberdome = (event: Event | null | undefined) =>
+    !!event?.description && /кибердом/i.test(event.description);
+
+  const handleEventBook = (event: Event) => {
+    if (isCyberdome(event)) {
+      window.open(CYBERDOME_URL, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    setSelectedEvent(event);
+    setSeatDialogOpen(true);
+  };
+
   const handleDayClick = (date: Date) => {
     const event = getEventForDay(date);
     if (event && event.available_seats > 0) {
-      setSelectedEvent(event);
-      setSeatDialogOpen(true);
+      handleEventBook(event);
     }
   };
 
@@ -267,13 +280,12 @@ const EventCalendarSection = () => {
                       </div>
                       {event.available_seats > 0 && (
                         <button
-                          onClick={() => {
-                            setSelectedEvent(event);
-                            setSeatDialogOpen(true);
-                          }}
+                          onClick={() => handleEventBook(event)}
                           className="btn-primary-heritage w-full text-xs py-2.5 px-4 mt-3"
                         >
-                          Забронировать — {event.price_per_seat} ₽
+                          {isCyberdome(event)
+                            ? 'Записаться через Кибердом'
+                            : `Забронировать — ${event.price_per_seat} ₽`}
                         </button>
                       )}
                     </div>
