@@ -280,13 +280,12 @@ const EventCalendarSection = () => {
                       </div>
                       {event.available_seats > 0 && (
                         <button
-                          onClick={() => {
-                            setSelectedEvent(event);
-                            setSeatDialogOpen(true);
-                          }}
+                          onClick={() => handleEventBook(event)}
                           className="btn-primary-heritage w-full text-xs py-2.5 px-4 mt-3"
                         >
-                          Забронировать — {event.price_per_seat} ₽
+                          {isCyberdome(event)
+                            ? 'Записаться через Кибердом'
+                            : `Забронировать — ${event.price_per_seat} ₽`}
                         </button>
                       )}
                     </div>
