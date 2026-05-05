@@ -88,7 +88,7 @@ const EventCalendarSection = () => {
   const CYBERDOME_URL = "https://cyberlevel.moscow/feed/26-05-legacy-strategy?utm_source=partner&utm_medium=partner&utm_campaign=chernenko";
 
   const isCyberdome = (event: Event | null | undefined) =>
-    !!event?.description && /кибердом/i.test(event.description);
+    !!event?.description && /кибер(дом|этаж)/i.test(event.description);
 
   const handleEventBook = (event: Event) => {
     if (isCyberdome(event)) {
