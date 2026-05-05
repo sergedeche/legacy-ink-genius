@@ -9,14 +9,24 @@ import img6 from "@/assets/event/event-06.jpeg";
 import img7 from "@/assets/event/event-07.jpeg";
 import img8 from "@/assets/event/event-08.jpeg";
 import img9 from "@/assets/event/event-09.jpeg";
+import img10 from "@/assets/event/event-10.jpeg";
+import img11 from "@/assets/event/event-11.jpeg";
+import img12 from "@/assets/event/event-12.jpeg";
+import img13 from "@/assets/event/event-13.jpeg";
+import img14 from "@/assets/event/event-14.jpeg";
 
 const photos = [
   { src: img4, alt: "Сергей Чернеко на встрече «Стратегия Наследия»" },
+  { src: img10, alt: "Гости за круглым столом с редкими изданиями" },
   { src: img5, alt: "Гости рассматривают редкие книги в белых перчатках" },
+  { src: img11, alt: "Семья изучает иллюминированную рукопись" },
   { src: img9, alt: "Организаторы встречи в SAVVA Метрополь" },
+  { src: img13, alt: "Гости вечера в SAVVA Метрополь" },
   { src: img6, alt: "Книга с автографом Сергея Довлатова" },
+  { src: img12, alt: "Прижизненное издание сочинений М. В. Ломоносова" },
   { src: img3, alt: "Сервировка стола — Культура Дома" },
   { src: img1, alt: "Фарфоровые чашки с поэтическими надписями" },
+  { src: img14, alt: "Гости изучают старинный журнал «Кулинар»" },
   { src: img8, alt: "Архивный экземпляр «Меценаты Российской державы»" },
   { src: img7, alt: "Перчатки SAVVA для работы с редкими изданиями" },
   { src: img2, alt: "Открытка гостиницы «Метрополь»" },
