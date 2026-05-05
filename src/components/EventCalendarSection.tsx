@@ -283,9 +283,7 @@ const EventCalendarSection = () => {
                           onClick={() => handleEventBook(event)}
                           className="btn-primary-heritage w-full text-xs py-2.5 px-4 mt-3"
                         >
-                          {isCyberdome(event)
-                            ? 'Записаться через Кибердом'
-                            : `Забронировать — ${event.price_per_seat} ₽`}
+                          {`Забронировать — ${event.price_per_seat} ₽`}
                         </button>
                       )}
                     </div>
