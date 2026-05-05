@@ -14,15 +14,19 @@ import img11 from "@/assets/event/event-11.jpeg";
 import img12 from "@/assets/event/event-12.jpeg";
 import img13 from "@/assets/event/event-13.jpeg";
 import img14 from "@/assets/event/event-14.jpeg";
+import img15 from "@/assets/event/event-15.jpeg";
+import img16 from "@/assets/event/event-16.jpeg";
 
 const photos = [
   { src: img4, alt: "Сергей Чернеко на встрече «Стратегия Наследия»" },
   { src: img10, alt: "Гости за круглым столом с редкими изданиями" },
   { src: img5, alt: "Гости рассматривают редкие книги в белых перчатках" },
+  { src: img16, alt: "Общий вид стола с редкими изданиями в SAVVA Метрополь" },
   { src: img11, alt: "Семья изучает иллюминированную рукопись" },
   { src: img9, alt: "Организаторы встречи в SAVVA Метрополь" },
   { src: img13, alt: "Гости вечера в SAVVA Метрополь" },
   { src: img6, alt: "Книга с автографом Сергея Довлатова" },
+  { src: img15, alt: "Авторская подача — пельмени с крабом от шефа" },
   { src: img12, alt: "Прижизненное издание сочинений М. В. Ломоносова" },
   { src: img3, alt: "Сервировка стола — Культура Дома" },
   { src: img1, alt: "Фарфоровые чашки с поэтическими надписями" },
