@@ -7,6 +7,7 @@ const KeyInsightsSection = lazy(() => import("@/components/KeyInsightsSection"))
 const UniqueFormatSection = lazy(() => import("@/components/UniqueFormatSection"));
 const EventCalendarSection = lazy(() => import("@/components/EventCalendarSection"));
 const AuthorSection = lazy(() => import("@/components/AuthorSection"));
+const EventGallerySection = lazy(() => import("@/components/EventGallerySection"));
 const CharitySection = lazy(() => import("@/components/CharitySection"));
 const PartnersSection = lazy(() => import("@/components/PartnersSection"));
 const Footer = lazy(() => import("@/components/Footer"));
@@ -35,6 +36,7 @@ const Index = () => {
         <PartnersSection />
         <EventCalendarSection />
         <AuthorSection />
+        <EventGallerySection />
         <Footer />
         <TelegramDialog open={telegramOpen} onOpenChange={setTelegramOpen} />
         <SavedTicketButton />
