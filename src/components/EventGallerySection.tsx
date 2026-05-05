@@ -98,36 +98,22 @@ const EventGallerySection = () => {
           </div>
         </div>
 
-        {/* Desktop masonry-like grid */}
-        <div className="hidden md:grid max-w-6xl mx-auto grid-cols-12 auto-rows-[140px] gap-4">
-          {photos.map((p, i) => {
-            // varied placement: tall, wide, square pattern
-            const layouts = [
-              "col-span-5 row-span-3",
-              "col-span-4 row-span-2",
-              "col-span-3 row-span-2",
-              "col-span-3 row-span-2",
-              "col-span-4 row-span-3",
-              "col-span-5 row-span-2",
-              "col-span-4 row-span-2",
-              "col-span-4 row-span-2",
-              "col-span-4 row-span-3",
-            ];
-            return (
-              <div
-                key={i}
-                className={`overflow-hidden rounded-2xl group ${layouts[i % layouts.length]}`}
-                style={{ border: "1px solid hsl(35 20% 25%)" }}
-              >
-                <img
-                  src={p.src}
-                  alt={p.alt}
-                  loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-              </div>
-            );
-          })}
+        {/* Desktop masonry — true CSS columns, no cropping */}
+        <div className="hidden md:block max-w-6xl mx-auto columns-3 lg:columns-4 gap-4 [column-fill:_balance]">
+          {photos.map((p, i) => (
+            <div
+              key={i}
+              className="mb-4 break-inside-avoid overflow-hidden rounded-2xl group"
+              style={{ border: "1px solid hsl(35 20% 25%)" }}
+            >
+              <img
+                src={p.src}
+                alt={p.alt}
+                loading="lazy"
+                className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.03]"
+              />
+            </div>
+          ))}
         </div>
       </div>
     </section>
