@@ -11,7 +11,7 @@ const Footer = () => {
         <div className="section-divider opacity-30" />
         
         <p className="font-body text-sm mb-2">
-          Все средства направляются в благотворительный фонд «Жизнь как чудо».
+          Все средства направляются в благотворительный фонд «Жизнь как чудо»
         </p>
         
         <div className="flex items-center justify-center gap-4 mb-4">
