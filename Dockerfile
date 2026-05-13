@@ -3,9 +3,9 @@ FROM node:20-slim AS build
 
 WORKDIR /app
 
-# System deps (only curl; npm comes with the node image)
-RUN DEBIAN_FRONTEND=noninteractive apt-get update \
-    && apt-get install -y --no-install-recommends curl \
+# System deps only; npm comes with the node image and runs in a separate step below.
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Install JS deps with a clean, reproducible install
