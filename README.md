@@ -10,15 +10,45 @@ apt-get install -y --no-install-recommends curl npm ci
 
 это значит, что приложение в Timeweb создано как **Frontend → Static site / Другой JS-фреймворк**, а `npm ci` ошибочно попал в поле **System dependencies**. В этом режиме Timeweb использует свой автосборщик и не читает `Dockerfile` из репозитория.
 
-Исправление в Timeweb:
+### Чеклист исправления в панели Timeweb Cloud
 
-1. Откройте настройки приложения → сборка/деплой.
-2. Очистите поле **System dependencies** полностью.
-3. Укажите `npm ci` только в поле **Install command**.
-4. `Build command`: `npm run build`.
-5. `Output directory`: `dist`.
+Зайдите в **My Cloud → Apps → ваше приложение → Settings (Настройки) → раздел Build / Сборка** и выполните пункты по порядку:
 
-Если нужен именно Dockerfile-деплой — создайте приложение заново через вкладку **Dockerfile**, оставьте путь проекта пустым и используйте порт `8080` из `EXPOSE 8080`.
+#### 1. Поле «System dependencies» (Системные зависимости)
+- [ ] Полностью **очистите** это поле. Оно должно остаться **пустым**.
+- [ ] Здесь НЕ должно быть: `npm`, `npm ci`, `nodejs`, `node`, `yarn`, `curl`, `git`.
+- [ ] Сюда можно писать **только названия Debian/Ubuntu пакетов** (например `libvips`, `ffmpeg`). Команды (`npm ci`, `npm install`) сюда писать нельзя — Timeweb подставит их в `apt-get install`, и сборка упадёт с `exit code: 100`.
+
+#### 2. Поле «Install command» (Команда установки зависимостей)
+- [ ] Установите значение: `npm ci`
+- [ ] Если `npm ci` падает на lock-файле — используйте `npm install`.
+
+#### 3. Поле «Build command» (Команда сборки)
+- [ ] Установите значение: `npm run build`
+
+#### 4. Поле «Output directory» / «Public directory» (Каталог сборки)
+- [ ] Установите значение: `dist`
+
+#### 5. Поле «Node.js version»
+- [ ] Выберите `20.x` (или новее).
+
+#### 6. Сохранить и пересобрать
+- [ ] Нажмите **Save / Сохранить**.
+- [ ] Запустите **Redeploy / Пересобрать**.
+- [ ] В логах сборки команда `apt-get install ... npm ci` должна **исчезнуть**. Останутся только `npm ci` → `npm run build`.
+
+### Альтернатива: деплой через Dockerfile
+Если хотите использовать `Dockerfile` из репозитория (он уже настроен на `node:20-slim` без `apt-get`):
+
+1. Удалите текущее приложение в Timeweb (тип Static / Frontend).
+2. Создайте новое: **Create app → вкладка Dockerfile** (не Frontend!).
+3. Подключите тот же репозиторий и ветку.
+4. **Path to Dockerfile**: `Dockerfile` (в корне).
+5. **Port**: `8080` (соответствует `EXPOSE 8080`).
+6. Поля Install/Build/System dependencies оставьте пустыми — всё уже описано в `Dockerfile`.
+7. Запустите Deploy.
+
+> Признак того, что Timeweb всё ещё игнорирует `Dockerfile`: в логах появляется строка `apt-get install ... npm ci`. В Dockerfile-режиме этой команды быть не может в принципе.
 
 ## Project info
 
