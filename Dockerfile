@@ -1,34 +1,28 @@
-# Build stage: install deps and build Vite app
+# Dependencies stage: install JS deps only, without apt-get
+FROM node:20-slim AS deps
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Build stage: compile the Vite app
 FROM node:20-slim AS build
 
 WORKDIR /app
 
-# Install JS deps with a clean, reproducible install
-COPY package.json package-lock.json ./
-RUN npm ci
-
-# Copy source and build
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-# Runtime stage: serve static files with nginx
-FROM nginx:alpine
+# Runtime stage: serve static files using only Node built into node:20-slim
+FROM node:20-slim AS runtime
 
-# Copy built assets
-COPY --from=build /app/dist /usr/share/nginx/html
-# SPA fallback (200.html is also produced by vite plugin, this is a safety net)
-RUN cp /usr/share/nginx/html/index.html /usr/share/nginx/html/200.html
+WORKDIR /app
+ENV NODE_ENV=production
 
-# Nginx SPA config: fall back to index.html for client-side routes
-RUN printf 'server {\n\
-  listen 80;\n\
-  server_name _;\n\
-  root /usr/share/nginx/html;\n\
-  index index.html;\n\
-  location / {\n\
-    try_files $uri $uri/ /index.html;\n\
-  }\n\
-}\n' > /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist ./dist
+COPY docker-server.mjs ./docker-server.mjs
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 8080
+CMD ["node", "docker-server.mjs"]
