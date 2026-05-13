@@ -1,4 +1,24 @@
-# Welcome to your Lovable project
+# Legacy Ink Genius
+
+## Важно для Timeweb Cloud
+
+Если деплой падает на команде вида:
+
+```text
+apt-get install -y --no-install-recommends curl npm ci
+```
+
+это значит, что приложение в Timeweb создано как **Frontend → Static site / Другой JS-фреймворк**, а `npm ci` ошибочно попал в поле **System dependencies**. В этом режиме Timeweb использует свой автосборщик и не читает `Dockerfile` из репозитория.
+
+Исправление в Timeweb:
+
+1. Откройте настройки приложения → сборка/деплой.
+2. Очистите поле **System dependencies** полностью.
+3. Укажите `npm ci` только в поле **Install command**.
+4. `Build command`: `npm run build`.
+5. `Output directory`: `dist`.
+
+Если нужен именно Dockerfile-деплой — создайте приложение заново через вкладку **Dockerfile**, оставьте путь проекта пустым и используйте порт `8080` из `EXPOSE 8080`.
 
 ## Project info
 
