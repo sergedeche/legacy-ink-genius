@@ -11,6 +11,15 @@ FROM node:20-slim AS build
 
 WORKDIR /app
 
+# VITE_* env vars must be present at build time — Vite inlines them into the bundle.
+# Timeweb Cloud passes app env vars as Docker build args automatically.
+ARG VITE_SUPABASE_PROJECT_ID
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_PUBLISHABLE_KEY
+ENV VITE_SUPABASE_PROJECT_ID=$VITE_SUPABASE_PROJECT_ID \
+    VITE_SUPABASE_URL=$VITE_SUPABASE_URL \
+    VITE_SUPABASE_PUBLISHABLE_KEY=$VITE_SUPABASE_PUBLISHABLE_KEY
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
