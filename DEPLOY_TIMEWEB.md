@@ -1,8 +1,8 @@
-# Деплой на Timeweb Cloud (Static site из GitHub)
+# Деплой на Timeweb Cloud через Dockerfile из GitHub
 
 Этот проект состоит из двух частей:
 
-- **Фронтенд** — React + Vite, собирается в `dist/`. Хостится на **Timeweb Cloud**.
+- **Фронтенд** — React + Vite, собирается в `dist/` внутри Dockerfile. Хостится на **Timeweb Cloud**.
 - **Бэкенд** — Lovable Cloud (Supabase): база, edge-функции (`create-booking`, `verify-payment`, отправка писем и т.д.). **Остаётся на Lovable.** Фронт обращается к нему по адресу `https://nqssnmhzgfkglpgiqoga.supabase.co`. CORS открыт для всех источников (`*`), поэтому новый домен заработает без правок.
 
 ---
@@ -13,17 +13,35 @@
 
 ## Шаг 2. Создать приложение на Timeweb Cloud
 
-Панель Timeweb Cloud → **Apps** → **Создать приложение** → **Frontend → Static site** → источник **GitHub** → выбрать репозиторий и ветку `main`.
+Панель Timeweb Cloud → **Apps** → **Создать приложение** → вкладка **Dockerfile** → источник **GitHub** → выбрать репозиторий и ветку `main`.
 
-### Параметры сборки
+Важно: не выбирайте **Frontend → Static site / Другой JS-фреймворк** для этого проекта, если хотите использовать Dockerfile. В этом режиме Timeweb игнорирует `Dockerfile` и запускает свой автосборщик с `apt-get`. Именно он даёт ошибку вида:
 
 ```text
-Framework preset:  Vite (или Custom)
-Node.js version:   20
-Install command:   npm ci
-Build command:     npm run build
-Output directory:  dist
+apt-get install -y --no-install-recommends curl npm ci
 ```
+
+`npm ci` — это команда Node.js, а не системный пакет. Если она попала в поле системных зависимостей Timeweb, `apt-get` завершится с `exit code: 100`.
+
+### Параметры Dockerfile-приложения
+
+```text
+Project directory:  оставить пустым, если Dockerfile лежит в корне
+Port:               определяется из EXPOSE 8080
+Start command:      не указывать — используется CMD из Dockerfile
+System dependencies: оставить пустым
+```
+
+Если вы всё же создаёте **Frontend → Static site**, тогда в настройках должны быть только frontend-команды:
+
+```text
+Install command:       npm ci
+Build command:         npm run build
+Output directory:      dist
+System dependencies:   оставить пустым
+```
+
+Не вписывайте `npm ci` в **System dependencies**.
 
 ### Переменные окружения (обязательно!)
 
