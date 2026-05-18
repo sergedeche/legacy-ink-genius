@@ -206,10 +206,14 @@ const EventCalendarSection = () => {
                       backgroundColor: hasEvent && !isPast
                         ? isSoldOut
                           ? 'hsl(0 0% 40%)'
-                          : 'hsl(38 70% 50%)'
+                          : isVip(event)
+                            ? VIP_COLOR
+                            : GOLD_COLOR
                         : 'transparent',
                       color: hasEvent && !isPast
-                        ? 'hsl(25 20% 10%)'
+                        ? isVip(event) && !isSoldOut
+                          ? 'hsl(35 25% 96%)'
+                          : 'hsl(25 20% 10%)'
                         : isPast
                           ? 'hsl(35 20% 40%)'
                           : 'hsl(35 25% 85%)',
@@ -220,7 +224,7 @@ const EventCalendarSection = () => {
                     {hasEvent && !isPast && !isSoldOut && (
                       <span
                         className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                        style={{ backgroundColor: 'hsl(25 20% 10%)' }}
+                        style={{ backgroundColor: isVip(event) ? 'hsl(35 25% 96%)' : 'hsl(25 20% 10%)' }}
                       />
                     )}
                   </button>
