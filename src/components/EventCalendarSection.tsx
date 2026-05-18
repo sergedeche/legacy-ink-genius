@@ -257,19 +257,52 @@ const EventCalendarSection = () => {
               </div>
             ) : events.length > 0 ? (
               <div className="space-y-4">
-                {(showAll ? events : events.slice(0, INITIAL_VISIBLE_COUNT)).map((event) => (
+                {(showAll ? events : events.slice(0, INITIAL_VISIBLE_COUNT)).map((event) => {
+                  const vip = isVip(event);
+                  const accent = vip ? VIP_COLOR : GOLD_COLOR;
+                  // Render description: replace literal "Telegram" word with a link for VIP rows
+                  const renderDescription = (text: string) => {
+                    if (!vip) return text;
+                    const parts = text.split(/(Telegram)/i);
+                    return parts.map((part, idx) =>
+                      /^telegram$/i.test(part) ? (
+                        <a
+                          key={idx}
+                          href={TELEGRAM_DIRECT_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity"
+                          style={{ color: VIP_COLOR }}
+                        >
+                          {part}
+                        </a>
+                      ) : (
+                        <span key={idx}>{part}</span>
+                      )
+                    );
+                  };
+                  return (
                     <div
                       key={event.id}
-                      className="p-4 rounded-lg"
+                      className="p-4 rounded-lg relative"
                       style={{
                         backgroundColor: 'hsl(215 30% 15%)',
-                        border: '1px solid hsl(35 20% 25%)',
+                        border: `1px solid ${vip ? accent : 'hsl(35 20% 25%)'}`,
+                        boxShadow: vip ? `0 0 0 1px ${accent} inset, 0 6px 24px -12px ${accent}` : undefined,
                         opacity: event.available_seats === 0 ? 0.6 : 1,
                       }}
                     >
+                      {vip && (
+                        <span
+                          className="absolute -top-2 right-3 px-2 py-0.5 rounded-full text-[10px] font-display tracking-[0.2em] uppercase"
+                          style={{ backgroundColor: accent, color: 'hsl(35 25% 96%)' }}
+                        >
+                          VIP
+                        </span>
+                      )}
                       <div className="space-y-2">
                         <div className="flex items-center gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
-                          <Calendar className="w-4 h-4 shrink-0" style={{ color: 'hsl(38 70% 50%)' }} />
+                          <Calendar className="w-4 h-4 shrink-0" style={{ color: accent }} />
                           <span className="font-display text-base">
                             {format(new Date(event.event_date), 'd MMMM yyyy', { locale: ru })}
                           </span>
@@ -278,13 +311,13 @@ const EventCalendarSection = () => {
                           </span>
                         </div>
                         {event.description && event.description !== 'Мест нет' && (
-                          <div className="flex items-center gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
-                            <MapPin className="w-4 h-4 shrink-0" style={{ color: 'hsl(38 70% 50%)' }} />
-                            <span className="font-body text-sm">{event.description}</span>
+                          <div className="flex items-start gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
+                            <MapPin className="w-4 h-4 shrink-0 mt-0.5" style={{ color: accent }} />
+                            <span className="font-body text-sm">{renderDescription(event.description)}</span>
                           </div>
                         )}
                         <div className="flex items-center gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
-                          <Users className="w-4 h-4 shrink-0" style={{ color: 'hsl(38 70% 50%)' }} />
+                          <Users className="w-4 h-4 shrink-0" style={{ color: accent }} />
                           <span className="font-body text-sm">
                             {event.available_seats > 0
                               ? `${event.available_seats} из ${event.total_seats} мест`
@@ -295,13 +328,23 @@ const EventCalendarSection = () => {
                       {event.available_seats > 0 && (
                         <button
                           onClick={() => handleEventBook(event)}
-                          className="btn-primary-heritage w-full text-xs py-2.5 px-4 mt-3"
+                          className="w-full text-xs py-2.5 px-4 mt-3 rounded-full font-display tracking-[0.15em] uppercase transition-all hover:opacity-90"
+                          style={
+                            vip
+                              ? { backgroundColor: accent, color: 'hsl(35 25% 96%)' }
+                              : undefined
+                          }
                         >
-                          {`Забронировать — ${event.price_per_seat} ₽`}
+                          {vip ? (
+                            `Забронировать VIP — ${event.price_per_seat.toLocaleString('ru-RU')} ₽`
+                          ) : (
+                            <span className="btn-primary-heritage w-full block">{`Забронировать — ${event.price_per_seat} ₽`}</span>
+                          )}
                         </button>
                       )}
                     </div>
-                ))}
+                  );
+                })}
                 {events.length > INITIAL_VISIBLE_COUNT && !showAll && (
                   <button
                     onClick={() => setShowAll(true)}
