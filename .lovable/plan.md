@@ -1,65 +1,49 @@
-## Причина ошибки
+## Что чиним
 
-Сборка падает не из-за GitHub-ветки и не из-за React/Vite, а из-за Dockerfile в Timeweb:
+Сайт `lit.sergeichernenko.ru` грузится с Timeweb (российский IP) — это работает. Но за данными (события, брони, edge-функции) браузер ходит напрямую на `nqssnmhzgfkglpgiqoga.supabase.co`. Этот домен сейчас режут российские провайдеры → бесконечное «Загрузка…» без VPN.
 
-```text
-apt-get install ... curl npm ci
-E: Unable to locate package ci
-```
+Решение: поднять на Timeweb отдельное приложение-прокси, которое принимает запросы на ваш домен `api.lit.sergeichernenko.ru` и пересылает их в Supabase со своей стороны (с российского IP сервера, который ходит наружу свободно). Фронт переключаем на новый адрес.
 
-`npm ci` попал внутрь команды `apt-get install`, поэтому Linux пытается установить пакет с названием `ci`. Такого пакета нет, поэтому билд останавливается.
+## План работ
 
-## Что нужно сделать
+### 1. Создать прокси-приложение в коде проекта
 
-1. Найти Dockerfile в репозитории GitHub/Timeweb, который сейчас использует Timeweb.
-2. Исправить блок установки зависимостей:
-   - через `apt-get install` устанавливать только системные пакеты, например `curl`;
-   - `npm ci` вынести отдельной командой после копирования `package.json` и `package-lock.json`.
-3. Убедиться, что финальная сборка делает:
-   - `npm ci`
-   - `npm run build`
-   - отдаёт папку `dist`.
+Добавить в репозиторий новую папку `proxy/` с минимальным Node-сервером (или Nginx-контейнером). Один эндпоинт: всё, что пришло на `/*` — пересылается на `https://nqssnmhzgfkglpgiqoga.supabase.co/*` с сохранением метода, заголовков, тела и стримингом ответа. Плюс корректный CORS для `https://lit.sergeichernenko.ru`.
 
-## Правильный вариант Dockerfile
+Файлы:
+- `proxy/Dockerfile` — `node:20-slim`, порт 8080
+- `proxy/server.mjs` — простой http-прокси (~50 строк)
+- `proxy/package.json`
 
-```dockerfile
-FROM node:20-slim AS build
+### 2. Развернуть прокси на Timeweb
 
-WORKDIR /app
+Шаги, которые делаете вы в панели Timeweb (я подготовлю инструкцию):
+- Создать **второе** приложение в том же GitHub-репозитории.
+- Тип: Dockerfile, путь `proxy/Dockerfile`, порт 8080.
+- Привязать поддомен `api.lit.sergeichernenko.ru` (новая A-запись на reg.ru, аналогично основной).
+- Дождаться SSL от Let's Encrypt.
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update \
-  && apt-get install -y --no-install-recommends curl \
-  && rm -rf /var/lib/apt/lists/*
+### 3. Переключить фронт на прокси
 
-COPY package*.json ./
-RUN npm ci
+- В `.env` Timeweb (основного приложения) поменять `VITE_SUPABASE_URL` с `https://nqssnmhzgfkglpgiqoga.supabase.co` на `https://api.lit.sergeichernenko.ru`.
+- Пересобрать фронт (Timeweb сделает автоматически после смены env).
+- Файл `src/integrations/supabase/client.ts` трогать не нужно — он уже читает URL из env.
 
-COPY . .
-RUN npm run build
+### 4. Проверка
 
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY --from=build /app/dist/index.html /usr/share/nginx/html/200.html
+- Открыть `lit.sergeichernenko.ru` без VPN с мобильного интернета РФ.
+- Календарь должен показать события, бронирование должно отрабатывать, письмо с билетом приходить.
+- В DevTools → Network запросы должны идти на `api.lit.sergeichernenko.ru/rest/v1/...` и `/functions/v1/...`, отвечать 200.
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-```
+## Что НЕ нужно делать
 
-## Если Timeweb выбран как Static site, Dockerfile лучше вообще не использовать
+- Не переносить базу/функции — они остаются на Lovable Cloud (Supabase). Прокси нужен только как «российская точка входа».
+- Не менять `client.ts`, `.env` локально (он автогенерируется), не трогать `supabase/config.toml`.
+- Не выкатывать через Lovable Publish после переключения env — обновлять только через Timeweb из GitHub.
 
-Для Static site в Timeweb достаточно настроек:
+## Что нужно от вас перед стартом
 
-```text
-Install command: npm ci
-Build command: npm run build
-Output directory: dist
-Node.js version: 20
-```
+1. Подтвердить, что готовы добавить A-запись `api.lit.sergeichernenko.ru` на reg.ru (на IP, который выдаст Timeweb).
+2. Подтвердить, что готовы создать **второе** приложение в Timeweb (потребляет ещё один слот тарифа).
 
-То есть самый простой путь — удалить/отключить Dockerfile в Timeweb и деплоить как Vite Static site.
-
-## Что я могу сделать после подтверждения
-
-- Добавить в проект корректный Dockerfile, если вы хотите деплоить через контейнер.
-- Или обновить инструкцию `DEPLOY_TIMEWEB.md`, чтобы Timeweb настраивался именно как Static site без Dockerfile.
-- Если Dockerfile сейчас существует только в GitHub, но не в Lovable-проекте, нужно будет исправить его там вручную или синхронизировать сюда.
+После подтверждения я добавлю папку `proxy/` в репозиторий и дам пошаговую инструкцию для Timeweb и reg.ru.
