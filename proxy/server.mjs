@@ -50,11 +50,17 @@ const server = createServer(async (req, res) => {
 
   // Health-check для Timeweb — отвечаем на любой метод (GET/HEAD/OPTIONS/POST)
   if (HEALTH_PATHS.has(urlPath)) {
-    res.writeHead(200, { 'Content-Type': 'text/plain', ...cors });
+    const body = 'ok';
+    res.writeHead(200, {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Content-Length': Buffer.byteLength(body),
+      'Cache-Control': 'no-store',
+      ...cors,
+    });
     if (req.method === 'HEAD') {
       res.end();
     } else {
-      res.end('ok');
+      res.end(body);
     }
     log(req.method, req.url, 200);
     return;
