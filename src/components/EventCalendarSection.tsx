@@ -233,10 +233,14 @@ const EventCalendarSection = () => {
             </div>
 
             {/* Legend */}
-            <div className="flex items-center justify-center gap-6 mt-6 text-xs" style={{ color: 'hsl(35 20% 65%)' }}>
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-6 text-xs" style={{ color: 'hsl(35 20% 65%)' }}>
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded" style={{ backgroundColor: 'hsl(38 70% 50%)' }} />
+                <span className="w-3 h-3 rounded" style={{ backgroundColor: GOLD_COLOR }} />
                 <span>Есть места</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded" style={{ backgroundColor: VIP_COLOR }} />
+                <span>VIP</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded" style={{ backgroundColor: 'hsl(0 0% 40%)' }} />
