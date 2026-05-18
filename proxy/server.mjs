@@ -37,20 +37,33 @@ function buildCorsHeaders(origin) {
   };
 }
 
+const HEALTH_PATHS = new Set(['/', '/healthz', '/health', '/status', '/ping']);
+
+function log(method, url, status) {
+  console.log(`${method} ${url} -> ${status}`);
+}
+
 const server = createServer(async (req, res) => {
   const origin = req.headers.origin || '';
   const cors = buildCorsHeaders(origin);
+  const urlPath = (req.url || '/').split('?')[0];
 
-  // Health-check для Timeweb
-  if (req.method === 'GET' && (req.url === '/healthz' || req.url === '/')) {
+  // Health-check для Timeweb — отвечаем на любой метод (GET/HEAD/OPTIONS/POST)
+  if (HEALTH_PATHS.has(urlPath)) {
     res.writeHead(200, { 'Content-Type': 'text/plain', ...cors });
-    res.end('ok');
+    if (req.method === 'HEAD') {
+      res.end();
+    } else {
+      res.end('ok');
+    }
+    log(req.method, req.url, 200);
     return;
   }
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204, cors);
     res.end();
+    log(req.method, req.url, 204);
     return;
   }
 
@@ -101,10 +114,12 @@ const server = createServer(async (req, res) => {
       }
     }
     res.end();
+    log(req.method, req.url, upstream.status);
   } catch (err) {
     console.error('Proxy error:', err);
     res.writeHead(502, { 'Content-Type': 'application/json', ...cors });
     res.end(JSON.stringify({ error: 'bad_gateway', message: String(err?.message || err) }));
+    log(req.method, req.url, 502);
   }
 });
 
