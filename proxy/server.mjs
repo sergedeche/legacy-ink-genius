@@ -114,10 +114,12 @@ const server = createServer(async (req, res) => {
       }
     }
     res.end();
+    log(req.method, req.url, upstream.status);
   } catch (err) {
     console.error('Proxy error:', err);
     res.writeHead(502, { 'Content-Type': 'application/json', ...cors });
     res.end(JSON.stringify({ error: 'bad_gateway', message: String(err?.message || err) }));
+    log(req.method, req.url, 502);
   }
 });
 
