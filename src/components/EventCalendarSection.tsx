@@ -86,9 +86,15 @@ const EventCalendarSection = () => {
   };
 
   const CYBERDOME_URL = "https://cyberlevel.moscow/feed/26-05-legacy-strategy?utm_source=partner&utm_medium=partner&utm_campaign=chernenko";
+  const TELEGRAM_DIRECT_URL = "https://t.me/corphacker?direct";
+  const VIP_COLOR = "hsl(8 72% 52%)";
+  const GOLD_COLOR = "hsl(38 70% 50%)";
 
   const isCyberdome = (event: Event | null | undefined) =>
     !!event?.description && /кибер(дом|этаж)/i.test(event.description);
+
+  const isVip = (event: Event | null | undefined) =>
+    !!event && (/vip|вип/i.test(event.title) || /vip|вип/i.test(event.description || ''));
 
   const handleEventBook = (event: Event) => {
     if (isCyberdome(event)) {
