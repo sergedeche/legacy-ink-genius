@@ -86,9 +86,15 @@ const EventCalendarSection = () => {
   };
 
   const CYBERDOME_URL = "https://cyberlevel.moscow/feed/26-05-legacy-strategy?utm_source=partner&utm_medium=partner&utm_campaign=chernenko";
+  const TELEGRAM_DIRECT_URL = "https://t.me/corphacker?direct";
+  const VIP_COLOR = "hsl(8 72% 52%)";
+  const GOLD_COLOR = "hsl(38 70% 50%)";
 
   const isCyberdome = (event: Event | null | undefined) =>
     !!event?.description && /кибер(дом|этаж)/i.test(event.description);
+
+  const isVip = (event: Event | null | undefined) =>
+    !!event && (/vip|вип/i.test(event.title) || /vip|вип/i.test(event.description || ''));
 
   const handleEventBook = (event: Event) => {
     if (isCyberdome(event)) {
@@ -200,10 +206,14 @@ const EventCalendarSection = () => {
                       backgroundColor: hasEvent && !isPast
                         ? isSoldOut
                           ? 'hsl(0 0% 40%)'
-                          : 'hsl(38 70% 50%)'
+                          : isVip(event)
+                            ? VIP_COLOR
+                            : GOLD_COLOR
                         : 'transparent',
                       color: hasEvent && !isPast
-                        ? 'hsl(25 20% 10%)'
+                        ? isVip(event) && !isSoldOut
+                          ? 'hsl(35 25% 96%)'
+                          : 'hsl(25 20% 10%)'
                         : isPast
                           ? 'hsl(35 20% 40%)'
                           : 'hsl(35 25% 85%)',
@@ -214,7 +224,7 @@ const EventCalendarSection = () => {
                     {hasEvent && !isPast && !isSoldOut && (
                       <span
                         className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                        style={{ backgroundColor: 'hsl(25 20% 10%)' }}
+                        style={{ backgroundColor: isVip(event) ? 'hsl(35 25% 96%)' : 'hsl(25 20% 10%)' }}
                       />
                     )}
                   </button>
@@ -223,10 +233,14 @@ const EventCalendarSection = () => {
             </div>
 
             {/* Legend */}
-            <div className="flex items-center justify-center gap-6 mt-6 text-xs" style={{ color: 'hsl(35 20% 65%)' }}>
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-6 text-xs" style={{ color: 'hsl(35 20% 65%)' }}>
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded" style={{ backgroundColor: 'hsl(38 70% 50%)' }} />
+                <span className="w-3 h-3 rounded" style={{ backgroundColor: GOLD_COLOR }} />
                 <span>Есть места</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded" style={{ backgroundColor: VIP_COLOR }} />
+                <span>VIP</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded" style={{ backgroundColor: 'hsl(0 0% 40%)' }} />
@@ -243,19 +257,52 @@ const EventCalendarSection = () => {
               </div>
             ) : events.length > 0 ? (
               <div className="space-y-4">
-                {(showAll ? events : events.slice(0, INITIAL_VISIBLE_COUNT)).map((event) => (
+                {(showAll ? events : events.slice(0, INITIAL_VISIBLE_COUNT)).map((event) => {
+                  const vip = isVip(event);
+                  const accent = vip ? VIP_COLOR : GOLD_COLOR;
+                  // Render description: replace literal "Telegram" word with a link for VIP rows
+                  const renderDescription = (text: string) => {
+                    if (!vip) return text;
+                    const parts = text.split(/(Telegram)/i);
+                    return parts.map((part, idx) =>
+                      /^telegram$/i.test(part) ? (
+                        <a
+                          key={idx}
+                          href={TELEGRAM_DIRECT_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity"
+                          style={{ color: VIP_COLOR }}
+                        >
+                          {part}
+                        </a>
+                      ) : (
+                        <span key={idx}>{part}</span>
+                      )
+                    );
+                  };
+                  return (
                     <div
                       key={event.id}
-                      className="p-4 rounded-lg"
+                      className="p-4 rounded-lg relative"
                       style={{
                         backgroundColor: 'hsl(215 30% 15%)',
-                        border: '1px solid hsl(35 20% 25%)',
+                        border: `1px solid ${vip ? accent : 'hsl(35 20% 25%)'}`,
+                        boxShadow: vip ? `0 0 0 1px ${accent} inset, 0 6px 24px -12px ${accent}` : undefined,
                         opacity: event.available_seats === 0 ? 0.6 : 1,
                       }}
                     >
+                      {vip && (
+                        <span
+                          className="absolute -top-2 right-3 px-2 py-0.5 rounded-full text-[10px] font-display tracking-[0.2em] uppercase"
+                          style={{ backgroundColor: accent, color: 'hsl(35 25% 96%)' }}
+                        >
+                          VIP
+                        </span>
+                      )}
                       <div className="space-y-2">
                         <div className="flex items-center gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
-                          <Calendar className="w-4 h-4 shrink-0" style={{ color: 'hsl(38 70% 50%)' }} />
+                          <Calendar className="w-4 h-4 shrink-0" style={{ color: accent }} />
                           <span className="font-display text-base">
                             {format(new Date(event.event_date), 'd MMMM yyyy', { locale: ru })}
                           </span>
@@ -264,13 +311,13 @@ const EventCalendarSection = () => {
                           </span>
                         </div>
                         {event.description && event.description !== 'Мест нет' && (
-                          <div className="flex items-center gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
-                            <MapPin className="w-4 h-4 shrink-0" style={{ color: 'hsl(38 70% 50%)' }} />
-                            <span className="font-body text-sm">{event.description}</span>
+                          <div className="flex items-start gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
+                            <MapPin className="w-4 h-4 shrink-0 mt-0.5" style={{ color: accent }} />
+                            <span className="font-body text-sm">{renderDescription(event.description)}</span>
                           </div>
                         )}
                         <div className="flex items-center gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
-                          <Users className="w-4 h-4 shrink-0" style={{ color: 'hsl(38 70% 50%)' }} />
+                          <Users className="w-4 h-4 shrink-0" style={{ color: accent }} />
                           <span className="font-body text-sm">
                             {event.available_seats > 0
                               ? `${event.available_seats} из ${event.total_seats} мест`
@@ -281,13 +328,23 @@ const EventCalendarSection = () => {
                       {event.available_seats > 0 && (
                         <button
                           onClick={() => handleEventBook(event)}
-                          className="btn-primary-heritage w-full text-xs py-2.5 px-4 mt-3"
+                          className="w-full text-xs py-2.5 px-4 mt-3 rounded-full font-display tracking-[0.15em] uppercase transition-all hover:opacity-90"
+                          style={
+                            vip
+                              ? { backgroundColor: accent, color: 'hsl(35 25% 96%)' }
+                              : undefined
+                          }
                         >
-                          {`Забронировать — ${event.price_per_seat} ₽`}
+                          {vip ? (
+                            `Забронировать VIP — ${event.price_per_seat.toLocaleString('ru-RU')} ₽`
+                          ) : (
+                            <span className="btn-primary-heritage w-full block">{`Забронировать — ${event.price_per_seat} ₽`}</span>
+                          )}
                         </button>
                       )}
                     </div>
-                ))}
+                  );
+                })}
                 {events.length > INITIAL_VISIBLE_COUNT && !showAll && (
                   <button
                     onClick={() => setShowAll(true)}
