@@ -82,3 +82,28 @@ SUPABASE_TARGET = https://nqssnmhzgfkglpgiqoga.supabase.co
 `VITE_SUPABASE_URL` на `https://nqssnmhzgfkglpgiqoga.supabase.co`
 и сделать Redeploy. Прокси можно оставить выключенным, основной сайт
 снова будет работать (через VPN, как до правок).
+
+## Если healthcheck Timeweb не проходит
+
+В настройках приложения Timeweb (раздел Healthcheck / Проверка работоспособности):
+
+```text
+Path:    /healthz
+Method:  GET
+Expected status: 200
+Port:    8080
+```
+
+Прокси отвечает `200 ok` на `/`, `/healthz`, `/health`, `/status`, `/ping`
+любым методом (GET, HEAD, OPTIONS) — подойдёт любая из настроек платформы.
+
+После деплоя в логах должны появляться строки вида:
+
+```text
+GET /healthz -> 200
+HEAD / -> 200
+```
+
+Если таких строк **нет вообще**, а статус контейнера уходит в `unhealthy` —
+значит healthcheck не доходит до контейнера (неверный порт/таргет в настройках
+Timeweb), а не падает в коде.
