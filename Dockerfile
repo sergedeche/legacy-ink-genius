@@ -22,7 +22,15 @@ ENV VITE_SUPABASE_PROJECT_ID=$VITE_SUPABASE_PROJECT_ID \
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN VITE_SUPABASE_PROJECT_ID="$(printf '%s' "$VITE_SUPABASE_PROJECT_ID" | tr -d '[:space:]')" && \
+    VITE_SUPABASE_URL="$(printf '%s' "$VITE_SUPABASE_URL" | tr -d '[:space:]')" && \
+    VITE_SUPABASE_PUBLISHABLE_KEY="$(printf '%s' "$VITE_SUPABASE_PUBLISHABLE_KEY" | tr -d '[:space:]')" && \
+    test -n "$VITE_SUPABASE_URL" && \
+    test -n "$VITE_SUPABASE_PUBLISHABLE_KEY" && \
+    VITE_SUPABASE_PROJECT_ID="$VITE_SUPABASE_PROJECT_ID" \
+    VITE_SUPABASE_URL="$VITE_SUPABASE_URL" \
+    VITE_SUPABASE_PUBLISHABLE_KEY="$VITE_SUPABASE_PUBLISHABLE_KEY" \
+    npm run build
 
 # Runtime stage: serve static files using only Node built into node:20-slim
 FROM node:20-slim AS runtime
