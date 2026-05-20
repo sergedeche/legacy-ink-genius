@@ -1,14 +1,15 @@
 // Минимальный HTTP-прокси для Supabase.
-// Принимает запросы на api.lit.sergeichernenko.ru/* и пересылает их
-// на https://nqssnmhzgfkglpgiqoga.supabase.co/* со стороны российского сервера.
-// Браузер РФ-пользователя ходит только на наш домен и не упирается в блок *.supabase.co.
+// Принимает запросы на наш домен и потоково форвардит их на Supabase.
+// Без буферизации тел запроса/ответа — это надёжнее на любых размерах.
 
 import { createServer } from 'node:http';
+import { request as httpsRequest } from 'node:https';
+import { URL } from 'node:url';
 
 const TARGET = process.env.SUPABASE_TARGET || 'https://nqssnmhzgfkglpgiqoga.supabase.co';
 const PORT = Number(process.env.PORT || 8080);
+const targetUrl = new URL(TARGET);
 
-// Заголовки, которые нельзя прокидывать «в лоб» — node fetch управляет ими сам.
 const HOP_BY_HOP = new Set([
   'host',
   'connection',
@@ -19,18 +20,15 @@ const HOP_BY_HOP = new Set([
   'trailer',
   'transfer-encoding',
   'upgrade',
-  'content-length',
 ]);
 
 function buildCorsHeaders(origin) {
-  // Разрешаем все origin'ы (как у Lovable Cloud по умолчанию),
-  // но возвращаем конкретный, чтобы работал credentials-режим.
   return {
     'Access-Control-Allow-Origin': origin || '*',
     'Access-Control-Allow-Credentials': 'true',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
     'Access-Control-Allow-Headers':
-      'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version, prefer, range, x-upsert',
+      'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version, prefer, range, x-upsert, x-verification-code',
     'Access-Control-Expose-Headers': 'content-range, x-total-count',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin',
@@ -43,29 +41,24 @@ function log(method, url, status) {
   console.log(`${method} ${url} -> ${status}`);
 }
 
-const server = createServer(async (req, res) => {
+const server = createServer((req, res) => {
   const origin = req.headers.origin || '';
   const cors = buildCorsHeaders(origin);
   const urlPath = (req.url || '/').split('?')[0];
 
-  // Health-check для Timeweb — отвечаем на любой метод (GET/HEAD/OPTIONS/POST)
+  // Health-check
   if (HEALTH_PATHS.has(urlPath)) {
-    const body = 'ok';
     res.writeHead(200, {
       'Content-Type': 'text/plain; charset=utf-8',
-      'Content-Length': Buffer.byteLength(body),
       'Cache-Control': 'no-store',
       ...cors,
     });
-    if (req.method === 'HEAD') {
-      res.end();
-    } else {
-      res.end(body);
-    }
+    res.end(req.method === 'HEAD' ? undefined : 'ok');
     log(req.method, req.url, 200);
     return;
   }
 
+  // CORS preflight
   if (req.method === 'OPTIONS') {
     res.writeHead(204, cors);
     res.end();
@@ -73,60 +66,62 @@ const server = createServer(async (req, res) => {
     return;
   }
 
-  const targetUrl = TARGET + req.url;
-
-  // Готовим заголовки для апстрима
+  // Подготовка заголовков
   const headers = {};
   for (const [key, value] of Object.entries(req.headers)) {
-    if (!HOP_BY_HOP.has(key.toLowerCase())) {
-      headers[key] = Array.isArray(value) ? value.join(', ') : String(value ?? '');
-    }
+    const lk = key.toLowerCase();
+    if (HOP_BY_HOP.has(lk)) continue;
+    headers[key] = Array.isArray(value) ? value.join(', ') : String(value ?? '');
   }
-  // Host подставит fetch автоматически из targetUrl
+  headers['host'] = targetUrl.host;
 
-  // Собираем тело (для не-GET/HEAD)
-  let body;
-  if (req.method !== 'GET' && req.method !== 'HEAD') {
-    const chunks = [];
-    for await (const chunk of req) chunks.push(chunk);
-    body = Buffer.concat(chunks);
-  }
-
-  try {
-    const upstream = await fetch(targetUrl, {
+  const upstreamReq = httpsRequest(
+    {
+      protocol: targetUrl.protocol,
+      hostname: targetUrl.hostname,
+      port: targetUrl.port || 443,
       method: req.method,
+      path: req.url,
       headers,
-      body,
-      redirect: 'manual',
-    });
-
-    const respHeaders = {};
-    upstream.headers.forEach((value, key) => {
-      if (!HOP_BY_HOP.has(key.toLowerCase())) {
+    },
+    (upstreamRes) => {
+      const respHeaders = {};
+      for (const [key, value] of Object.entries(upstreamRes.headers)) {
+        if (HOP_BY_HOP.has(key.toLowerCase())) continue;
         respHeaders[key] = value;
       }
-    });
-    // Перебиваем CORS своими значениями (Supabase отдаёт *, нам нужен конкретный origin)
-    Object.assign(respHeaders, cors);
+      // Перебиваем CORS своими значениями
+      Object.assign(respHeaders, cors);
 
-    res.writeHead(upstream.status, respHeaders);
+      res.writeHead(upstreamRes.statusCode || 502, respHeaders);
+      upstreamRes.pipe(res);
+      log(req.method, req.url, upstreamRes.statusCode || 502);
+    },
+  );
 
-    if (upstream.body) {
-      const reader = upstream.body.getReader();
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        res.write(Buffer.from(value));
-      }
+  upstreamReq.on('error', (err) => {
+    console.error('Proxy upstream error:', err);
+    if (!res.headersSent) {
+      res.writeHead(502, { 'Content-Type': 'application/json', ...cors });
+      res.end(JSON.stringify({ error: 'bad_gateway', message: String(err?.message || err) }));
+    } else {
+      try { res.end(); } catch {}
     }
-    res.end();
-    log(req.method, req.url, upstream.status);
-  } catch (err) {
-    console.error('Proxy error:', err);
-    res.writeHead(502, { 'Content-Type': 'application/json', ...cors });
-    res.end(JSON.stringify({ error: 'bad_gateway', message: String(err?.message || err) }));
     log(req.method, req.url, 502);
-  }
+  });
+
+  req.on('error', (err) => {
+    console.error('Proxy client error:', err);
+    try { upstreamReq.destroy(err); } catch {}
+  });
+
+  // Потоково форвардим тело запроса
+  req.pipe(upstreamReq);
+});
+
+server.on('clientError', (err, socket) => {
+  console.error('Server clientError:', err?.message);
+  try { socket.destroy(); } catch {}
 });
 
 server.listen(PORT, '0.0.0.0', () => {
