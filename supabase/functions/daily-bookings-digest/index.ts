@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
       throw new Error(`Telegram failed: ${JSON.stringify(tgData)}`);
     }
 
-    return new Response(JSON.stringify({ success: true, count: bookings.length }), {
+    return new Response(JSON.stringify({ success: true, count: list.length }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e: any) {
