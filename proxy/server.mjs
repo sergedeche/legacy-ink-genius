@@ -22,6 +22,16 @@ const HOP_BY_HOP = new Set([
   'upgrade',
 ]);
 
+const CORS_RESPONSE_HEADERS = new Set([
+  'access-control-allow-origin',
+  'access-control-allow-credentials',
+  'access-control-allow-methods',
+  'access-control-allow-headers',
+  'access-control-expose-headers',
+  'access-control-max-age',
+  'vary',
+]);
+
 function buildCorsHeaders(origin) {
   return {
     'Access-Control-Allow-Origin': origin || '*',
