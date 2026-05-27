@@ -22,6 +22,16 @@ const HOP_BY_HOP = new Set([
   'upgrade',
 ]);
 
+const CORS_RESPONSE_HEADERS = new Set([
+  'access-control-allow-origin',
+  'access-control-allow-credentials',
+  'access-control-allow-methods',
+  'access-control-allow-headers',
+  'access-control-expose-headers',
+  'access-control-max-age',
+  'vary',
+]);
+
 function buildCorsHeaders(origin) {
   return {
     'Access-Control-Allow-Origin': origin || '*',
@@ -87,7 +97,11 @@ const server = createServer((req, res) => {
     (upstreamRes) => {
       const respHeaders = {};
       for (const [key, value] of Object.entries(upstreamRes.headers)) {
-        if (HOP_BY_HOP.has(key.toLowerCase())) continue;
+        const lk = key.toLowerCase();
+        if (HOP_BY_HOP.has(lk)) continue;
+        // Не пробрасываем CORS-заголовки от Supabase — иначе в ответе будут дубликаты
+        // (Supabase отдаёт Access-Control-Allow-Origin: *, а мы ниже выставляем свой).
+        if (CORS_RESPONSE_HEADERS.has(lk)) continue;
         respHeaders[key] = value;
       }
       // Перебиваем CORS своими значениями
