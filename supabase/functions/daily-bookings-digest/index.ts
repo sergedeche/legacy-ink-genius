@@ -33,28 +33,27 @@ Deno.serve(async (req) => {
 
     console.log(`Found ${bookings?.length || 0} new verified bookings in last 24h`);
 
-    if (!bookings || bookings.length === 0) {
-      return new Response(JSON.stringify({ success: true, count: 0, message: 'No new bookings' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
     const fmt = (n: number) => new Intl.NumberFormat('ru-RU').format(n);
-    const totalAmount = bookings.reduce((s, b) => s + (b.total_amount || 0), 0);
-    const totalSeats = bookings.reduce((s, b) => s + (b.seats_count || 0), 0);
+    const list = bookings || [];
+    const totalAmount = list.reduce((s, b) => s + (b.total_amount || 0), 0);
+    const totalSeats = list.reduce((s, b) => s + (b.seats_count || 0), 0);
 
-    const lines = bookings.map((b: any, i: number) => {
-      const ev = b.events?.title || 'мероприятие не указано';
-      const evDate = b.events?.event_date
-        ? new Date(b.events.event_date).toLocaleDateString('ru-RU', {
-            day: 'numeric', month: 'long', timeZone: 'Europe/Moscow',
-          })
-        : '—';
-      const email = b.guest_email === 'pending@placeholder.local' ? 'без email' : b.guest_email;
-      return `${i + 1}. 👤 ${b.guest_name} (${email})\n   🎭 ${ev} — ${evDate}\n   🪑 ${b.seats_count} мест · 💰 ${fmt(b.total_amount)} ₽`;
-    });
-
-    const message = `🌅 Сводка за сутки\n\n📩 Новых броней: ${bookings.length}\n🪑 Всего мест: ${totalSeats}\n💰 Сумма: ${fmt(totalAmount)} ₽\n\n${lines.join('\n\n')}`;
+    let message: string;
+    if (list.length === 0) {
+      message = `🌅 Сводка за сутки\n\nНовых подтверждённых броней за последние 24 часа нет.`;
+    } else {
+      const lines = list.map((b: any, i: number) => {
+        const ev = b.events?.title || 'мероприятие не указано';
+        const evDate = b.events?.event_date
+          ? new Date(b.events.event_date).toLocaleDateString('ru-RU', {
+              day: 'numeric', month: 'long', timeZone: 'Europe/Moscow',
+            })
+          : '—';
+        const email = b.guest_email === 'pending@placeholder.local' ? 'без email' : b.guest_email;
+        return `${i + 1}. 👤 ${b.guest_name} (${email})\n   🎭 ${ev} — ${evDate}\n   🪑 ${b.seats_count} мест · 💰 ${fmt(b.total_amount)} ₽`;
+      });
+      message = `🌅 Сводка за сутки\n\n📩 Новых броней: ${list.length}\n🪑 Всего мест: ${totalSeats}\n💰 Сумма: ${fmt(totalAmount)} ₽\n\n${lines.join('\n\n')}`;
+    }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
     const TELEGRAM_API_KEY = Deno.env.get('TELEGRAM_API_KEY')!;
@@ -75,7 +74,7 @@ Deno.serve(async (req) => {
       throw new Error(`Telegram failed: ${JSON.stringify(tgData)}`);
     }
 
-    return new Response(JSON.stringify({ success: true, count: bookings.length }), {
+    return new Response(JSON.stringify({ success: true, count: list.length }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e: any) {
