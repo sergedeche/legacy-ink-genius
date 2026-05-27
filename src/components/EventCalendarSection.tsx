@@ -329,17 +329,14 @@ const EventCalendarSection = () => {
                         <button
                           onClick={() => handleEventBook(event)}
                           className="w-full text-xs py-2.5 px-4 mt-3 rounded-full font-display tracking-[0.15em] uppercase transition-all hover:opacity-90"
-                          style={
-                            vip
-                              ? { backgroundColor: accent, color: 'hsl(35 25% 96%)' }
-                              : undefined
-                          }
+                          style={{
+                            backgroundColor: accent,
+                            color: vip ? 'hsl(35 25% 96%)' : 'hsl(25 20% 10%)',
+                          }}
                         >
-                          {vip ? (
-                            `Забронировать VIP — ${event.price_per_seat.toLocaleString('ru-RU')} ₽`
-                          ) : (
-                            <span className="btn-primary-heritage w-full block">{`Забронировать — ${event.price_per_seat} ₽`}</span>
-                          )}
+                          {vip
+                            ? `Забронировать VIP — ${event.price_per_seat.toLocaleString('ru-RU')} ₽`
+                            : `Забронировать — ${event.price_per_seat.toLocaleString('ru-RU')} ₽`}
                         </button>
                       )}
                     </div>
