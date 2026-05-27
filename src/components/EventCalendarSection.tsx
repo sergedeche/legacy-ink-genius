@@ -85,7 +85,7 @@ const EventCalendarSection = () => {
     });
   };
 
-  const CYBERDOME_URL = "https://cyberlevel.moscow/feed/26-05-legacy-strategy?utm_source=partner&utm_medium=partner&utm_campaign=chernenko";
+  const FUND_URL = "https://estafeta.ru/events/master-klass/ekskurs-strategiya-naslediya-343403/";
   const TELEGRAM_DIRECT_URL = "https://t.me/corphacker?direct";
   const VIP_COLOR = "hsl(8 72% 52%)";
   const GOLD_COLOR = "hsl(38 70% 50%)";
@@ -98,7 +98,7 @@ const EventCalendarSection = () => {
 
   const handleEventBook = (event: Event) => {
     if (isCyberdome(event)) {
-      window.open(CYBERDOME_URL, '_blank', 'noopener,noreferrer');
+      window.open(event.estafeta_url || FUND_URL, '_blank', 'noopener,noreferrer');
       return;
     }
     setSelectedEvent(event);
@@ -329,17 +329,14 @@ const EventCalendarSection = () => {
                         <button
                           onClick={() => handleEventBook(event)}
                           className="w-full text-xs py-2.5 px-4 mt-3 rounded-full font-display tracking-[0.15em] uppercase transition-all hover:opacity-90"
-                          style={
-                            vip
-                              ? { backgroundColor: accent, color: 'hsl(35 25% 96%)' }
-                              : undefined
-                          }
+                          style={{
+                            backgroundColor: accent,
+                            color: vip ? 'hsl(35 25% 96%)' : 'hsl(25 20% 10%)',
+                          }}
                         >
-                          {vip ? (
-                            `Забронировать VIP — ${event.price_per_seat.toLocaleString('ru-RU')} ₽`
-                          ) : (
-                            <span className="btn-primary-heritage w-full block">{`Забронировать — ${event.price_per_seat} ₽`}</span>
-                          )}
+                          {vip
+                            ? `Забронировать VIP — ${event.price_per_seat.toLocaleString('ru-RU')} ₽`
+                            : `Забронировать — ${event.price_per_seat.toLocaleString('ru-RU')} ₽`}
                         </button>
                       )}
                     </div>
