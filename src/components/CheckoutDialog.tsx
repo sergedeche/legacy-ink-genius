@@ -135,7 +135,7 @@ const CheckoutDialog = ({
                 type="text"
                 value={guestName}
                 onChange={(e) => setGuestName(e.target.value)}
-                placeholder="Как вас зовут?"
+                placeholder="Например, Иван П"
                 required
                 className="h-12"
                 style={{ 
@@ -145,7 +145,7 @@ const CheckoutDialog = ({
                 }}
               />
               <p className="text-xs" style={{ color: 'hsl(38 70% 50%)' }}>
-                ⚠️ Введите имя и фамилию — так же, как укажете при пожертвовании
+                ⚠️ Введите имя и первую букву фамилии (например, «Иван П») — так же, как укажете при пожертвовании. Можно указать и фамилию полностью.
               </p>
             </div>
 

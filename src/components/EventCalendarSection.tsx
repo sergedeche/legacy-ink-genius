@@ -297,14 +297,20 @@ const EventCalendarSection = () => {
                         </span>
                       )}
                       <div className="space-y-2">
-                        <div className="flex items-center gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
+                        <div className="flex items-center gap-2 flex-wrap" style={{ color: 'hsl(35 20% 75%)' }}>
                           <Calendar className="w-4 h-4 shrink-0" style={{ color: accent }} />
                           <span className="font-display text-base">
                             {format(new Date(event.event_date), 'd MMMM yyyy', { locale: ru })}
                           </span>
-                          <span className="font-display text-base ml-1">
-                            {format(new Date(event.event_date), 'HH:mm')}
-                          </span>
+                          {isCyberdome(event) ? (
+                            <span className="font-body text-sm ml-1">
+                              Сбор гостей 18:00, начало 18:30
+                            </span>
+                          ) : (
+                            <span className="font-display text-base ml-1">
+                              {format(new Date(event.event_date), 'HH:mm')}
+                            </span>
+                          )}
                         </div>
                         {event.description && event.description !== 'Мест нет' && (
                           <div className="flex items-start gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
