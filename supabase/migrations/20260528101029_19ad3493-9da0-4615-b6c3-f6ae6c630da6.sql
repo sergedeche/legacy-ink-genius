@@ -1,0 +1,1 @@
+UPDATE public.events SET event_date = '2026-06-25 15:30:00+00' WHERE id = '2ebdd321-8c5f-420e-8e1c-66aa569d5abc';
