@@ -97,10 +97,6 @@ const EventCalendarSection = () => {
     !!event && (/vip|вип/i.test(event.title) || /vip|вип/i.test(event.description || ''));
 
   const handleEventBook = (event: Event) => {
-    if (isCyberdome(event)) {
-      window.open(event.estafeta_url || FUND_URL, '_blank', 'noopener,noreferrer');
-      return;
-    }
     setSelectedEvent(event);
     setSeatDialogOpen(true);
   };
