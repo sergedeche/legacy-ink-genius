@@ -67,6 +67,24 @@ export type Database = {
           },
         ]
       }
+      donation_tracker: {
+        Row: {
+          id: number
+          last_amount: number
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          last_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          last_amount?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
