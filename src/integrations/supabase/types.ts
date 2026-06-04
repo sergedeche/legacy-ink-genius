@@ -71,16 +71,19 @@ export type Database = {
         Row: {
           id: number
           last_amount: number
+          last_donation_at: string | null
           updated_at: string
         }
         Insert: {
           id?: number
           last_amount?: number
+          last_donation_at?: string | null
           updated_at?: string
         }
         Update: {
           id?: number
           last_amount?: number
+          last_donation_at?: string | null
           updated_at?: string
         }
         Relationships: []
