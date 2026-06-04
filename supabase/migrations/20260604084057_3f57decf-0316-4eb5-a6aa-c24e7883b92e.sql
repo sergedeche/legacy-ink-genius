@@ -1,0 +1,1 @@
+ALTER TABLE public.donation_tracker ADD COLUMN IF NOT EXISTS last_donation_at TIMESTAMPTZ;
