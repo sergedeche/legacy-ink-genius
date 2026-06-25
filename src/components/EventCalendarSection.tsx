@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths, isToday, isBefore, startOfDay } from "date-fns";
 import { ru } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Calendar, Users, Clock, MapPin } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Users, Clock, MapPin, Send } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SeatSelectionDialog from "./SeatSelectionDialog";
@@ -398,6 +398,20 @@ const EventCalendarSection = () => {
             >
               Правила участия
             </Link>
+
+            <a
+              href={TELEGRAM_DIRECT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-display tracking-[0.15em] uppercase transition-all hover:opacity-90"
+              style={{
+                backgroundColor: 'hsl(38 70% 50%)',
+                color: 'hsl(25 20% 10%)',
+              }}
+            >
+              <Send className="w-4 h-4" />
+              Оставить заявку в Telegram
+            </a>
           </div>
         </div>
       </div>
