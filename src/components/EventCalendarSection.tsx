@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths, isToday, isBefore, startOfDay } from "date-fns";
 import { ru } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Calendar, Users, Clock, MapPin, Send } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Users, Clock, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SeatSelectionDialog from "./SeatSelectionDialog";
@@ -89,6 +89,41 @@ const EventCalendarSection = () => {
   const TELEGRAM_DIRECT_URL = "https://t.me/corphacker?direct";
   const VIP_COLOR = "hsl(8 72% 52%)";
   const GOLD_COLOR = "hsl(38 70% 50%)";
+
+  const placeholderCard = (
+    <div
+      className="p-4 rounded-lg"
+      style={{
+        backgroundColor: 'hsl(215 30% 15%)',
+        border: '1px solid hsl(35 20% 25%)',
+      }}
+    >
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 flex-wrap" style={{ color: 'hsl(35 20% 75%)' }}>
+          <Calendar className="w-4 h-4 shrink-0" style={{ color: GOLD_COLOR }} />
+          <span className="font-display text-base">Следующее мероприятие</span>
+        </div>
+        <div className="flex items-start gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
+          <MapPin className="w-4 h-4 shrink-0 mt-0.5" style={{ color: GOLD_COLOR }} />
+          <span className="font-body text-sm">
+            Уточняется или готовится. Напишите, и я сообщу вам о дате и месте.
+          </span>
+        </div>
+      </div>
+      <a
+        href={TELEGRAM_DIRECT_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-full inline-block text-center text-xs py-2.5 px-4 mt-3 rounded-full font-display tracking-[0.15em] uppercase transition-all hover:opacity-90"
+        style={{
+          backgroundColor: GOLD_COLOR,
+          color: 'hsl(25 20% 10%)',
+        }}
+      >
+        Оставить заявку в Telegram
+      </a>
+    </div>
+  );
 
   const isCyberdome = (event: Event | null | undefined) =>
     !!event?.description && /кибер(дом|этаж)/i.test(event.description);
@@ -357,12 +392,10 @@ const EventCalendarSection = () => {
                     Ещё {events.length - INITIAL_VISIBLE_COUNT} мероприятий
                   </button>
                 )}
+                {placeholderCard}
               </div>
             ) : (
-              <div className="text-center" style={{ color: 'hsl(35 20% 65%)' }}>
-                <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p className="font-display text-xl">Мероприятия скоро появятся</p>
-              </div>
+              placeholderCard
             )}
           </div>
         </div>
@@ -399,19 +432,6 @@ const EventCalendarSection = () => {
               Правила участия
             </Link>
 
-            <a
-              href={TELEGRAM_DIRECT_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-display tracking-[0.15em] uppercase transition-all hover:opacity-90"
-              style={{
-                backgroundColor: 'hsl(38 70% 50%)',
-                color: 'hsl(25 20% 10%)',
-              }}
-            >
-              <Send className="w-4 h-4" />
-              Оставить заявку в Telegram
-            </a>
           </div>
         </div>
       </div>
