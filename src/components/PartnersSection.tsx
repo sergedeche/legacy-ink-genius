@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import savvaLogo from "@/assets/partner-savva.webp";
 import kulturaDoma from "@/assets/partner-kultura-doma.webp";
-import domVishnevskihLogo from "@/assets/partner-dom-vishnevskih.png.asset.json";
+import domVishnevskihLogo from "@/assets/partner-dom-vishnevskih.webp";
 
 interface Partner {
   name: string;
@@ -30,7 +30,7 @@ const partners: Partner[] = [
     name: "Дом Вишневских",
     description:
       "Дом Вишневских — исторический московский особняк, в котором сохранилась атмосфера старой Москвы с её неспешным ритмом, традициями гостеприимства и уважением к культуре. Подобные городские дома были местом, где пересекались частная жизнь, интеллектуальные беседы и общественная деятельность, а архитектура становилась отражением эпохи и вкуса своих владельцев.\n\nСегодня Дом Вишневских открывает новую главу своей истории, оставаясь пространством для встреч, лекций, камерных концертов, выставок, деловых мероприятий и частных событий. Исторические интерьеры создают особую среду, где культурное наследие становится естественной частью современного общения, а каждое событие приобретает глубину и неповторимую атмосферу.",
-    logo: domVishnevskihLogo.url,
+    logo: domVishnevskihLogo,
     url: "https://domvishnevski.com/",
   },
 ];
