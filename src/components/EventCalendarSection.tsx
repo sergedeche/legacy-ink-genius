@@ -293,24 +293,56 @@ const EventCalendarSection = () => {
                   const accent = vip ? VIP_COLOR : GOLD_COLOR;
                   // Render description: replace literal "Telegram" word with a link for VIP rows
                   const renderDescription = (text: string) => {
-                    if (!vip) return text;
-                    const parts = text.split(/(Telegram)/i);
-                    return parts.map((part, idx) =>
-                      /^telegram$/i.test(part) ? (
+                    // Parse [label](url) markdown links first
+                    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+                    const nodes: React.ReactNode[] = [];
+                    let lastIndex = 0;
+                    let match: RegExpExecArray | null;
+                    let key = 0;
+                    const pushText = (str: string) => {
+                      if (!str) return;
+                      if (vip) {
+                        const parts = str.split(/(Telegram)/i);
+                        parts.forEach((part) => {
+                          if (/^telegram$/i.test(part)) {
+                            nodes.push(
+                              <a
+                                key={`tg-${key++}`}
+                                href={TELEGRAM_DIRECT_URL}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity"
+                                style={{ color: VIP_COLOR }}
+                              >
+                                {part}
+                              </a>
+                            );
+                          } else if (part) {
+                            nodes.push(<span key={`t-${key++}`}>{part}</span>);
+                          }
+                        });
+                      } else {
+                        nodes.push(<span key={`t-${key++}`}>{str}</span>);
+                      }
+                    };
+                    while ((match = linkRegex.exec(text)) !== null) {
+                      pushText(text.slice(lastIndex, match.index));
+                      nodes.push(
                         <a
-                          key={idx}
-                          href={TELEGRAM_DIRECT_URL}
+                          key={`lnk-${key++}`}
+                          href={match[2]}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity"
-                          style={{ color: VIP_COLOR }}
+                          style={{ color: accent }}
                         >
-                          {part}
+                          {match[1]}
                         </a>
-                      ) : (
-                        <span key={idx}>{part}</span>
-                      )
-                    );
+                      );
+                      lastIndex = match.index + match[0].length;
+                    }
+                    pushText(text.slice(lastIndex));
+                    return nodes;
                   };
                   return (
                     <div
