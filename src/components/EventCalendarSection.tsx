@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths, isToday, isBefore, startOfDay } from "date-fns";
 import { ru } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Calendar, Users, Clock, MapPin } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Users, MapPin, Shirt } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SeatSelectionDialog from "./SeatSelectionDialog";
@@ -90,43 +90,11 @@ const EventCalendarSection = () => {
   const VIP_COLOR = "hsl(8 72% 52%)";
   const GOLD_COLOR = "hsl(38 70% 50%)";
 
-  const placeholderCard = (
-    <div
-      className="p-4 rounded-lg"
-      style={{
-        backgroundColor: 'hsl(215 30% 15%)',
-        border: '1px solid hsl(35 20% 25%)',
-      }}
-    >
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 flex-wrap" style={{ color: 'hsl(35 20% 75%)' }}>
-          <Calendar className="w-4 h-4 shrink-0" style={{ color: GOLD_COLOR }} />
-          <span className="font-display text-base">Следующее мероприятие</span>
-        </div>
-        <div className="flex items-start gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
-          <MapPin className="w-4 h-4 shrink-0 mt-0.5" style={{ color: GOLD_COLOR }} />
-          <span className="font-body text-sm">
-            Уточняется или готовится. Напишите, и я сообщу вам о дате и месте.
-          </span>
-        </div>
-      </div>
-      <a
-        href={TELEGRAM_DIRECT_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="w-full inline-block text-center text-xs py-2.5 px-4 mt-3 rounded-full font-display tracking-[0.15em] uppercase transition-all hover:opacity-90"
-        style={{
-          backgroundColor: GOLD_COLOR,
-          color: 'hsl(25 20% 10%)',
-        }}
-      >
-        Оставить заявку в Telegram
-      </a>
-    </div>
-  );
-
   const isCyberdome = (event: Event | null | undefined) =>
     !!event?.description && /кибер(дом|этаж)/i.test(event.description);
+
+  const isDomVishnevskih = (event: Event | null | undefined) =>
+    !!event?.description && /дом\s+вишневских|domvishnevski/i.test(event.description);
 
   const isVip = (event: Event | null | undefined) =>
     !!event && (/vip|вип/i.test(event.title) || /vip|вип/i.test(event.description || ''));
@@ -369,7 +337,11 @@ const EventCalendarSection = () => {
                           <span className="font-display text-base">
                             {format(new Date(event.event_date), 'd MMMM yyyy', { locale: ru })}
                           </span>
-                          {isCyberdome(event) ? (
+                          {isDomVishnevskih(event) ? (
+                            <span className="font-display text-base ml-1">
+                              12:00 – 15:00
+                            </span>
+                          ) : isCyberdome(event) ? (
                             <span className="font-body text-sm ml-1">
                               Сбор гостей 18:00, начало 18:30
                             </span>
@@ -383,6 +355,12 @@ const EventCalendarSection = () => {
                           <div className="flex items-start gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
                             <MapPin className="w-4 h-4 shrink-0 mt-0.5" style={{ color: accent }} />
                             <span className="font-body text-sm">{renderDescription(event.description)}</span>
+                          </div>
+                        )}
+                        {isDomVishnevskih(event) && (
+                          <div className="flex items-center gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
+                            <Shirt className="w-4 h-4 shrink-0" style={{ color: accent }} />
+                            <span className="font-body text-sm">Дресс-код</span>
                           </div>
                         )}
                         <div className="flex items-center gap-2" style={{ color: 'hsl(35 20% 75%)' }}>
