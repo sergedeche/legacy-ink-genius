@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import savvaLogo from "@/assets/partner-savva.webp";
 import kulturaDoma from "@/assets/partner-kultura-doma.webp";
-import domVishnevskihLogo from "@/assets/partner-dom-vishnevskih.png.asset.json";
+import domVishnevskihLogo from "@/assets/partner-dom-vishnevskih.webp";
 
 interface Partner {
   name: string;
