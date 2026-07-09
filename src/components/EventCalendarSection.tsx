@@ -424,11 +424,8 @@ const EventCalendarSection = () => {
                     Ещё {events.length - INITIAL_VISIBLE_COUNT} мероприятий
                   </button>
                 )}
-                {placeholderCard}
               </div>
-            ) : (
-              placeholderCard
-            )}
+            ) : null}
           </div>
         </div>
 
